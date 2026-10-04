@@ -1,0 +1,16 @@
+/*
+Theme Name: May Piano
+Theme URI: https://maypiano.me
+Author: May Piano
+Description: Trang chủ và trang đăng ký khóa học của May Piano.
+Version: 1.0.0
+Requires at least: 6.4
+Requires PHP: 7.4
+Text Domain: maypiano
+*/
+html{scroll-behavior:smooth}
+body{margin:0;background:#E3D7D7}
+x-dc{display:block}
+x-dc:not([data-ready]){visibility:hidden;min-height:100vh}
+.mp-plain{font-family:Georgia,serif;color:#2B1E24;max-width:760px;margin:0 auto;padding:48px 20px;font-size:20px;line-height:1.6}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

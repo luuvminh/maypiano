@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Mây Piano — Đăng ký khóa học</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2B1E24}a:hover{color:#C2456B}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #2B1E24;outline-offset:3px}
+button{font-family:inherit;cursor:pointer}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.rise{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+.press{transition:transform .12s ease,filter .12s ease}
+.press:hover{filter:brightness(1.08)}
+.press:active{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.55; min-height: 100vh">
+
+<header style="display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between; padding: 20px clamp(16px, 5vw, 80px)">
+<a href="BanNhac.dc.html" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px; text-decoration: none; padding: 8px 0">Mây Piano</a>
+<a href="BanNhac.dc.html" style="font-weight: 600; padding: 10px 0">Về trang chủ</a>
+</header>
+
+<ol aria-label="Các bước đăng ký" style="list-style: none; margin: 0; padding: 0 clamp(16px, 5vw, 80px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{crumbs}}" as="b" hint-placeholder-count="4">
+<li style="display: flex; flex-direction: column; gap: 8px"><span style="height: 6px; border-radius: 3px; background: {{b.bar}}; transition: background .3s ease"></span><span style="font-size: clamp(14px, 1.5vw, 18px); font-weight: {{b.weight}}; line-height: 1.25">{{b.label}}</span></li>
+</sc-for>
+</ol>
+
+<main style="padding: clamp(24px, 4vw, 56px) clamp(16px, 5vw, 80px) clamp(48px, 6vw, 96px)">
+
+<sc-if value="{{isPick}}" hint-placeholder-val="{{ true }}">
+<div class="rise" style="display: flex; flex-direction: column; gap: 28px">
+<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(32px, 4.4vw, 60px); line-height: 1.1">Bạn muốn học khóa nào?</h1>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+<button type="button" class="press" aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="border: 2px solid #2B1E24; border-radius: 999px; padding: 10px 20px; min-height: 48px; font-size: 18px; font-weight: 600; background: {{t.bg}}; color: {{t.fg}}">{{t.label}}</button>
+</sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px 48px; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(18px, 3vw, 40px); align-items: start">
+<img src="{{cur.img}}" alt="" style="display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-weight: 600; color: #8A3350">{{cur.level}}</div>
+<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.12">{{cur.name}}</h2>
+<p style="margin: 0">{{cur.desc}}</p>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{cur.gets}}" as="g" hint-placeholder-count="3">
+<div style="display: flex; gap: 12px; align-items: flex-start"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 4px" aria-hidden="true"><path d="M4 12.500l5 5L20 6.500"></path></svg><span>{{g.t}}</span></div>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; padding-top: 6px"><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 36px">{{cur.priceText}}</span><span>{{cur.meta}}</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+<button type="button" class="press" onClick="{{addCur}}" style="border: 0; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 0 30px; min-height: 56px; font-size: 20px; font-weight: 600">{{addLabel}}</button>
+<button type="button" class="press" onClick="{{goCart}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 0 26px; min-height: 56px; font-size: 20px; font-weight: 600">{{cartLabel}}</button>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isCart}}" hint-placeholder-val="{{ false }}">
+<div class="rise" style="display: flex; flex-direction: column; gap: 24px; max-width: 880px">
+<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(32px, 4.4vw, 60px); line-height: 1.1">Giỏ hàng của bạn</h1>
+<sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+<div style="background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(20px, 3vw, 40px); display: flex; flex-direction: column; gap: 16px; align-items: flex-start"><p style="margin: 0">Giỏ hàng đang trống. Bạn chọn một khóa học để bắt đầu nhé.</p><button type="button" class="press" onClick="{{goPick}}" style="border: 0; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 0 28px; min-height: 54px; font-size: 20px; font-weight: 600">Chọn khóa học</button></div>
+</sc-if>
+<sc-if value="{{hasItems}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 24px">
+<div style="background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: 4px clamp(16px, 3vw, 32px)">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="2">
+<div style="display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid #D2BFC3">
+<div style="flex: 1 1 220px"><div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 24px; line-height: 1.2">{{it.name}}</div><div style="font-size: 17px">{{it.meta}}</div></div>
+<div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 24px; white-space: nowrap">{{it.priceText}}</div>
+<button type="button" onClick="{{it.remove}}" aria-label="{{it.removeLabel}}" style="border: 0; background: transparent; color: #8A3350; font-size: 18px; font-weight: 600; text-decoration: underline; min-height: 44px; padding: 0 4px">Bỏ khỏi giỏ</button>
+</div>
+</sc-for>
+<div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline; padding: 20px 0"><span style="font-weight: 600">Tổng cộng</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(30px, 3.4vw, 42px)">{{totalText}}</span></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<button type="button" class="press" onClick="{{goPay}}" style="border: 0; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 0 30px; min-height: 56px; font-size: 20px; font-weight: 600">Tiến hành thanh toán</button>
+<button type="button" class="press" onClick="{{goPick}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 0 26px; min-height: 56px; font-size: 20px; font-weight: 600">Thêm khóa khác</button>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isPay}}" hint-placeholder-val="{{ false }}">
+<div class="rise" style="display: flex; flex-direction: column; gap: 24px">
+<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(32px, 4.4vw, 60px); line-height: 1.1">Thanh toán</h1>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<form onSubmit="{{submit}}" style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 22px; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(18px, 3vw, 36px); box-sizing: border-box">
+<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 28px">Thông tin của bạn</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="ten" style="font-weight: 600">Họ và tên</label><input id="ten" type="text" autocomplete="name" value="{{name}}" onChange="{{setName}}" style="min-height: 54px; box-sizing: border-box; width: 100%; border: 2px solid #2B1E24; border-radius: 12px; padding: 0 16px; font-family: inherit; font-size: 20px; background: #F6EFEF; color: #2B1E24"></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="mail" style="font-weight: 600">Email nhận tài khoản học</label><input id="mail" type="email" autocomplete="email" value="{{email}}" onChange="{{setEmail}}" style="min-height: 54px; box-sizing: border-box; width: 100%; border: 2px solid #2B1E24; border-radius: 12px; padding: 0 16px; font-family: inherit; font-size: 20px; background: #F6EFEF; color: #2B1E24"></div>
+</div>
+<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 28px">Cách thanh toán</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px">
+<sc-for list="{{methods}}" as="m" hint-placeholder-count="2">
+<button type="button" aria-pressed="{{m.pressed}}" onClick="{{m.pick}}" style="text-align: left; border: 2px solid #2B1E24; border-radius: 12px; padding: 16px 18px; min-height: 84px; font-size: 19px; background: {{m.bg}}; color: {{m.fg}}; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{m.label}}</span><span style="font-size: 17px">{{m.sub}}</span></button>
+</sc-for>
+</div>
+<sc-if value="{{isBank}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; background: #F6EFEF; border-radius: 12px; padding: 20px">
+<div style="flex: none; width: 150px; height: 150px; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 16px; padding: 10px; box-sizing: border-box">[Mã QR chuyển khoản]</div>
+<div style="flex: 1 1 220px; display: flex; flex-direction: column; gap: 4px"><div>Ngân hàng: <strong>Techcombank</strong></div><div>Chủ tài khoản: <strong>Phan Trần Hải Mây</strong></div><div>Số tài khoản: <strong>[SỐ TÀI KHOẢN]</strong></div><div>Số tiền: <strong>{{totalText}}</strong></div><div>Nội dung: <strong>tên của bạn và số điện thoại</strong></div></div>
+</div>
+</sc-if>
+<sc-if value="{{isPaypal}}" hint-placeholder-val="{{ false }}">
+<div style="background: #F6EFEF; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 4px"><div>Dành cho bạn ở nước ngoài.</div><div>Số tiền: <strong>[GIÁ USD]</strong></div><div>Sau khi bấm hoàn tất, bạn sẽ được chuyển sang PayPal để trả tiền.</div></div>
+</sc-if>
+<sc-if value="{{showErr}}" hint-placeholder-val="{{ false }}">
+<p role="alert" style="margin: 0; color: #8A1F3D; font-weight: 600">Bạn điền họ tên và email đúng dạng để Mây gửi tài khoản học nhé.</p>
+</sc-if>
+<button type="submit" class="press" style="align-self: flex-start; border: 0; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 0 32px; min-height: 58px; font-size: 21px; font-weight: 600">{{payLabel}}</button>
+</form>
+<aside style="flex: 1 1 280px; min-width: 0; background: #5B2A3C; color: #F6EFEF; border-radius: 16px; padding: clamp(18px, 3vw, 32px); box-sizing: border-box; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: 26px">Đơn của bạn</h2>
+<sc-for list="{{items}}" as="it" hint-placeholder-count="2">
+<div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline"><span>{{it.name}}</span><span style="white-space: nowrap; font-weight: 600">{{it.priceText}}</span></div>
+</sc-for>
+<div style="border-top: 1px solid #A87888; padding-top: 14px; display: flex; justify-content: space-between; gap: 16px; align-items: baseline"><span style="font-weight: 600">Tổng cộng</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 32px">{{totalText}}</span></div>
+<button type="button" onClick="{{goCart}}" style="align-self: flex-start; border: 0; background: transparent; color: #F6EFEF; font-size: 18px; font-weight: 600; text-decoration: underline; min-height: 44px; padding: 0">Sửa giỏ hàng</button>
+</aside>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isDone}}" hint-placeholder-val="{{ false }}">
+<div class="rise" style="display: flex; flex-direction: column; gap: 22px; max-width: 820px; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(20px, 4vw, 48px)">
+<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M7 12.500l3.500 3.500L17 9"></path></svg>
+<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(32px, 4.4vw, 56px); line-height: 1.1">Cảm ơn bạn, Mây đã nhận đơn</h1>
+<p style="margin: 0">Mã đơn của bạn là <strong>{{orderId}}</strong>. Mây đã gửi thông tin đơn tới <strong>{{email}}</strong>.</p>
+<div style="background: #F6EFEF; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-weight: 600">Bước tiếp theo</div>
+<sc-for list="{{nexts}}" as="n" hint-placeholder-count="3">
+<div style="display: flex; gap: 14px; align-items: flex-start"><span style="flex: none; width: 34px; height: 34px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700">{{n.i}}</span><span>{{n.t}}</span></div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="2">
+<div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline; border-bottom: 1px solid #D2BFC3; padding-bottom: 8px"><span>{{it.name}}</span><span style="white-space: nowrap; font-weight: 600">{{it.priceText}}</span></div>
+</sc-for>
+<div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline"><span style="font-weight: 600">Tổng cộng</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 30px">{{totalText}}</span></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<a href="BanNhac.dc.html" class="press" style="text-decoration: none; background: #2B1E24; color: #F6EFEF; border-radius: 999px; padding: 15px 28px; font-weight: 600">Về trang chủ</a>
+<a href="https://www.facebook.com/groups/558515685499528/" style="padding: 15px 4px; font-weight: 600">Vào nhóm Facebook trong lúc chờ</a>
+</div>
+</div>
+</sc-if>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#C2456B","options":["#C2456B","#A8456F","#B4552D"]},"$preview":{"width":1280,"height":1100}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { step: 0, sel: 0, cart: [], name: '', email: '', method: 'bank', err: false, orderId: '' };
+}
+renderVals() {
+const accent = this.props.accent ?? '#C2456B';
+const s = this.state;
+const INK = '#2B1E24';
+const vnd = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+const C = [
+{ short: 'Solo Căn Bản', name: 'Piano Solo Căn Bản', level: 'Dành cho bạn mới bắt đầu', price: 899000, meta: '58 bài, 4 giờ 04 phút', img: '/_blob/83723b08c33cfad30ce6e2b553d0c008', desc: 'Mây chỉ bạn đọc nốt, bấm hợp âm tay trái và ghép hai tay qua hơn 20 bản nhạc quen thuộc.', gets: [{ t: 'Đọc được nốt nhạc và sheet nhạc' }, { t: 'Đàn hai tay hơn 20 bản nhạc quen thuộc' }, { t: 'Biết đệm tay trái từ đơn giản tới nâng cao hơn' }] },
+{ short: 'Cover 40 bài', name: 'Piano Cover 40 Bài Nhạc Việt', level: 'Dành cho bạn đã biết nốt và hợp âm', price: 1499000, meta: '40 bài, 12 giờ 30 phút', img: '/_blob/2a8a36b7bb645bdfe2d1f8223897a863', desc: 'Mình cùng đàn hai tay 40 bài, từ nhạc xưa bất hủ tới hit mới, có đủ dạo đầu và nhiều kiểu đệm.', gets: [{ t: 'Đàn hai tay 40 bài nhạc Việt, có đủ dạo đầu' }, { t: 'Dùng được nhiều thế bấm và kiểu đệm' }, { t: 'Tự cover thêm bài khác theo cùng cách' }] },
+{ short: 'Solo Nâng Cao', name: 'Piano Solo Nâng Cao', level: 'Dành cho bạn đã đàn được hai tay', price: 2000000, meta: '110 bài, 18 giờ 08 phút', img: '/_blob/9dc936d841e9bca8e74b2ad281b88140', desc: 'Mây giúp bạn tự soạn hợp âm, gạch nhịp và đệm nhiều điệu: ballad, valse, rumba, tango, bossanova.', gets: [{ t: 'Tự soạn hợp âm và gạch nhịp cho một bản nhạc' }, { t: 'Đệm được ballad, valse, rumba, tango, bossanova' }, { t: 'Tự tạo dạo đầu, câu nối và đoạn kết' }] },
+{ short: 'Đệm Hát', name: 'Đệm Hát Piano', level: 'Dành cho bạn muốn vừa đàn vừa hát', price: 799000, meta: '39 bài, 3 giờ 55 phút', img: '/_blob/d3a9efe407d9798a514cdd5c4f18f56c', desc: 'Vừa đàn vừa hát bài bạn thích. Mây đi sâu vào điệu ballad và cách phối nhiều kiểu đệm trong một bài.', gets: [{ t: 'Nắm 14 hợp âm căn bản và các điệu phổ biến' }, { t: 'Phối nhiều kiểu đệm trong một bài' }, { t: 'Tự đệm bài mới mà không cần giáo viên' }] },
+{ short: 'Thánh Ca', name: 'Đệm Hát Thánh Ca', level: 'Dành cho bạn đệm đàn ca đoàn', price: 799000, meta: '37 bài, 3 giờ 54 phút', img: '/_blob/1314b86e9af2c1f6ecf5fc14fe6445d9', desc: 'Mây hướng dẫn bạn đệm cho từng phần thánh lễ, từ Nhập lễ tới Kết lễ, và trọn bộ lễ Seraphim.', gets: [{ t: 'Tự đặt hợp âm cho bài chưa có hợp âm sẵn' }, { t: 'Đệm đúng kiểu cho từng phần thánh lễ' }, { t: 'Đệm trọn bộ lễ Seraphim' }] }
+];
+const on = (v) => v ? { bg: INK, fg: '#FFFFFF', pressed: 'true' } : { bg: '#FFFFFF', fg: INK, pressed: 'false' };
+const go = (step) => () => this.setState({ step, err: false });
+const cur = { ...C[s.sel], priceText: vnd(C[s.sel].price) };
+const inCart = s.cart.includes(s.sel);
+const items = s.cart.map((i) => ({ name: C[i].name, meta: C[i].meta, priceText: vnd(C[i].price), removeLabel: 'Bỏ ' + C[i].name + ' khỏi giỏ', remove: () => this.setState({ cart: s.cart.filter((x) => x !== i) }) }));
+const total = s.cart.reduce((a, i) => a + C[i].price, 0);
+const labels = ['Chọn khóa', 'Giỏ hàng', 'Thanh toán', 'Hoàn tất'];
+const bank = s.method === 'bank';
+const okMail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s.email);
+return {
+accent,
+crumbs: labels.map((l, i) => ({ label: l, bar: i <= s.step ? accent : '#C9B6BA', weight: i === s.step ? 700 : 400 })),
+isPick: s.step === 0, isCart: s.step === 1, isPay: s.step === 2, isDone: s.step === 3,
+tabs: C.map((c, i) => ({ label: c.short, pick: () => this.setState({ sel: i }), ...on(s.sel === i) })),
+cur,
+addLabel: inCart ? 'Đã có trong giỏ, tới giỏ hàng' : 'Thêm vào giỏ hàng',
+addCur: () => this.setState({ cart: inCart ? s.cart : s.cart.concat([s.sel]), step: 1 }),
+cartLabel: 'Xem giỏ hàng (' + s.cart.length + ')',
+goPick: go(0), goCart: go(1), goPay: go(2),
+empty: s.cart.length === 0, hasItems: s.cart.length > 0,
+items, totalText: vnd(total),
+name: s.name, email: s.email,
+setName: (e) => this.setState({ name: e.target.value }),
+setEmail: (e) => this.setState({ email: e.target.value }),
+methods: [
+{ label: 'Chuyển khoản ngân hàng', sub: 'Dành cho bạn ở Việt Nam', pick: () => this.setState({ method: 'bank' }), ...on(bank) },
+{ label: 'PayPal', sub: 'Dành cho bạn ở nước ngoài', pick: () => this.setState({ method: 'paypal' }), ...on(!bank) }
+],
+isBank: bank, isPaypal: !bank, showErr: s.err,
+payLabel: bank ? 'Mình đã chuyển khoản, hoàn tất đơn' : 'Tiếp tục tới PayPal',
+submit: (e) => { e.preventDefault(); if (!s.name.trim() || !okMail) { this.setState({ err: true }); return; } const orderId = 'MP-' + String(Date.now()).slice(-6); if (window.MayPianoSend) window.MayPianoSend('order', { code: orderId, name: s.name.trim(), email: s.email.trim(), method: s.method, items: s.cart.map((i) => C[i].name), total: total }); this.setState({ step: 3, err: false, orderId }); },
+orderId: s.orderId,
+nexts: (bank
+? ['Mây kiểm tra khoản chuyển của bạn.', 'Mây gửi tài khoản học vào email của bạn trong [THỜI GIAN XỬ LÝ].', 'Bạn đăng nhập và bắt đầu từ bài đầu tiên.']
+: ['PayPal xác nhận thanh toán của bạn.', 'Mây gửi tài khoản học vào email của bạn trong [THỜI GIAN XỬ LÝ].', 'Bạn đăng nhập và bắt đầu từ bài đầu tiên.']).map((t, i) => ({ i: String(i + 1), t }))
+};
+}
+}
+</script>
+</body>
+</html>
