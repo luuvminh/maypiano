@@ -356,6 +356,8 @@ let muted = false; try { muted = localStorage.getItem('mp-nhac') === '0'; } catc
 this.state = { note: 'chưa bấm', muted, locked: true, song: '', live: false, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
 this.timers = [];
 this.SONGS = ['Trái Tim Mùa Thu', 'Hẹn Ước Xin Khuất Lời', 'Autumn Leaves', 'Tình Lỡ Cách Xa', 'Lãng Quên Chiều Thu', 'Đôi Bờ', 'Jardin Secret', 'Luân Vũ Ngày Mưa', 'Ánh Trăng Nói Hộ Lòng Tôi', 'Kỷ Niệm Nào Vội Quên', 'Hẹn Ước Bồ Công Anh', 'Cry On My Shoulder', 'The Winner Takes It All', '10 Ngàn Năm'];
+/* Left out of the rotation for now: the recording of 'Ánh Trăng Nói Hộ Lòng Tôi' (09.mp3) has a fault. */
+this.SKIP = [8];
 this.NAME = ['Đô', 'Đô thăng', 'Rê', 'Rê thăng', 'Mi', 'Fa', 'Fa thăng', 'Son', 'Son thăng', 'La', 'La thăng', 'Si'];
 this.stripRef = (el) => { this.strip = el; };
 this.score();
@@ -440,7 +442,7 @@ a.addEventListener('ended', () => { this.nextSong(); this.playBg(); });
 this.nextSong();
 }
 nextSong() {
-let i; do { i = Math.floor(Math.random() * this.SONGS.length); } while (i === this.songI);
+let i; do { i = Math.floor(Math.random() * this.SONGS.length); } while (i === this.songI || this.SKIP.indexOf(i) >= 0);
 this.songI = i;
 this.bg.src = '%%THEME%%/assets/audio/' + 'nen/' + String(101 + i).slice(1) + '.mp3';
 this.setState({ song: this.SONGS[i], live: false });
