@@ -227,3 +227,24 @@ function maypiano_curriculum_report() {
 	}
 	return $lines;
 }
+
+/** For the owner only: what a course really holds, as plain numbers. /wp-admin/admin-post.php?action=maypiano_count&course=ID */
+add_action( 'admin_post_maypiano_count', function () {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( 'Không có quyền.' );
+	}
+	global $wpdb;
+	$course = isset( $_GET['course'] ) ? absint( $_GET['course'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
+	$out    = array( 'course' => $course, 'version' => MAYPIANO_VERSION, 'tidy' => get_post_meta( $course, '_maypiano_tidy', true ) );
+	// phpcs:disable WordPress.DB
+	$out['parts_by_parent']   = $wpdb->get_results( $wpdb->prepare( "SELECT post_status s, COUNT(*) n FROM {$wpdb->posts} WHERE post_type='topics' AND post_parent=%d GROUP BY post_status", $course ), ARRAY_A );
+	$out['lessons_by_part']   = $wpdb->get_results( $wpdb->prepare( "SELECT t.post_status part, l.post_status lesson, l.post_type type, COUNT(*) n FROM {$wpdb->posts} t JOIN {$wpdb->posts} l ON l.post_parent=t.ID WHERE t.post_type='topics' AND t.post_parent=%d GROUP BY t.post_status, l.post_status, l.post_type", $course ), ARRAY_A );
+	$out['lessons_by_link']   = $wpdb->get_results( $wpdb->prepare( "SELECT p.post_status s, p.post_type type, (SELECT pp.post_status FROM {$wpdb->posts} pp WHERE pp.ID=p.post_parent) parent_status, (SELECT pp.post_parent FROM {$wpdb->posts} pp WHERE pp.ID=p.post_parent) grandparent, COUNT(*) n FROM {$wpdb->postmeta} m JOIN {$wpdb->posts} p ON p.ID=m.post_id WHERE m.meta_key='_tutor_course_id_for_lesson' AND m.meta_value=%s GROUP BY 1,2,3,4", (string) $course ), ARRAY_A );
+	$out['keyed']             = $wpdb->get_results( $wpdb->prepare( "SELECT p.post_type type, p.post_status s, COUNT(*) n FROM {$wpdb->postmeta} m JOIN {$wpdb->posts} p ON p.ID=m.post_id WHERE m.meta_key='_maypiano_key' AND m.meta_value LIKE %s GROUP BY 1,2", $wpdb->esc_like( (string) get_post_field( 'post_name', $course ) ) . '/%' ), ARRAY_A );
+	// phpcs:enable
+	if ( function_exists( 'tutor_utils' ) ) {
+		$out['tutor_count'] = tutor_utils()->get_lesson_count_by_course( $course );
+	}
+	nocache_headers();
+	wp_send_json( $out );
+} );
