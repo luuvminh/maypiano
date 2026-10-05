@@ -79,7 +79,9 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 .stepb{grid-column:1/-1;height:16px;width:var(--w);border-radius:0 8px 8px 0;transform-origin:left;animation-name:growX}}
 /* The keyboard is wider than a phone screen and scrolls sideways there. */
 .keyhint{display:none}
-@media (max-width:740px){.keyhint{display:block}}
+@media (max-width:800px){.keyhint{display:block}}
+.kbsec{display:grid;gap:18px 40px}
+@media (min-width:1472px){.kbsec{grid-template-columns:minmax(260px,1fr) minmax(0,1280px);align-items:center}}
 /* Community: one row per place, the whole row is the link. */
 .crow{display:grid;grid-template-columns:clamp(200px,24vw,320px) minmax(0,1fr) auto;gap:6px 32px;align-items:center;padding:22px 0;border-top:2px solid #2B1E24;text-decoration:none;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .12s ease}
 .crow:active{opacity:.6}
@@ -161,14 +163,13 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </div>
 
 <section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
-<div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; max-width: 980px; margin: 0 auto 18px">
+<div class="kbsec">
 <div>
-<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2">Bạn bấm thử một phím nhé</h2>
+<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2; text-wrap: balance">Bạn bấm thử một phím nhé</h2>
 <p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
 <p class="keyhint" style="margin: 4px 0 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
 </div>
-</div>
-<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 980px; margin: 0 auto"><div style="position: relative; display: flex; box-sizing: border-box; min-width: 700px; aspect-ratio: 49 / 11; border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
+<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 0"><div style="position: relative; display: flex; box-sizing: border-box; min-width: 700px; aspect-ratio: 49 / 11; border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
 <sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
 <button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 16px; font-weight: 500">{{k.n}}</button>
 </sc-for>
@@ -176,6 +177,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <button type="button" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="position: absolute; top: 0; left: {{k.left}}; width: 3.6%; height: 60%; border: 0; border-radius: 0 0 5px 5px; background: #2B1E24; transition: background .15s ease"></button>
 </sc-for>
 </div></div>
+</div>
 </section>
 
 
@@ -298,7 +300,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </section>
 
 <section id="cong-dong" style="padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px 64px; align-items: center; margin-bottom: 48px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 40px 64px; align-items: center; margin-bottom: 48px">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(36px, 5.2vw, 76px); line-height: 1.08">Hơn 363.000 bạn đang theo dõi Mây</h2>
 <p style="margin: 0; max-width: 30em">Cảm ơn bạn đã đồng hành cùng Mây suốt những năm qua. Đàn xong một bài, bạn đăng lên nhóm để Mây và mọi người cùng nghe nhé.</p>
