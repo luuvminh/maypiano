@@ -144,12 +144,41 @@
   function start() { var roots = document.querySelectorAll('x-dc'); for (var i = 0; i < roots.length; i++) mount(roots[i]); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 
-  /* Sends an order or an email sign-up to the site. */
+  /*
+   * Talks to the site. Resolves with the answer, rejects with an Error carrying .code and .status.
+   * Pages are cached, so nothing secret is baked into them: a signed-in visitor (the owner testing)
+   * gets a fresh pass from the site first, everyone else needs none.
+   */
+  var cfg = window.MayPianoCfg;
+  var pass = null;
+  function getPass() {
+    if (!pass) {
+      pass = fetch(cfg.ajax + '?action=rest-nonce', { credentials: 'same-origin' })
+        .then(function (r) { return r.ok ? r.text() : ''; })
+        .then(function (t) { t = String(t).trim(); return /^[a-f0-9]{6,20}$/.test(t) ? t : ''; })
+        .catch(function () { return ''; });
+    }
+    return pass;
+  }
+  if (cfg && cfg.rest) {
+    window.MayPianoApi = function (path, data) {
+      return getPass().then(function (nonce) {
+        var headers = { 'Content-Type': 'application/json' };
+        if (nonce) headers['X-WP-Nonce'] = nonce;
+        return fetch(cfg.rest + path, { method: 'POST', headers: headers, credentials: 'same-origin', body: JSON.stringify(data || {}) });
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (body) {
+          if (r.ok) return body;
+          var e = new Error((body && body.code) || 'http_' + r.status);
+          e.code = (body && body.code) || '';
+          e.status = r.status;
+          throw e;
+        });
+      });
+    };
+  }
+  /* Fire-and-forget version, for the email sign-up on the home page. */
   window.MayPianoSend = function (kind, data) {
-    var cfg = window.MayPianoCfg;
-    if (!cfg || !cfg.rest) return;
-    try {
-      fetch(cfg.rest + kind, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': cfg.nonce }, body: JSON.stringify(data) });
-    } catch (e) {}
+    if (window.MayPianoApi) window.MayPianoApi(kind, data).catch(function () {});
   };
 })();
