@@ -30,8 +30,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( is_singular( 'courses' ) ) {
 		wp_enqueue_style( 'maypiano-course', get_theme_file_uri( 'assets/css/course.css' ), array( 'maypiano-app' ), MAYPIANO_VERSION );
 	}
-	// The page a learner studies on: lessons, and the quizzes and assignments Tutor LMS shows in the same frame.
-	if ( is_singular( array( 'lesson', 'tutor_quiz', 'tutor_assignments' ) ) ) {
+	// Every page Tutor LMS draws for a learner: the lesson page, quizzes and assignments, and the learner's own pages.
+	if ( maypiano_chrome_needed() ) {
 		wp_enqueue_style( 'maypiano-lesson', get_theme_file_uri( 'assets/css/lesson.css' ), array( 'maypiano-app' ), MAYPIANO_VERSION );
 	}
 }, 100 );
@@ -126,3 +126,8 @@ function maypiano_course_view( $course_id ) {
 		'buy'      => maypiano_signup_url( $key ),
 	);
 }
+
+/** A course kept private still reads as its own name to the learner, without WordPress's "Riêng tư:" in front. */
+add_filter( 'private_title_format', function ( $format, $post = null ) {
+	return ( $post && in_array( get_post_type( $post ), array( 'courses', 'topics', 'lesson' ), true ) && ! is_admin() ) ? '%s' : $format;
+}, 10, 2 );

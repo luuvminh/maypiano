@@ -15,14 +15,21 @@ add_action( 'admin_post_maypiano_enrol_by_hand', function () {
 	check_admin_referer( 'maypiano_enrol_by_hand' );
 	$name   = isset( $_POST['mp_name'] ) ? sanitize_text_field( wp_unslash( $_POST['mp_name'] ) ) : '';
 	$email  = isset( $_POST['mp_email'] ) ? sanitize_email( wp_unslash( $_POST['mp_email'] ) ) : '';
-	$key    = isset( $_POST['mp_course'] ) ? sanitize_key( wp_unslash( $_POST['mp_course'] ) ) : '';
+	$keys   = isset( $_POST['mp_course'] ) ? array_map( 'sanitize_key', (array) wp_unslash( $_POST['mp_course'] ) ) : array();
 	$note   = array( 'ok' => false, 'text' => '', 'link' => '' );
-	$course = '' !== $key ? maypiano_course_for( $key, ( $p = maypiano_product_for( $key ) ) ? $p->get_id() : 0 ) : 0;
+	$courses = array();
+	foreach ( array_intersect( $keys, array_keys( maypiano_catalog() ) ) as $key ) {
+		$product = maypiano_product_for( $key );
+		$found   = maypiano_course_for( $key, $product ? $product->get_id() : 0 );
+		if ( $found ) {
+			$courses[] = $found;
+		}
+	}
 
 	if ( ! is_email( $email ) ) {
 		$note['text'] = 'Email không hợp lệ.';
-	} elseif ( ! $course || ! function_exists( 'tutor_utils' ) ) {
-		$note['text'] = 'Chưa tìm thấy khóa học này trên site.';
+	} elseif ( ! $courses || ! function_exists( 'tutor_utils' ) ) {
+		$note['text'] = 'Bạn chưa chọn khóa nào, hoặc khóa đã chọn chưa có trên site.';
 	} else {
 		$user = get_user_by( 'email', $email );
 		$new  = false;
@@ -41,13 +48,21 @@ add_action( 'admin_post_maypiano_enrol_by_hand', function () {
 			}
 		}
 		if ( $user ) {
-			$enrolled = maypiano_enrol( $course, (int) $user->ID, 0, true );
-			if ( $enrolled ) {
+			$opened = array();
+			$failed = array();
+			foreach ( $courses as $course ) {
+				if ( maypiano_enrol( $course, (int) $user->ID, 0, true ) ) {
+					$opened[] = get_the_title( $course );
+				} else {
+					$failed[] = get_the_title( $course );
+				}
+			}
+			if ( $opened ) {
 				$note['ok']   = true;
-				$note['text'] = ( $new ? 'Đã tạo tài khoản và mở' : 'Tài khoản đã có sẵn, đã mở' ) . ' khóa ' . get_the_title( $course ) . ' cho ' . $user->display_name . ' (' . $email . ').';
+				$note['text'] = ( $new ? 'Đã tạo tài khoản và mở' : 'Tài khoản đã có sẵn, đã mở' ) . ' cho ' . $user->display_name . ' (' . $email . '): ' . implode( ', ', $opened ) . '.' . ( $failed ? ' KHÔNG mở được: ' . implode( ', ', $failed ) . '.' : '' );
 				$note['link'] = (string) maypiano_password_url( $user );
 			} else {
-				$note['text'] = 'Có tài khoản nhưng không mở được khóa ' . get_the_title( $course ) . '.';
+				$note['text'] = 'Có tài khoản nhưng không mở được khóa nào: ' . implode( ', ', $failed ) . '.';
 			}
 		}
 	}
@@ -73,11 +88,11 @@ function maypiano_enrol_by_hand_section() {
 	echo '<table class="form-table" role="presentation">';
 	echo '<tr><th scope="row"><label for="mp_name">Họ tên</label></th><td><input type="text" class="regular-text" id="mp_name" name="mp_name" required></td></tr>';
 	echo '<tr><th scope="row"><label for="mp_email">Email</label></th><td><input type="email" class="regular-text" id="mp_email" name="mp_email" required></td></tr>';
-	echo '<tr><th scope="row"><label for="mp_course">Khóa học</label></th><td><select id="mp_course" name="mp_course">';
+	echo '<tr><th scope="row">Khóa học</th><td><fieldset>';
 	foreach ( maypiano_catalog() as $key => $course ) {
-		echo '<option value="' . esc_attr( $key ) . '">' . esc_html( $course['name'] ) . '</option>';
+		echo '<label style="display:block;margin:4px 0"><input type="checkbox" name="mp_course[]" value="' . esc_attr( $key ) . '"> ' . esc_html( $course['name'] ) . '</label>';
 	}
-	echo '</select></td></tr></table>';
-	submit_button( 'Mở khóa học cho người này', 'secondary' );
+	echo '<p class="description">Tích một hay nhiều khóa. Người đã có khóa nào thì khóa đó giữ nguyên.</p></fieldset></td></tr></table>';
+	submit_button( 'Mở các khóa đã tích cho người này', 'secondary' );
 	echo '</form>';
 }
