@@ -135,7 +135,7 @@ function maypiano_bunny_player( $guid ) {
 	$expires = time() + MAYPIANO_BUNNY_LINK_HOURS * HOUR_IN_SECONDS;
 	$token   = hash( 'sha256', trim( (string) get_option( 'maypiano_bunny_token' ) ) . $guid . $expires );
 	$src     = 'https://iframe.mediadelivery.net/embed/' . rawurlencode( $library ) . '/' . rawurlencode( $guid ) . '?token=' . $token . '&expires=' . $expires . '&autoplay=false&preload=true';
-	return '<iframe src="' . esc_url( $src ) . '" loading="lazy" style="border:0;width:100%;aspect-ratio:16/9;display:block" allow="accelerometer; gyroscope; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+	return '<iframe src="' . esc_url( $src ) . '" loading="lazy" class="mp-bunny" style="border:0;position:absolute;top:0;left:0;width:100%;height:100%" allow="accelerometer; gyroscope; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
 }
 
 /**
@@ -159,6 +159,18 @@ function maypiano_bunny_video_record( $value, $lesson_id, $key, $single ) {
 	return $single ? array( $video ) : array( $video );
 }
 add_filter( 'get_post_metadata', 'maypiano_bunny_video_record', 10, 4 );
+
+/** The player fills the 16:9 frame Tutor LMS draws for it, on any screen. */
+add_action( 'wp_head', function () {
+	if ( is_singular( 'lesson' ) ) {
+		echo '<style>.tutor-video-player .tutor-ratio{position:relative;display:block;width:100%;aspect-ratio:16/9;padding:0}.tutor-video-player .tutor-ratio::before{content:none}</style>';
+	}
+} );
+
+/** Jetpack's "related posts" box has no place under a lesson or on a course page. */
+add_filter( 'jetpack_relatedposts_filter_enabled_for_request', function ( $on ) {
+	return is_singular( array( 'lesson', 'courses' ) ) ? false : $on;
+} );
 
 /** The Bunny part of Settings > May Piano. Opening the page also looks for new videos. */
 function maypiano_bunny_settings_section() {
