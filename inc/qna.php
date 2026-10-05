@@ -131,18 +131,153 @@ function maypiano_qna_sync() {
 	}
 }
 
-/** A lesson page hands its lesson to the questions page, so a question remembers which lesson it was asked from. */
+/*
+ * Questions by lesson.
+ *
+ * Tutor LMS keeps questions per course. Here the questions page opens on the questions of the lesson the learner came from,
+ * with a switch to all questions of the course. In the address: bai = the lesson, xem=tat-ca = show all.
+ */
+
+const MAYPIANO_QNA_LESSON_TYPES = array( 'lesson', 'tutor_quiz', 'tutor_assignments' );
+
+/** The lesson the questions page is about: the lesson being viewed, or the one named in the address. 0 when there is none. */
+function maypiano_qna_lesson() {
+	static $found = null;
+	if ( null !== $found ) {
+		return $found;
+	}
+	$found = 0;
+	if ( is_singular( MAYPIANO_QNA_LESSON_TYPES ) ) {
+		$found = (int) get_queried_object_id();
+		return $found;
+	}
+	$id = isset( $_GET['bai'] ) ? absint( wp_unslash( $_GET['bai'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
+	if ( ! $id || ! in_array( get_post_type( $id ), MAYPIANO_QNA_LESSON_TYPES, true ) || 'publish' !== get_post_status( $id ) ) {
+		return $found;
+	}
+	// The lesson must belong to the course on screen.
+	if ( function_exists( 'tutor_utils' ) && is_singular() && (int) tutor_utils()->get_course_id_by_subcontent( $id ) !== (int) get_queried_object_id() ) {
+		return $found;
+	}
+	$found = $id;
+	return $found;
+}
+
+/** True when the learner asked to see every question of the course. */
+function maypiano_qna_all() {
+	return 'tat-ca' === ( isset( $_GET['xem'] ) ? sanitize_key( wp_unslash( $_GET['xem'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification
+}
+
+/** The questions page goes through the theme (see maypiano_qna_page), and its menu link carries the lesson. */
+add_filter( 'tutor_learning_area_sub_page_menu_items', function ( $items ) {
+	if ( ! is_array( $items ) || empty( $items['qna'] ) ) {
+		return $items;
+	}
+	$items['qna']['template'] = get_theme_file_path( 'inc/qna-page.php' );
+	$lesson                   = maypiano_qna_lesson();
+	if ( $lesson && ! empty( $items['qna']['url'] ) ) {
+		$items['qna']['url'] = add_query_arg( 'bai', $lesson, $items['qna']['url'] );
+	}
+	return $items;
+}, 20 );
+
+/** Draws the questions page: Tutor LMS's own page, narrowed to one lesson, with the switch on top. */
+function maypiano_qna_page() {
+	global $tutor_course_id, $wpdb;
+	$original = function_exists( 'tutor_get_template' ) ? tutor_get_template( 'learning-area.subpages.qna' ) : '';
+	if ( ! $original || ! file_exists( $original ) ) {
+		return;
+	}
+	$single = ! empty( $_GET['question_id'] ); // phpcs:ignore WordPress.Security.NonceVerification
+	$lesson = maypiano_qna_lesson();
+	$all    = maypiano_qna_all();
+	$narrow = $lesson && ! $all && ! $single;
+
+	// Tutor LMS has no way to ask for one lesson's questions, so its own two queries (the count and the list) get one more condition.
+	$only = function ( $sql ) use ( $wpdb, $lesson ) {
+		if ( false === strpos( $sql, "_question.comment_type = 'tutor_q_and_a'" ) || false === strpos( $sql, '_question.comment_parent = 0' ) ) {
+			return $sql;
+		}
+		$where = $wpdb->prepare( " AND EXISTS (SELECT 1 FROM {$wpdb->commentmeta} mp_bai WHERE mp_bai.comment_id = _question.comment_ID AND mp_bai.meta_key = 'mp_lesson' AND mp_bai.meta_value = %s) ", (string) $lesson ); // phpcs:ignore WordPress.DB
+		return preg_replace_callback( '/\sORDER BY _question\.comment_ID\s/', function ( $m ) use ( $where ) {
+			return $where . $m[0];
+		}, $sql, 1 );
+	};
+
+	$GLOBALS['maypiano_qna_labels'] = ! $narrow && ! $single;
+	if ( $narrow ) {
+		add_filter( 'query', $only );
+	}
+	ob_start();
+	include $original;
+	$html = (string) ob_get_clean();
+	remove_filter( 'query', $only );
+	$GLOBALS['maypiano_qna_labels'] = false;
+
+	if ( $lesson && ! $single ) {
+		$base = add_query_arg( array( 'subpage' => 'qna', 'bai' => $lesson ), get_permalink( (int) $tutor_course_id ) );
+		$bar  = '<div class="mp-qna-scope">'
+			. '<p class="mp-qna-scope-bai">Bài: <a href="' . esc_url( get_permalink( $lesson ) ) . '">' . esc_html( get_the_title( $lesson ) ) . '</a></p>'
+			. '<div class="mp-qna-tabs" role="group" aria-label="Chọn câu hỏi muốn xem">'
+			. '<a class="mp-qna-tab' . ( $all ? '' : ' is-on' ) . '" href="' . esc_url( $base ) . '"' . ( $all ? '' : ' aria-current="true"' ) . '>Câu hỏi của bài này</a>'
+			. '<a class="mp-qna-tab' . ( $all ? ' is-on' : '' ) . '" href="' . esc_url( add_query_arg( 'xem', 'tat-ca', $base ) ) . '"' . ( $all ? ' aria-current="true"' : '' ) . '>Xem tất cả</a>'
+			. '</div></div>';
+		$spot = strpos( $html, '<div class="tutor-learning-area-qna"' );
+		$html = false === $spot ? $bar . $html : substr_replace( $html, $bar, $spot, 0 );
+		if ( $narrow && empty( $_GET['search'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$html = str_replace( esc_html__( 'No Questions Found!', 'tutor' ), 'Bài này chưa có câu hỏi nào.', $html );
+		}
+	}
+	echo $html; // phpcs:ignore WordPress.Security.EscapeOutput -- Tutor LMS's own page, already escaped there.
+}
+
+/** When all questions are listed, each one says which lesson it was asked from. */
+add_action( 'tutor_load_template_before', function ( $template ) {
+	if ( 'learning-area.subpages.qna.card' === $template && ! empty( $GLOBALS['maypiano_qna_labels'] ) ) {
+		ob_start();
+	}
+}, 10, 1 );
+add_action( 'tutor_load_template_after', function ( $template, $variables ) {
+	if ( 'learning-area.subpages.qna.card' !== $template || empty( $GLOBALS['maypiano_qna_labels'] ) ) {
+		return;
+	}
+	$html     = (string) ob_get_clean();
+	$question = is_array( $variables ) ? ( $variables['question'] ?? null ) : null;
+	$lesson   = $question ? (int) get_comment_meta( (int) $question->comment_ID, 'mp_lesson', true ) : 0;
+	if ( $lesson && 'publish' === get_post_status( $lesson ) ) {
+		$label = '<a class="mp-qna-bai" href="' . esc_url( get_permalink( $lesson ) ) . '">Bài: ' . esc_html( get_the_title( $lesson ) ) . '</a>';
+		$html  = preg_replace_callback( '/<a\s[^>]*class="tutor-discussion-card-title"/', function ( $m ) use ( $label ) {
+			return $label . $m[0];
+		}, $html, 1 );
+	}
+	echo $html; // phpcs:ignore WordPress.Security.EscapeOutput -- Tutor LMS's own card, already escaped there.
+}, 10, 2 );
+
+/** Links and the search box on these pages keep the lesson, so the learner stays on the same lesson's questions and a new question remembers its lesson. */
 add_action( 'wp_footer', function () {
-	if ( ! is_singular( array( 'lesson', 'tutor_quiz', 'tutor_assignments' ) ) ) {
+	$lesson = maypiano_qna_lesson();
+	if ( ! $lesson ) {
 		return;
 	}
 	?>
 <script>
 (function () {
-	var bai = <?php echo (int) get_queried_object_id(); ?>;
-	document.querySelectorAll('a[href*="subpage=qna"]').forEach(function (a) {
-		if (a.href.indexOf('bai=') < 0) { a.href += (a.href.indexOf('?') < 0 ? '?' : '&') + 'bai=' + bai; }
+	var keep = { bai: '<?php echo (int) $lesson; ?>'<?php echo maypiano_qna_all() ? ", xem: 'tat-ca'" : ''; ?> };
+	document.querySelectorAll('a[href*="subpage=qna"]:not(.mp-qna-tab)').forEach(function (a) {
+		var u;
+		try { u = new URL(a.href, location.href); } catch (e) { return; }
+		Object.keys(keep).forEach(function (k) { if (!u.searchParams.has(k)) { u.searchParams.set(k, keep[k]); } });
+		a.href = u.toString();
 	});
+	var f = document.getElementById('tutor-qna-search-form');
+	if (f) {
+		Object.keys(keep).forEach(function (k) {
+			if (f.querySelector('input[name="' + k + '"]')) { return; }
+			var i = document.createElement('input');
+			i.type = 'hidden'; i.name = k; i.value = keep[k];
+			f.appendChild(i);
+		});
+	}
 })();
 </script>
 	<?php
@@ -172,7 +307,7 @@ add_action( 'tutor_after_asked_question', function ( $data ) {
 	$from = array();
 	wp_parse_str( (string) wp_parse_url( (string) wp_get_referer(), PHP_URL_QUERY ), $from );
 	$lesson = (int) ( $from['bai'] ?? 0 );
-	if ( $lesson && in_array( get_post_type( $lesson ), array( 'lesson', 'tutor_quiz', 'tutor_assignments' ), true ) ) {
+	if ( $lesson && in_array( get_post_type( $lesson ), MAYPIANO_QNA_LESSON_TYPES, true ) ) {
 		update_comment_meta( $qid, 'mp_lesson', $lesson );
 	}
 	maypiano_qna_make_entry( get_comment( $qid ) );
