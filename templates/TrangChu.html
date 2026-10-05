@@ -49,7 +49,7 @@ html:not(.mp-fx) .mq:hover .mqrow,html:not(.mp-fx) .mq:focus-within .mqrow{anima
 /* Phones and tablets: the bar is the exact colour of the status bar above it, so the two read as one piece. */
 @media (hover:none),(max-width:600px){.bar{background:#E3D7D7!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 .tilt{transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease}
-.tilt:hover{transform:rotate(0) translateY(-8px)!important;box-shadow:0 16px 0 -6px #C2456B}
+@media (hover:hover){.tilt:hover{transform:rotate(0) translateY(-8px)!important;box-shadow:0 16px 0 -6px #C2456B}}
 .tilt:active{transform:rotate(0) scale(.985)!important;transition-duration:.1s}
 html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(43,30,36,.5)}
 .sublinks{display:none}
