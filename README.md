@@ -27,6 +27,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `inc/i18n.php` và `languages/tutor-vi.json`: tiếng Việt cho Tutor LMS (plugin không có sẵn tiếng Việt). Muốn sửa một câu thì sửa trong file JSON.
 - `inc/fx.php`: theo dõi tỷ giá. Mỗi tuần đọc tỷ giá Vietcombank; lệch từ 7% so với lúc đặt giá thì gửi email hỏi chủ site có đổi giá AUD, USD không. Giá chỉ đổi khi chủ site bấm áp dụng ở **Cài đặt > May Piano > Tỷ giá**.
 - `inc/curriculum.php` và `data/`: dựng các phần và bài học của một khóa trong Tutor LMS từ file danh sách (`data/dem-hat-piano.json` là khóa ở địa chỉ `dem-hat-piano`). Sửa file rồi đưa lên là site tự cập nhật; không tạo trùng, không xóa bài nào. Kết quả lần đọc gần nhất hiện ở đầu trang **Cài đặt > May Piano**.
+- `inc/bunny.php`: video bài học trên Bunny Stream. Ba khóa Bunny điền ở **Cài đặt > May Piano > Video bài học**, không nằm trong repo. Video trên Bunny đặt tên `<video_prefix> <số bài hai chữ số> · ...` (ví dụ `Đệm Hát 07 · ...`) thì site tự gắn vào đúng bài mỗi lần mở trang cài đặt. Link xem được ký mới mỗi lần, hết hạn sau 6 giờ, chỉ cho học viên đã ghi danh, người dạy, hoặc bài xem thử.
 - `assets/css/app.css`: design system cho các trang đó. Màu, font và kiểu nút lấy từ `design/TrangChu.dc.html`.
 - `woocommerce.php`: khuôn cho các trang WooCommerce còn dùng.
 - `templates/`: nội dung hai trang, tạo ra từ `design/`.

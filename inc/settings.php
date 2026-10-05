@@ -212,6 +212,7 @@ function maypiano_settings_page() {
 		maypiano_settings_row( $key, $fields[ $key ] );
 	}
 	echo '</table>';
+	maypiano_bunny_settings_section();
 	submit_button();
 	echo '</form>';
 	maypiano_fx_settings_section();
