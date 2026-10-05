@@ -159,9 +159,10 @@ function maypiano_mail_owner_reported( $order ) {
 }
 
 function maypiano_mail_owner_access_problem( $order, $missing ) {
-	$body = '<p><strong>Đơn đã trả tiền nhưng site chưa mở được khóa học:</strong> ' . esc_html( implode( ', ', $missing ) ) . '.</p>'
-		. '<p>Việc cần làm: vào Tutor LMS, ghi danh khách vào khóa học bằng tay, rồi báo khách. Sau đó vào Cài đặt &gt; May Piano kiểm tra cột "Khóa Tutor LMS" để lần sau site tự mở.</p>'
+	$body = '<p><strong>Khách đã trả tiền, nhưng site chưa mở được khóa học:</strong> ' . esc_html( implode( ', ', $missing ) ) . '.</p>'
+		. '<p>Lý do thường gặp: khóa này chưa được đưa lên site. Khi khóa có trên site, site tự mở cho khách và gửi email cho khách, bạn không cần làm gì thêm. Muốn thử mở ngay, bạn bấm nút dưới đây.</p>'
+		. maypiano_mail_button( maypiano_approve_url( $order ), 'Thử mở khóa học lại' )
 		. maypiano_mail_owner_facts( $order )
-		. maypiano_mail_button( $order->get_edit_order_url(), 'Mở đơn trong WooCommerce' );
-	return maypiano_mail( maypiano_notify_address(), maypiano_mail_owner_subject( $order, 'CẦN GHI DANH TAY' ), $body );
+		. '<p style="font-size:15px"><a href="' . esc_url( $order->get_edit_order_url() ) . '" style="color:#8A3350">Mở đơn trong WooCommerce</a></p>';
+	return maypiano_mail( maypiano_notify_address(), maypiano_mail_owner_subject( $order, 'CHƯA MỞ ĐƯỢC KHÓA' ), $body );
 }
