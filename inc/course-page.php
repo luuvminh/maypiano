@@ -30,6 +30,10 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( is_singular( 'courses' ) ) {
 		wp_enqueue_style( 'maypiano-course', get_theme_file_uri( 'assets/css/course.css' ), array( 'maypiano-app' ), MAYPIANO_VERSION );
 	}
+	// The page a learner studies on: lessons, and the quizzes and assignments Tutor LMS shows in the same frame.
+	if ( is_singular( array( 'lesson', 'tutor_quiz', 'tutor_assignments' ) ) ) {
+		wp_enqueue_style( 'maypiano-lesson', get_theme_file_uri( 'assets/css/lesson.css' ), array( 'maypiano-app' ), MAYPIANO_VERSION );
+	}
 }, 100 );
 
 /** Seconds as the site says a length: "3 giờ 55 phút", "21 phút". */
