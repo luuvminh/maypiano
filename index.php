@@ -11,5 +11,5 @@ if ( have_posts() ) {
 		the_content();
 	}
 }
-echo '<p><a href="' . esc_url( home_url( '/' ) ) . '">Về trang chủ</a></p></main>';
+echo '</main>';
 get_footer();

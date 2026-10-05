@@ -19,6 +19,9 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `inc/orders.php`: đặt đơn, báo đã trả, xác nhận, tạo tài khoản học, mở khóa học.
 - `inc/emails.php`: email gửi khách và gửi chủ site.
 - `inc/settings.php`: trang **Cài đặt > May Piano**.
+- `inc/chrome.php`: thanh menu, chân trang và giao diện chung cho mọi trang ngoài trang chủ và trang đăng ký (trang khóa học, khu học viên, tài khoản, trả tiền bằng thẻ). Cũng chuyển trang cửa hàng, sản phẩm, giỏ hàng và thanh toán của WooCommerce về `/dang-ky/`, để chỉ có một đường mua.
+- `assets/css/app.css`: design system cho các trang đó. Màu, font và kiểu nút lấy từ `design/TrangChu.dc.html`.
+- `woocommerce.php`: khuôn cho các trang WooCommerce còn dùng.
 - `templates/`: nội dung hai trang, tạo ra từ `design/`.
 - `design/`: bản thiết kế gốc. Sửa ở đây rồi chạy `python3 tools/build.py`.
 - `assets/js/`: `runtime.js` chạy trang, `vietqr.js` tạo và đọc mã chuyển khoản, `qrcode.js` (MIT) vẽ mã QR, `jsqr.js` (Apache-2.0) đọc ảnh mã QR ở trang cài đặt.

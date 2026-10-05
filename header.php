@@ -11,3 +11,4 @@
 </head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
+<?php maypiano_site_header(); ?>
