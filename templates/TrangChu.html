@@ -46,6 +46,8 @@ html:not(.mp-fx) .mq:hover .mqrow,html:not(.mp-fx) .mq:focus-within .mqrow{anima
 .page{overflow-x:hidden;overflow-x:clip}
 .bar{position:sticky;top:var(--wp-admin--admin-bar--height,0px);z-index:50;display:flex;gap:12px 32px;align-items:center;justify-content:space-between;padding:12px clamp(20px,6vw,96px);background:rgba(227,215,215,.97);transition:box-shadow .3s ease}
 @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){.bar{background:rgba(227,215,215,.72);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}}
+/* Phones and tablets: the bar is the exact colour of the status bar above it, so the two read as one piece. */
+@media (hover:none),(max-width:600px){.bar{background:#E3D7D7!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(43,30,36,.5)}
 .sublinks{display:none}
 @media (max-width:820px){.barlink{display:none}
