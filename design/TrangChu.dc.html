@@ -80,8 +80,14 @@ button{font-family:inherit;cursor:pointer}
 <div style="position: absolute; left: 0; right: 0; top: 54px; height: 82px; background: repeating-linear-gradient(180deg, #2B1E24 0 2px, transparent 2px 20px)"></div>
 <div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px)); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px))">
 <div ref="{{stripRef}}" style="position: absolute; left: clamp(190px, 30vw, 400px); top: 14px; width: 1px; height: 160px; will-change: transform">
+<sc-for list="{{barLines}}" as="b" hint-placeholder-count="4">
+<div style="position: absolute; left: {{b.x}}; top: 40px; width: {{b.w}}; height: 82px; background: #2B1E24"></div>
+</sc-for>
+<sc-for list="{{beamLines}}" as="b" hint-placeholder-count="6">
+<div style="position: absolute; left: {{b.x}}; top: {{b.y}}; width: {{b.w}}; height: 9px; background: #2B1E24; transform-origin: 0 0; transform: skewY({{b.a}})"></div>
+</sc-for>
 <sc-for list="{{notes}}" as="n" hint-placeholder-count="16">
-<svg data-n="{{n.i}}" width="40" height="66" viewBox="0 0 40 66" fill="none" style="position: absolute; left: {{n.left}}; top: {{n.top}}; overflow: visible; color: #2B1E24; transition: color .12s ease"><path d="M-5 54H29" stroke="#2B1E24" stroke-width="2" opacity="{{n.ledger}}"></path><ellipse cx="12" cy="54" rx="10.500" ry="7.500" transform="rotate(-20 12 54)" fill="{{n.fill}}" stroke="currentColor" stroke-width="3"></ellipse><path d="M21.500 51V5" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path><path d="M21.500 5c2 9 13 11 11 23" stroke="currentColor" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f1}}"></path><path d="M21.500 17c2 9 13 11 11 23" stroke="currentColor" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f2}}"></path></svg>
+<div data-n="{{n.i}}" style="position: absolute; left: {{n.x}}; top: 0; color: #2B1E24; transition: color .12s ease"><div style="position: absolute; left: -18px; top: 140px; width: 36px; height: 2px; background: #2B1E24; opacity: {{n.ledger}}"></div><div style="position: absolute; left: {{n.sx}}; top: {{n.st}}; width: 2.4px; height: {{n.sh}}; background: currentColor"></div><div style="position: absolute; left: -11.5px; top: {{n.hy}}; width: 23px; height: 16px; box-sizing: border-box; border-radius: 50%; transform: rotate(-20deg); background: {{n.fill}}; border: {{n.bw}} solid currentColor"></div></div>
 </sc-for>
 </div>
 </div>
@@ -483,20 +489,37 @@ const M = [60, 62, 64, 65, 67, 69, 71, 72, 74, 76];
 const LH = [[48, 55, 60], [43, 50, 55], [45, 52, 57], [40, 47, 52], [41, 48, 53], [48, 55, 60], [41, 48, 53], [43, 50, 55]];
 const LONG = [9, 8, 7, 6, 5, 4, 5, 6];
 const ARP = [[9, 7, 4, 7], [8, 6, 4, 6], [7, 5, 2, 5], [6, 4, 2, 4], [5, 3, 0, 3], [4, 2, 0, 2], [5, 3, 7, 5], [6, 4, 8, 6]];
-const D = 1600, ev = [], staff = [];
+const D = 1600, ev = [], staff = [], groups = [];
 let t = 0;
 const left = (i) => [0, 1, 2, 1].forEach((n, j) => ev.push({ t: t + j * D / 4, m: LH[i][n], v: j ? 0.26 : 0.38, h: 1.7, lh: 1 }));
-const tune = (at, k, v, h, kind) => { ev.push({ t: at, m: M[k], v, h, n: staff.length }); staff.push({ t: at, k, kind }); };
+const tune = (at, k, v, h, kind) => { ev.push({ t: at, m: M[k], v, h, n: staff.length }); staff.push({ t: at, k, kind }); return staff.length - 1; };
 LONG.forEach((k, i) => { left(i); tune(t, k, 0.6, 2, 'h'); ev.push({ t: t + 12, m: M[k - 2], v: 0.3, h: 2 }); t += D; });
-ARP.forEach((g, i) => { left(i); g.forEach((k, j) => tune(t + j * D / 4, k, j ? 0.48 : 0.62, 1.3, 'e')); t += D; });
-ARP.forEach((g, i) => { left(i); [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].forEach((k, j) => tune(t + j * D / 8, k, j % 4 ? 0.4 : 0.58, 1, 's')); t += D; });
+ARP.forEach((g, i) => { left(i); groups.push(g.map((k, j) => tune(t + j * D / 4, k, j ? 0.48 : 0.62, 1.3, 'e'))); t += D; });
+ARP.forEach((g, i) => { left(i); const ids = [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].map((k, j) => tune(t + j * D / 8, k, j % 4 ? 0.4 : 0.58, 1, 's')); groups.push(ids.slice(0, 4), ids.slice(4)); t += D; });
+const end = t;
 ev.push({ t, m: 48, v: 0.42, h: 4.5, lh: 1 }); ev.push({ t: t + 110, m: 55, v: 0.42, h: 4.5, lh: 1 });
 tune(t + 220, 7, 0.55, 4.5, 'h');
 ev.push({ t: t + 330, m: 64, v: 0.4, h: 4.5 }); ev.push({ t: t + 440, m: 76, v: 0.45, h: 4.5 });
-this.ev = ev.sort((a, b) => a.t - b.t);
 this.total = t + 6400;
-this.PX = 0.17;
-this.staff = staff.map((n, i) => Object.assign({ i }, n)).concat(staff.filter((n) => n.t < 13000).map((n) => Object.assign({ i: staff.indexOf(n) }, n, { t: n.t + this.total })));
+/* Engraving: 4/4 with a half note per chord. Stems turn down from the middle line, eighths and sixteenths are beamed in fours. */
+const PX = this.PX = 0.2, Y = (k) => 141 - 10 * k, beams = [], bars = [];
+staff.forEach((n) => { n.x = n.t * PX; n.y = Y(n.k); n.up = n.k < 6; n.tip = n.up ? n.y - 70 : n.y + 70; });
+groups.forEach((ids) => {
+const g = ids.map((i) => staff[i]), ks = g.map((n) => n.k);
+const up = Math.max(...ks) - 6 < 6 - Math.min(...ks);
+const w = g[g.length - 1].x - g[0].x;
+const sl = Math.max(-12, Math.min(12, (g[g.length - 1].y - g[0].y) * 0.3));
+const at = g.map((n) => sl * (n.x - g[0].x) / w);
+const b0 = up ? Math.min(...g.map((n, j) => n.y - 62 - at[j])) : Math.max(...g.map((n, j) => n.y + 62 - at[j]));
+g.forEach((n, j) => { n.up = up; n.tip = b0 + at[j]; });
+const beam = (off) => beams.push({ x: g[0].x + (up ? 8.6 : -11), y: (up ? b0 + off : b0 - 9 - off), w: w + 2.4, a: Math.atan2(sl, w) * 180 / Math.PI });
+beam(0); if (g[0].kind === 's') beam(14);
+});
+for (let b = 2 * D; b <= end; b += 2 * D) bars.push({ x: b * PX - 24, w: 2 });
+bars.push({ x: (end + D) * PX, w: 2 }, { x: (end + D) * PX + 7, w: 6 });
+const loop = this.total * PX, again = (list, lim) => list.concat(list.filter((o) => o.x < lim).map((o) => Object.assign({}, o, { x: o.x + loop })));
+this.staff = again(staff.map((n, i) => Object.assign({ i }, n)), 2600); this.beams = again(beams, 2600); this.bars = again(bars, 2600);
+this.ev = ev.sort((a, b) => a.t - b.t);
 }
 startAuto() {
 if (this.running || this.held) return;
@@ -549,7 +572,10 @@ else whites.push({ id: m, n: name, aria: 'Phím ' + name, play: () => this.press
 const mute = s.muted
 ? { pressed: 'true', bg: INK, fg: '#FFFFFF', label: 'Bật tiếng', wave: 0, cross: 1 }
 : { pressed: 'false', bg: 'transparent', fg: INK, label: 'Tắt tiếng', wave: 1, cross: 0 };
-const notes = this.staff.map((n) => ({ i: n.i, left: (n.t * this.PX - 12).toFixed(1) + 'px', top: (87 - 10 * n.k) + 'px', ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? '#E3D7D7' : 'currentColor', f1: n.kind === 'h' ? 0 : 1, f2: n.kind === 's' ? 1 : 0 }));
+const px = (v) => v.toFixed(1) + 'px';
+const barLines = this.bars.map((b) => ({ x: px(b.x), w: px(b.w) }));
+const beamLines = this.beams.map((b) => ({ x: px(b.x), y: px(b.y), w: px(b.w), a: b.a.toFixed(2) + 'deg' }));
+const notes = this.staff.map((n) => ({ i: n.i, x: px(n.x), hy: px(n.y - 8), sx: n.up ? '8.6px' : '-11px', st: px(n.up ? n.tip : n.y + 2), sh: px(Math.abs(n.tip - n.y) - 2), ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? 'transparent' : 'currentColor', bw: n.kind === 'h' ? '3px' : '0', left: (n.t * this.PX - 12).toFixed(1) + 'px', top: (87 - 10 * n.k) + 'px', ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? '#E3D7D7' : 'currentColor', f1: n.kind === 'h' ? 0 : 1, f2: n.kind === 's' ? 1 : 0 }));
 const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 const c = s.count;
 const stats = [
@@ -902,7 +928,7 @@ tc: ['Thánh ca', ['Bao La Tình Chúa', 'Chung Lời Tạ Ơn', 'Về Nơi Đâ
 const genres = Object.keys(G).map((k) => ({ label: G[k][0], pick: () => this.setState({ genre: k }), ...on(s.genre === k) }));
 const list = G[s.genre][1];
 return {
-accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), locked: s.locked && !s.muted, stripRef: this.stripRef, noteRef: this.noteRef, notes, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
+accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), locked: s.locked && !s.muted, stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
 swap: s.swap % 2 ? 'swapA' : 'swapB',
 steps, cur: { num: String(s.step + 1), title: ST[s.step][0], body: ST[s.step][1] }, stepSwap: s.tick % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
