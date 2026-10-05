@@ -240,7 +240,7 @@ body.mp-app .mp-qna-who span::before{content:"·";margin:0 6px}
 body.mp-app .mp-qna-text{font-size:18px;line-height:1.55;overflow-wrap:anywhere}
 body.mp-app .mp-qna-text p{margin:0 0 8px}
 body.mp-app .mp-qna-text p:last-child{margin-bottom:0}
-body.mp-app .mp-qna-answer{margin:12px 0 0;padding:12px 16px;background:var(--mp-blush);border-inline-start:4px solid var(--mp-accent);border-radius:0 10px 10px 0}
+body.mp-app .mp-qna-answer{margin:12px 0 0;padding:12px 16px;background:var(--mp-blush);border-radius:14px}
 body.mp-app a.mp-qna-reply,body.mp-app .mp-qna-more a{display:inline-flex;align-items:center;min-height:44px;font-size:17px;font-weight:600;color:var(--mp-ink);text-decoration:underline;text-underline-offset:3px}
 body.mp-app a.mp-qna-reply:hover,body.mp-app .mp-qna-more a:hover{color:var(--mp-accent)}
 body.mp-app .mp-qna-more{display:flex;flex-wrap:wrap;gap:0 24px;margin:14px 0 0;padding-top:8px;border-top:1px solid var(--mp-muted)}
