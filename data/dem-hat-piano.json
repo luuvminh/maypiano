@@ -1,0 +1,220 @@
+{
+ "course": "dem-hat-piano",
+ "topics": [
+  {
+   "title": "Phần 1: Đệm hát và cấu tạo hợp âm căn",
+   "lessons": [
+    {
+     "no": 1,
+     "title": "Đệm hát là gì, khó khăn thường gặp",
+     "length": "3:21"
+    },
+    {
+     "no": 2,
+     "title": "Cấu tạo 14 hợp âm căn bản",
+     "length": "6:19"
+    },
+    {
+     "no": 3,
+     "title": "Cách đệm số 1: Bấm hợp âm",
+     "length": "4:27"
+    },
+    {
+     "no": 4,
+     "title": "Áp dụng vào bài Vết Mưa",
+     "length": "2:23"
+    },
+    {
+     "no": 5,
+     "title": "Thế đảo của hợp âm",
+     "length": "4:43"
+    }
+   ]
+  },
+  {
+   "title": "Phần 2: Điệu Ballad",
+   "lessons": [
+    {
+     "no": 6,
+     "title": "Điệu Ballad: Hoa Vàng Cỏ Xanh, Tình Thôi Xót Xa",
+     "length": "8:14"
+    },
+    {
+     "no": 7,
+     "title": "Rải 4 nốt ở những hợp âm khó hơn",
+     "length": "6:02"
+    },
+    {
+     "no": 8,
+     "title": "Phát triển hợp âm rải từ 4 đến 8 nốt",
+     "length": "6:28"
+    },
+    {
+     "no": 9,
+     "title": "Rải 4 đến 8 nốt: Sau Tất Cả",
+     "length": "9:12"
+    },
+    {
+     "no": 10,
+     "title": "Rải hai tay: Em Gái Mưa, tone G",
+     "length": "5:38"
+    },
+    {
+     "no": 11,
+     "title": "Kết hợp hai kiểu đệm: Beautiful in White",
+     "length": "3:15"
+    },
+    {
+     "no": 12,
+     "title": "Kết hợp hai kiểu đệm: Trái Tim Bên Lề",
+     "length": "6:52"
+    },
+    {
+     "no": 13,
+     "title": "Cách đệm số 3: Một Thời Đã Xa",
+     "length": "5:59"
+    },
+    {
+     "no": 14,
+     "title": "Thực hành: Người Tình Mùa Đông",
+     "length": "2:25"
+    },
+    {
+     "no": 15,
+     "title": "Đệm điệp khúc: Láy đuôi",
+     "length": "6:03"
+    },
+    {
+     "no": 16,
+     "title": "Láy đuôi: Hơn Cả Yêu, hợp âm Bb",
+     "length": "3:06"
+    },
+    {
+     "no": 17,
+     "title": "Điệp khúc Có Chàng Trai Viết Lên Cây",
+     "length": "2:00"
+    },
+    {
+     "no": 18,
+     "title": "Nhảy bass: Ước Mơ Của Mẹ",
+     "length": "4:31"
+    },
+    {
+     "no": 19,
+     "title": "Nhảy bass: Cô Gái Đến Từ Hôm Qua",
+     "length": "3:21"
+    },
+    {
+     "no": 20,
+     "title": "Dằn quãng 8 hai tay",
+     "length": "7:56"
+    }
+   ]
+  },
+  {
+   "title": "Phần 3: Đệm Ballad hoàn chỉnh và nâng cao",
+   "lessons": [
+    {
+     "no": 21,
+     "title": "Cách tạo intro đơn giản",
+     "length": "7:13"
+    },
+    {
+     "no": 22,
+     "title": "Áp dụng tạo intro cho bài mẫu",
+     "length": "6:17"
+    },
+    {
+     "no": 23,
+     "title": "Cách phân chia bố cục cho một bài",
+     "length": "3:17"
+    },
+    {
+     "no": 24,
+     "title": "Dĩ Vãng Nhạt Nhoà, phiên khúc",
+     "length": "6:14"
+    },
+    {
+     "no": 25,
+     "title": "Dĩ Vãng Nhạt Nhoà, điệp khúc và cả bài",
+     "length": "7:56"
+    },
+    {
+     "no": 26,
+     "title": "Ánh Nắng Của Anh, intro và phiên khúc",
+     "length": "7:45"
+    },
+    {
+     "no": 27,
+     "title": "Ánh Nắng Của Anh, điệp khúc và cả bài",
+     "length": "10:50"
+    },
+    {
+     "no": 28,
+     "title": "Hoa Nở Không Màu, phiên khúc",
+     "length": "6:48"
+    },
+    {
+     "no": 29,
+     "title": "Hoa Nở Không Màu, điệp khúc và bridge",
+     "length": "6:39"
+    },
+    {
+     "no": 30,
+     "title": "Tăng giảm tone cho hợp giọng hát",
+     "length": "6:47"
+    },
+    {
+     "no": 31,
+     "title": "Vòng Canon in C",
+     "length": "5:26"
+    },
+    {
+     "no": 32,
+     "title": "Vòng C G Am F",
+     "length": "4:14"
+    }
+   ]
+  },
+  {
+   "title": "Phần 4: Fox, Valse, Bossanova, Rumba, Slowrock",
+   "lessons": [
+    {
+     "no": 33,
+     "title": "Điệu Fox",
+     "length": "9:11"
+    },
+    {
+     "no": 34,
+     "title": "Kết hợp Fox và Ballad: Vào Hạ",
+     "length": "10:54"
+    },
+    {
+     "no": 35,
+     "title": "Điệu Valse",
+     "length": "8:40"
+    },
+    {
+     "no": 36,
+     "title": "Điệu Bossanova",
+     "length": "6:11"
+    },
+    {
+     "no": 37,
+     "title": "Điệu Slowrock",
+     "length": "6:51"
+    },
+    {
+     "no": 38,
+     "title": "Điệu Rumba",
+     "length": "6:24"
+    },
+    {
+     "no": 39,
+     "title": "Tổng kết: nhiều kiểu đệm trên Happy Birthday",
+     "length": "5:30"
+    }
+   ]
+  }
+ ]
+}

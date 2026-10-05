@@ -142,6 +142,9 @@ function maypiano_settings_page() {
 	if ( ! $has_lms ) {
 		echo '<div class="notice notice-warning"><p>Tutor LMS đang tắt. Đơn vẫn được ghi, nhưng học viên không tự được cấp quyền học.</p></div>';
 	}
+	foreach ( maypiano_curriculum_report() as $line ) {
+		echo '<div class="notice notice-info inline"><p>Nội dung khóa học đã dựng từ file. ' . esc_html( $line ) . '</p></div>';
+	}
 	echo '<form method="post" action="options.php">';
 	settings_fields( 'maypiano' );
 
