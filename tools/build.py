@@ -30,7 +30,7 @@ def build(name, home_href, signup_href):
         body = body.replace('/_blob/' + k, '%%THEME%%/assets/img/' + v + '.jpg')
     assert '/_blob/' not in body, 'unmapped image in ' + name
     body = body.replace("'/_audio/'", "'%%THEME%%/assets/audio/'")
-    body = body.replace('href="MuaKhoaHoc.dc.html"', 'href="%%SIGNUP%%"').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"').replace('href="DangNhap.dc.html"', 'href="%%LOGIN%%"')
+    body = body.replace('href="MuaKhoaHoc.dc.html', 'href="%%SIGNUP%%').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"').replace('href="DangNhap.dc.html"', 'href="%%LOGIN%%"')
     for a, b in TEXT[name]:
         assert a in body, (name, a[:40])
         body = body.replace(a, b)
