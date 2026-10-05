@@ -7,16 +7,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.3.1' );
+define( 'MAYPIANO_VERSION', '1.4.7' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
 require get_theme_file_path( 'inc/emails.php' );
 require get_theme_file_path( 'inc/orders.php' );
+require get_theme_file_path( 'inc/approve.php' );
+require get_theme_file_path( 'inc/account.php' );
 require get_theme_file_path( 'inc/chrome.php' );
 require get_theme_file_path( 'inc/i18n.php' );
 require get_theme_file_path( 'inc/fx.php' );
 require get_theme_file_path( 'inc/mailpoet.php' );
+require get_theme_file_path( 'inc/videos.php' );
+require get_theme_file_path( 'inc/curriculum.php' );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );
@@ -45,10 +49,15 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 	wp_enqueue_script( 'maypiano-runtime', get_theme_file_uri( 'assets/js/runtime.js' ), $needs, MAYPIANO_VERSION, true );
 	// No nonce here on purpose: pages are cached, and a stale nonce would make every request fail.
-	wp_localize_script( 'maypiano-runtime', 'MayPianoCfg', array(
+	$cfg = array(
 		'rest' => esc_url_raw( rest_url( 'maypiano/v1/' ) ),
 		'ajax' => esc_url_raw( admin_url( 'admin-ajax.php' ) ),
-	) );
+	);
+	if ( is_front_page() ) {
+		// What the page shows first. It then asks the site again, so a cached page still ends up with the newest three.
+		$cfg['videos'] = maypiano_videos();
+	}
+	wp_localize_script( 'maypiano-runtime', 'MayPianoCfg', $cfg );
 } );
 
 /** Prints one page template with its links and images filled in. */
@@ -62,6 +71,7 @@ function maypiano_render( $name ) {
 		'%%THEME%%'  => esc_url( get_template_directory_uri() ),
 		'%%HOME%%'   => esc_url( home_url( '/' ) ),
 		'%%SIGNUP%%' => esc_url( home_url( '/dang-ky/' ) ),
+		'%%LOGIN%%'  => esc_url( maypiano_login_url() ), // Signed-in learners are sent straight on to their courses.
 	) );
 }
 
@@ -83,4 +93,49 @@ add_action( 'init', function () {
 		'label'     => 'Email nhận bài học',
 		'menu_icon' => 'dashicons-email',
 	) ) );
+} );
+
+/** What search engines and shared links say about the two designed pages. */
+add_action( 'wp_head', function () {
+	$text = '';
+	if ( is_front_page() ) {
+		$text = 'Học piano online cùng Mây, từ nốt nhạc đầu tiên đến tự soạn hợp âm. Năm khóa học qua video, 284 bài, có sheet nhạc đi kèm.';
+	} elseif ( is_page( 'dang-ky' ) ) {
+		$text = 'Đăng ký khóa học piano online của Mây Piano. Bạn chọn khóa, trả bằng chuyển khoản hoặc PayPal, rồi nhận tài khoản học qua email.';
+	}
+	if ( '' !== $text ) {
+		echo '<meta name="description" content="' . esc_attr( $text ) . '">' . "\n";
+	}
+}, 2 );
+
+/**
+ * The home page and the sign-up page run on the theme's own script and styles.
+ * Visitors there do not download the shop, course and gallery plugins' files. Site statistics stay.
+ */
+function maypiano_slim_assets() {
+	if ( maypiano_chrome_needed() || is_admin_bar_showing() ) {
+		return;
+	}
+	foreach ( array( wp_scripts(), wp_styles() ) as $deps ) {
+		foreach ( (array) $deps->queue as $handle ) {
+			if ( 0 !== strpos( $handle, 'maypiano' ) && false === strpos( $handle, 'stats' ) ) {
+				$deps->dequeue( $handle );
+			}
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'maypiano_slim_assets', 9999 );
+add_action( 'wp_footer', 'maypiano_slim_assets', 1 );
+add_action( 'wp', function () {
+	if ( ! maypiano_chrome_needed() && ! is_admin() ) {
+		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	}
+} );
+
+/** A visitor who is not signed in needs no pass for the site's requests: answer plainly instead of with an error. */
+add_action( 'wp_ajax_nopriv_rest-nonce', function () {
+	nocache_headers();
+	status_header( 200 );
+	exit;
 } );

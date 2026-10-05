@@ -16,9 +16,6 @@ BLOB = {
 # Wording used on the live site where the design still has an open question.
 TEXT = {
     'TrangChu': [
-        ('[Tên video YouTube 1]', 'Bài học miễn phí trên YouTube'),
-        ('[Tên video YouTube 2]', 'Mây đàn mẫu và hướng dẫn'),
-        ('[Tên video YouTube 3]', 'Xem thêm trên kênh của Mây'),
         ("'Ở Việt Nam, bạn chuyển khoản ngân hàng. [Cách thanh toán cho người ở nước ngoài]'",
          "'Ở Việt Nam, bạn chuyển khoản ngân hàng. Ở nước ngoài, bạn trả qua PayPal.'"),
         ("['Tôi được học trong bao lâu?', '[Thời hạn truy cập khóa học]']", ''),
@@ -32,7 +29,11 @@ def build(name, home_href, signup_href):
     for k, v in BLOB.items():
         body = body.replace('/_blob/' + k, '%%THEME%%/assets/img/' + v + '.jpg')
     assert '/_blob/' not in body, 'unmapped image in ' + name
-    body = body.replace('href="MuaKhoaHoc.dc.html"', 'href="%%SIGNUP%%"').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"')
+    body = body.replace("'/_audio/'", "'%%THEME%%/assets/audio/'")
+    # An <img src="{{...}}"> would make the browser fetch the placeholder text before the page script fills it in.
+    body = body.replace(' src="{{', ' data-dc-src="{{')
+    body = body.replace('"/_img/', '"%%THEME%%/assets/img/')
+    body = body.replace('href="MuaKhoaHoc.dc.html', 'href="%%SIGNUP%%').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"').replace('href="DangNhap.dc.html"', 'href="%%LOGIN%%"')
     for a, b in TEXT[name]:
         assert a in body, (name, a[:40])
         body = body.replace(a, b)

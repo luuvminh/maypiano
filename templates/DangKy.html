@@ -20,13 +20,16 @@ button{font-family:inherit;cursor:pointer}
 <div style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.55; min-height: 100vh">
 
 <header style="display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between; padding: 20px clamp(16px, 5vw, 80px)">
-<a href="%%HOME%%" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px; text-decoration: none; padding: 8px 0">Mây Piano</a>
+<a href="%%HOME%%" style="display: flex; align-items: center; text-decoration: none; padding: 4px 0"><img src="%%THEME%%/assets/img/logo.png" alt="Mây Piano" width="413" height="240" style="display: block; height: 48px; width: auto"></a>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center">
+<a href="%%LOGIN%%" style="font-weight: 600; padding: 10px 0">Đã mua khóa? Vào học</a>
 <a href="%%HOME%%" style="font-weight: 600; padding: 10px 0">Về trang chủ</a>
+</div>
 </header>
 
 <ol aria-label="Các bước đăng ký" style="list-style: none; margin: 0; padding: 0 clamp(16px, 5vw, 80px); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
 <sc-for list="{{crumbs}}" as="b" hint-placeholder-count="5">
-<li aria-current="{{b.current}}" style="display: flex; flex-direction: column; gap: 8px"><span style="height: 6px; border-radius: 3px; background: {{b.bar}}; transition: background .3s ease"></span><span style="font-size: clamp(13px, 1.5vw, 18px); font-weight: {{b.weight}}; line-height: 1.25">{{b.label}}</span></li>
+<li aria-current="{{b.current}}" style="display: flex; flex-direction: column; gap: 8px"><span style="height: 6px; border-radius: 3px; background: {{b.bar}}; transition: background .3s ease"></span><span style="font-size: clamp(15px, 1.5vw, 18px); font-weight: {{b.weight}}; line-height: 1.25">{{b.label}}</span></li>
 </sc-for>
 </ol>
 
@@ -50,7 +53,7 @@ button{font-family:inherit;cursor:pointer}
 </sc-for>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 28px 48px; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(18px, 3vw, 36px); box-sizing: border-box; align-items: start">
-<img src="{{cur.img}}" alt="" style="display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px">
+<img data-dc-src="{{cur.img}}" alt="" style="display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px">
 <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
 <div style="font-weight: 600; color: #8A3350">{{cur.level}}</div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.12">{{cur.name}}</h2>
@@ -151,7 +154,7 @@ button{font-family:inherit;cursor:pointer}
 <sc-if value="{{payBank}}" hint-placeholder-val="{{ true }}">
 <div style="background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(18px, 3vw, 36px); box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
 <sc-if value="{{hasQr}}" hint-placeholder-val="{{ true }}">
-<div style="flex: 0 1 260px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center"><img src="{{qrSrc}}" alt="Mã QR chuyển khoản, đã có sẵn số tiền và nội dung" style="display: block; width: 100%; max-width: 260px; aspect-ratio: 1 / 1; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 12px; box-sizing: border-box"><span style="font-size: 17px">{{qrHint}}</span></div>
+<div style="flex: 0 1 260px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center"><img data-dc-src="{{qrSrc}}" alt="Mã QR chuyển khoản, đã có sẵn số tiền và nội dung" style="display: block; width: 100%; max-width: 260px; aspect-ratio: 1 / 1; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 12px; box-sizing: border-box"><span style="font-size: 17px">{{qrHint}}</span></div>
 </sc-if>
 <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column">
 <sc-for list="{{bankRows}}" as="row" hint-placeholder-count="5">
@@ -447,7 +450,7 @@ const newAcc = !!o.newAccount;
 const open = o.access === 'open' || o.access === 'partial';
 const nexts = (open
 ? [newAcc ? 'Bạn mở email ' + o.email + ' và bấm nút đặt mật khẩu Mây vừa gửi.' : 'Bạn đăng nhập bằng email ' + o.email + ' và mật khẩu đang dùng.', 'Bạn vào học, bắt đầu từ bài đầu tiên.']
-: ['Mây mở khóa học cho bạn bằng tay trong ' + (cfg.processing || '24 giờ') + '.', 'Mây gửi email tới ' + o.email + ' ngay khi xong.']).map((t, i) => ({ i: String(i + 1), t }));
+: ['Khóa học của bạn sẽ được kích hoạt trong vòng ' + (cfg.processing || '24 giờ') + '.', 'Mây gửi email tới ' + o.email + ' ngay khi bạn có thể vào học.']).map((t, i) => ({ i: String(i + 1), t }));
 const labels = ['Chọn khóa', 'Giỏ hàng', 'Thông tin', 'Thanh toán', 'Hoàn tất'];
 
 return {
@@ -455,7 +458,7 @@ accent,
 crumbs: labels.map((l, i) => ({ label: l, bar: i <= s.step ? accent : '#C9B6BA', weight: i === s.step ? 700 : 400, current: i === s.step ? 'step' : null })),
 isLoading: s.loading,
 isPick: !s.loading && s.step === 0, isCart: !s.loading && s.step === 1, isInfo: !s.loading && s.step === 2, isPay: !s.loading && s.step === 3 && !!s.order, isDone: !s.loading && s.step === 4 && !!s.order,
-regions: [['VN', 'Việt Nam'], ['AU', 'Úc'], ['INTL', 'Nước khác']].map(([id, label]) => ({ label, pick: later(() => this.setState({ region: id, regionPicked: true, err: '' })), ...on(region === id) })),
+regions: [['VN', 'Việt Nam'], ['AU', 'Úc'], ['INTL', 'Mỹ và nước khác']].map(([id, label]) => ({ label, pick: later(() => this.setState({ region: id, regionPicked: true, err: '' })), ...on(region === id) })),
 tabs: COURSES.map((c, i) => ({ label: c.short, pick: () => this.setState({ sel: i }), ...on(s.sel === i) })),
 cur: { ...c0, priceText: price(c0) == null ? 'Mây báo giá qua email' : money(price(c0), cur) },
 addLabel: inCart ? 'Đã có trong giỏ, tới giỏ hàng' : 'Thêm vào giỏ hàng',

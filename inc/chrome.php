@@ -73,6 +73,37 @@ add_action( 'template_redirect', function () {
 	}
 } );
 
+/**
+ * One way in: learners sign in on the May Piano sign-in page, and an account is made when a course is bought.
+ * The plugins' own sign-in, registration and course-list pages lead to ours, so nobody meets a second look.
+ */
+add_action( 'template_redirect', function () {
+	if ( is_admin() ) {
+		return;
+	}
+	$target = '';
+	if ( is_post_type_archive( 'courses' ) ) {
+		$target = home_url( '/#chon-khoa' );
+	} elseif ( ! is_user_logged_in() ) {
+		$tutor    = function_exists( 'tutor_utils' ) ? tutor_utils() : null;
+		$register = array_filter( array( 'student-registration', 'instructor-registration', $tutor ? (int) $tutor->get_option( 'student_register_page' ) : 0, $tutor ? (int) $tutor->get_option( 'instructor_register_page' ) : 0 ) );
+		$signin   = array_filter( array( 'dashboard', $tutor ? (int) $tutor->get_option( 'tutor_dashboard_page_id' ) : 0 ) );
+		if ( is_page( $register ) ) {
+			$target = maypiano_signup_url();
+		} elseif ( is_page( $signin ) || ( function_exists( 'is_account_page' ) && is_account_page() ) ) {
+			$target = maypiano_login_url();
+		}
+	}
+	if ( '' !== $target ) {
+		nocache_headers();
+		wp_safe_redirect( $target, 302 );
+		exit;
+	}
+}, 1 );
+
+/** Nobody signs themselves up: accounts come from orders (wc_create_new_customer does not look at this setting). */
+add_filter( 'pre_option_users_can_register', '__return_zero' );
+
 /** On a course page the buy button goes to the sign-up page with that course picked. */
 add_action( 'wp_footer', function () {
 	if ( ! is_singular( 'courses' ) ) {
@@ -100,7 +131,7 @@ function maypiano_site_header() {
 	?>
 <header class="mp-top">
 <nav class="mp-nav" aria-label="Chính">
-<a class="mp-logo" href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>">Mây Piano</a>
+<a class="mp-logo" href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>"><img src="<?php echo esc_url( get_template_directory_uri() . '/assets/img/logo.png' ); ?>" alt="Mây Piano" width="413" height="240"></a>
 <div class="mp-links">
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#chon-khoa">Chọn khóa</a>
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#lo-trinh">Lộ trình</a>
@@ -109,7 +140,8 @@ function maypiano_site_header() {
 	<?php if ( is_user_logged_in() ) : ?>
 <a class="mp-pill" href="<?php echo esc_url( maypiano_learn_url() ); ?>">Khóa học của mình</a>
 	<?php else : ?>
-<a class="mp-pill" href="<?php echo esc_url( maypiano_signup_url() ); ?>">Bắt đầu học</a>
+<a class="mp-enter" href="<?php echo esc_url( maypiano_login_url() ); ?>">Vào học</a>
+<a class="mp-pill" href="<?php echo esc_url( maypiano_signup_url() ); ?>">Đăng ký học</a>
 	<?php endif; ?>
 </div>
 </nav>
@@ -130,3 +162,27 @@ function maypiano_site_footer() {
 </footer>
 	<?php
 }
+
+/** The May Piano icon for browser tabs, bookmarks, phone home screens and search results. */
+function maypiano_icon_links() {
+	$dir = esc_url( get_template_directory_uri() . '/assets/img/' );
+	// phpcs:disable WordPress.Security.EscapeOutput
+	echo '<link rel="icon" href="' . $dir . 'favicon.ico" sizes="any">'
+		. '<link rel="icon" type="image/png" sizes="32x32" href="' . $dir . 'icon-32.png">'
+		. '<link rel="icon" type="image/png" sizes="192x192" href="' . $dir . 'icon-192.png">'
+		. '<link rel="icon" type="image/png" sizes="512x512" href="' . $dir . 'icon-512.png">'
+		. '<link rel="apple-touch-icon" href="' . $dir . 'apple-touch-icon.png">'
+		. '<meta name="theme-color" content="#E3D7D7">' . "\n";
+	// phpcs:enable
+}
+add_action( 'wp_head', 'maypiano_icon_links', 1 );
+add_action( 'admin_head', 'maypiano_icon_links', 1 );
+add_action( 'login_head', 'maypiano_icon_links', 1 );
+/* The theme's icon replaces any WordPress one, so there is only ever one. */
+add_filter( 'get_site_icon_url', '__return_empty_string' );
+remove_action( 'wp_head', 'wp_site_icon', 99 );
+/* Browsers and search engines that ask for /favicon.ico directly get it too. */
+add_action( 'do_faviconico', function () {
+	wp_safe_redirect( get_template_directory_uri() . '/assets/img/favicon.ico', 301 );
+	exit;
+}, 1 );

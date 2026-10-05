@@ -3,7 +3,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Noto+Music&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
-a{color:#2B1E24}a:hover{color:#C2456B}
+a{color:#2B1E24}
+a,button{-webkit-tap-highlight-color:transparent}
+h2{letter-spacing:-.015em;text-wrap:balance}
+[id]{scroll-margin-top:84px}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #2B1E24;outline-offset:3px}
 button{font-family:inherit;cursor:pointer}
 @keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
@@ -17,37 +20,102 @@ button{font-family:inherit;cursor:pointer}
 @keyframes fillA{from{width:0}to{width:100%}}
 @keyframes fillB{from{width:0}to{width:100%}}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(194,69,107,.55)}100%{box-shadow:0 0 0 14px rgba(194,69,107,0)}}
+@keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
 @keyframes swing{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
 .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
 .lift{transition:transform .25s ease,box-shadow .25s ease}
-.lift:hover{transform:translateY(-5px);box-shadow:0 14px 0 -6px #C2456B}
-.tilt{transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease}
-.tilt:hover{transform:rotate(0) translateY(-8px)!important;box-shadow:0 16px 0 -6px #C2456B}
 .press{transition:transform .12s ease,filter .12s ease}
-.press:hover{filter:brightness(1.08)}
 .press:active{transform:scale(.96)}
 .wkey{transition:background .15s ease,transform .1s ease;transform-origin:top}
 .wkey:active{transform:scaleY(.97)}
-.mq:hover .mqrow{animation-play-state:paused}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.mqrow{touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
+.mqrow img{-webkit-user-drag:none;pointer-events:none}
+html:not(.mp-fx) .mqrow{animation:drift 40s linear infinite}
+html:not(.mp-fx) .mqrow[data-back]{animation-name:driftBack}
+html:not(.mp-fx) .mq:hover .mqrow,html:not(.mp-fx) .mq:focus-within .mqrow{animation-play-state:paused}
+.song{font:inherit;color:inherit;background:none;border:0;padding:8px 0;margin:0;text-decoration:underline transparent;text-decoration-thickness:2px;text-underline-offset:.16em;transition:text-decoration-color .2s ease}
+.song:focus-visible{text-decoration-color:currentColor}
+/* Hover effects only where there is a pointer that hovers; a touch gets its answer on press instead. */
+@media (hover:hover){a:hover{color:#C2456B}
+.lift:hover{transform:translateY(-5px);box-shadow:0 14px 0 -6px #C2456B}
+.press:hover{filter:brightness(1.08)}
+.song:hover{text-decoration-color:currentColor}}
+.lift:active{transform:scale(.985);transition-duration:.1s}
+/* Menu bar: stays at the top as a translucent layer, the page scrolls underneath. */
+.page{overflow-x:hidden;overflow-x:clip}
+.bar{position:sticky;top:var(--wp-admin--admin-bar--height,0px);z-index:50;display:flex;gap:12px 32px;align-items:center;justify-content:space-between;padding:12px clamp(20px,6vw,96px);background:rgba(227,215,215,.97);transition:box-shadow .3s ease}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){.bar{background:rgba(227,215,215,.72);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}}
+/* Phones and tablets: the bar is the exact colour of the status bar above it, so the two read as one piece. */
+@media (hover:none),(max-width:600px){.bar{background:#E3D7D7!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+.tilt{transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease}
+@media (hover:hover){.tilt:hover{transform:rotate(0) translateY(-8px)!important;box-shadow:0 16px 0 -6px #C2456B}}
+.tilt:active{transform:rotate(0) scale(.985)!important;transition-duration:.1s}
+html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(43,30,36,.5)}
+.sublinks{display:none}
+@media (max-width:820px){.barlink{display:none}
+.bar{padding-top:8px;padding-bottom:8px;gap:10px}
+.bargroup{gap:8px!important}
+.bar .press{padding:9px 15px!important;font-size:17px}
+.barlogo img{height:44px!important}
+.sublinks{display:flex;gap:26px;padding:2px clamp(20px,6vw,96px) 6px;overflow-x:auto;white-space:nowrap;font-weight:500;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sublinks::-webkit-scrollbar{display:none}}
+@media (max-width:600px){.bar{top:0}}
+@media (max-width:420px){.bar{padding-left:14px;padding-right:14px}.bargroup{gap:6px!important}}
+@media (max-width:380px){.bar .press{padding:10px 11px!important;font-size:16px}.barlogo img{height:38px!important}}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){.bar{background:#E3D7D7!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+@media (prefers-contrast:more){.bar{box-shadow:0 2px 0 #2B1E24!important}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+/* Hours chart: columns side by side on a wide screen, bars one under another on a phone. */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(8px,1.2vw,16px);align-items:end}
+.step{display:flex;flex-direction:column;gap:10px}
+.stepn{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(28px,3.4vw,50px);line-height:1;white-space:nowrap}
+.stept{font-size:clamp(16px,1.3vw,18px);line-height:1.35}
+.stepb{height:var(--h);border-radius:10px 10px 0 0;transform-origin:bottom;animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (max-width:700px){.steps{grid-template-columns:1fr;gap:20px}
+.step{display:grid;grid-template-columns:minmax(4.6em,auto) 1fr;gap:6px 14px;align-items:baseline}
+.stept{font-size:17px}
+.stepb{grid-column:1/-1;height:16px;width:var(--w);border-radius:0 8px 8px 0;transform-origin:left;animation-name:growX}}
+/* The keyboard is wider than a phone screen and scrolls sideways there. */
+.keyhint{display:none}
+@media (max-width:740px){.keyhint{display:block}}
+/* Community: one row per place, the whole row is the link. */
+.crow{display:grid;grid-template-columns:clamp(200px,24vw,320px) minmax(0,1fr) auto;gap:6px 32px;align-items:center;padding:22px 0;border-top:2px solid #2B1E24;text-decoration:none;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .12s ease}
+.crow:active{opacity:.6}
+@media (hover:hover){.crow:hover{transform:translateX(10px)}}
+.cnum{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(38px,4vw,56px);line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cgo{font-weight:600;text-decoration:underline;text-underline-offset:.16em;white-space:nowrap}
+@media (max-width:700px){.crow{grid-template-columns:1fr;padding:18px 0}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+/* Reduced motion: nothing slides or loops; colour and opacity changes stay, as short fades. */
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-property:opacity,color,background-color,text-decoration-color,box-shadow!important}.rise{animation:fade .4s ease both!important}}
 </style>
 </helmet>
-<div style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.6; overflow-x: hidden">
+<div class="page" style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.6">
 
-<nav style="display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; justify-content: space-between; padding: 22px clamp(20px, 6vw, 96px)">
-<a href="#dau-trang" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; text-decoration: none">Mây Piano</a>
-<div style="display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: center; font-weight: 500">
+<nav class="bar" aria-label="Chính">
+<a href="#dau-trang" class="barlogo" style="display: flex; align-items: center; text-decoration: none"><img src="%%THEME%%/assets/img/logo.png" alt="Mây Piano" width="413" height="240" style="display: block; height: 52px; width: auto"></a>
+<div class="bargroup" style="display: flex; gap: 8px 28px; align-items: center; font-weight: 500">
+<a class="barlink" href="#chon-khoa" style="text-decoration: none; padding: 10px 0">Chọn khóa</a>
+<a class="barlink" href="#lo-trinh" style="text-decoration: none; padding: 10px 0">Lộ trình</a>
+<a class="barlink" href="#bai-hat" style="text-decoration: none; padding: 10px 0">Bài hát</a>
+<a class="barlink" href="#cong-dong" style="text-decoration: none; padding: 10px 0">Cộng đồng</a>
+<a href="%%LOGIN%%" class="press" style="text-decoration: none; border: 2px solid #2B1E24; padding: 10px 22px; border-radius: 999px; font-weight: 600; white-space: nowrap">Vào học</a>
+<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 12px 24px; border-radius: 999px; font-weight: 600; white-space: nowrap">Đăng ký học</a>
+</div>
+</nav>
+<div class="sublinks" role="navigation" aria-label="Các phần của trang">
 <a href="#chon-khoa" style="text-decoration: none; padding: 10px 0">Chọn khóa</a>
 <a href="#lo-trinh" style="text-decoration: none; padding: 10px 0">Lộ trình</a>
 <a href="#bai-hat" style="text-decoration: none; padding: 10px 0">Bài hát</a>
 <a href="#cong-dong" style="text-decoration: none; padding: 10px 0">Cộng đồng</a>
-<a href="#chon-khoa" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 12px 24px; border-radius: 999px; font-weight: 600">Bắt đầu học</a>
 </div>
-</nav>
 
+<main>
 <header id="dau-trang" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px 56px; align-items: center; padding: clamp(28px, 4vw, 64px) clamp(20px, 6vw, 96px) 0">
 <div style="display: flex; flex-direction: column; gap: 26px">
-<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(42px, 5.8vw, 84px); line-height: 1.08; letter-spacing: -0.015em">
+<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(42px, 5.8vw, 84px); line-height: 1.08; letter-spacing: -0.02em">
 <span class="rise" style="display: block">Học piano</span>
 <span class="rise" style="display: block; animation-delay: .15s">cùng Mây,</span>
 <span class="rise" style="display: block; animation-delay: .3s">từ con số 0</span>
@@ -56,11 +124,11 @@ button{font-family:inherit;cursor:pointer}
 <p class="rise" style="margin: 0; font-size: clamp(20px, 1.7vw, 23px); max-width: 30em; animation-delay: .6s">Mây dạy bạn từ nốt nhạc đầu tiên, bằng chính những bài hát bạn đã thuộc, tới lúc bạn tự soạn hợp âm cho bài mình thích.</p>
 <div class="rise" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; animation-delay: .75s">
 <a href="#hoc-thu" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Nhận bài học miễn phí</a>
-<a href="#chon-khoa" class="press" style="text-decoration: none; background: #2B1E24; color: #F6EFEF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Tìm khóa hợp với bạn</a>
+<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: #2B1E24; color: #F6EFEF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Đăng ký học</a>
 </div>
 </div>
 <div class="rise" style="position: relative; animation-delay: .4s">
-<img src="%%THEME%%/assets/img/p06.jpg" alt="Mây cười bên cây đàn piano" style="display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 600px; object-fit: cover; object-position: 60% 40%; border-radius: 280px 280px 12px 12px">
+<img width="790" height="1000" src="%%THEME%%/assets/img/p06.jpg" alt="Mây cười bên cây đàn piano" style="display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 600px; object-fit: cover; object-position: 60% 40%; border-radius: 280px 280px 12px 12px">
 <span aria-hidden="true" style="position: absolute; left: 6%; bottom: 30%; font-size: 44px; color: {{accent}}; animation: floatUp 5s ease-in infinite">♪</span>
 <span aria-hidden="true" style="position: absolute; left: 22%; bottom: 18%; font-size: 30px; color: #5B2A3C; animation: floatUp 6s ease-in 1.4s infinite">♫</span>
 <span aria-hidden="true" style="position: absolute; right: 10%; bottom: 26%; font-size: 52px; color: #5B2A3C; animation: floatUp 5.5s ease-in .7s infinite">♪</span>
@@ -68,45 +136,48 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </header>
 
-<div aria-hidden="true" style="position: relative; margin: clamp(36px, 5vw, 64px) 0 0; height: 190px">
+<div style="display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: clamp(36px, 5vw, 64px) 0 0; padding: 0 clamp(20px, 6vw, 96px)">
+<button type="button" class="press" aria-pressed="{{np.pressed}}" aria-label="{{np.aria}}" onClick="{{toggleMute}}" style="display: inline-flex; align-items: center; gap: 14px; min-height: 60px; padding: 6px 24px 6px 8px; border: 2px solid #2B1E24; border-radius: 999px; background: #FFFFFF; color: #2B1E24; font-size: 18px; text-align: left"><span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: {{np.dot}}; color: #FFFFFF; display: grid; place-items: center; animation: {{np.pulse}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l12-7z" style="opacity: {{np.play}}"></path><path d="M6.5 5h4v14h-4zM13.5 5h4v14h-4z" style="opacity: {{np.pause}}"></path></svg></span><span style="display: flex; flex-direction: column; line-height: 1.3"><span>{{np.label}}<strong style="margin-left: .35em">{{np.song}}</strong></span><span style="font-size: 16px; opacity: .8">{{np.hint}}</span></span><span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 3px; height: 18px; opacity: {{np.eq}}"><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.9s ease-in-out 0s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.7s ease-in-out 0.2s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 1.1s ease-in-out 0.4s infinite; animation-play-state: {{np.run}}"></span></span></button>
+<span style="font-size: 18px">Mây đàn, trích từ <a href="https://www.youtube.com/watch?v=d95HrWkox20">Những Bản Tình Ca Mùa Thu</a></span>
+</div>
+<div aria-hidden="true" style="position: relative; margin: 14px 0 0; height: 190px">
+<div style="position: absolute; left: 0; right: 0; top: 26px; height: 138px; background: linear-gradient(90deg, transparent, #E9B9C6 30%, #E9B9C6 70%, transparent); opacity: .28"></div>
+<div style="position: absolute; left: calc(clamp(190px, 30vw, 400px) - 22px); top: 34px; width: 44px; height: 122px; border-radius: 22px; background: {{accent}}; opacity: .16"></div>
 <div style="position: absolute; left: 0; right: 0; top: 54px; height: 82px; background: repeating-linear-gradient(180deg, #2B1E24 0 2px, transparent 2px 20px)"></div>
-<div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px)); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px))">
-<div style="position: absolute; left: 0; top: 14px; width: 200%; height: 160px; animation: drift 30s linear infinite">
+<div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%)">
+<div ref="{{stripRef}}" style="position: absolute; left: clamp(190px, 30vw, 400px); top: 14px; width: 1px; height: 160px; will-change: transform">
+<sc-for list="{{barLines}}" as="b" hint-placeholder-count="4">
+<div style="position: absolute; left: {{b.x}}; top: 40px; width: {{b.w}}; height: 82px; background: #2B1E24"></div>
+</sc-for>
+<sc-for list="{{beamLines}}" as="b" hint-placeholder-count="6">
+<div style="position: absolute; left: {{b.x}}; top: {{b.y}}; width: {{b.w}}; height: 9px; background: #2B1E24; transform-origin: 0 0; transform: skewY({{b.a}})"></div>
+</sc-for>
 <sc-for list="{{notes}}" as="n" hint-placeholder-count="16">
-<svg width="40" height="66" viewBox="0 0 40 66" fill="none" style="position: absolute; left: {{n.left}}; top: {{n.top}}; overflow: visible; animation: bob2 1.8s ease-in-out {{n.delay}} infinite"><ellipse cx="12" cy="54" rx="10.500" ry="7.500" transform="rotate(-20 12 54)" fill="{{n.fill}}" stroke="{{n.col}}" stroke-width="3"></ellipse><path d="M21.500 51V5" stroke="{{n.col}}" stroke-width="3" stroke-linecap="round" opacity="{{n.stem}}"></path><path d="M21.500 5c2 9 13 11 11 23" stroke="{{n.col}}" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f1}}"></path><path d="M21.500 17c2 9 13 11 11 23" stroke="{{n.col}}" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f2}}"></path></svg>
+<div data-n="{{n.i}}" style="position: absolute; left: {{n.x}}; top: 0; color: #2B1E24; transition: color .12s ease"><div style="position: absolute; left: -18px; top: 140px; width: 36px; height: 2px; background: #2B1E24; opacity: {{n.ledger}}"></div><div style="position: absolute; left: {{n.sx}}; top: {{n.st}}; width: 2.4px; height: {{n.sh}}; background: currentColor"></div><div style="position: absolute; left: -11.5px; top: {{n.hy}}; width: 23px; height: 16px; box-sizing: border-box; border-radius: 50%; transform: rotate(-20deg); background: {{n.fill}}; border: {{n.bw}} solid currentColor"></div></div>
 </sc-for>
 </div>
 </div>
 <span style="position: absolute; left: clamp(16px, 3vw, 44px); top: 40px; font-family: 'Noto Music', 'Apple Symbols', 'Segoe UI Symbol', serif; font-size: 100px; line-height: 1; color: #2B1E24">𝄞</span>
 </div>
 
-<section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) 0">
+<section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
 <div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-bottom: 18px">
 <div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2">Bạn bấm thử một phím nhé</h2>
-<p style="margin: 4px 0 0">Nốt vừa bấm: <strong>{{lastNote}}</strong></p>
+<p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
+<p class="keyhint" style="margin: 4px 0 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
 </div>
-<button type="button" class="press" onClick="{{demo}}" style="border: 0; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 14px 26px; min-height: 50px; font-size: 19px; font-weight: 600; display: flex; gap: 10px; align-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M6 4l14 8-14 8z"></path></svg>Nghe thử một đoạn Canon</button>
 </div>
-<div style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 620px; height: clamp(170px, 21vw, 250px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
+<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 700px; height: clamp(160px, 17vw, 220px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
 <sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
-<button type="button" class="wkey" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: {{k.bg}}; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 12px; font-size: 17px; font-weight: 500">{{k.n}}</button>
+<button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 16px; font-weight: 500">{{k.n}}</button>
 </sc-for>
 <sc-for list="{{blacks}}" as="k" hint-placeholder-count="7">
-<button type="button" aria-label="{{k.aria}}" onClick="{{k.play}}" style="position: absolute; top: 0; left: {{k.left}}; width: 6%; height: 60%; border: 0; border-radius: 0 0 6px 6px; background: {{k.bg}}; transition: background .15s ease"></button>
+<button type="button" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="position: absolute; top: 0; left: {{k.left}}; width: 3.6%; height: 60%; border: 0; border-radius: 0 0 5px 5px; background: #2B1E24; transition: background .15s ease"></button>
 </sc-for>
 </div></div>
 </section>
 
-<section ref="{{statsRef}}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px 40px; padding: clamp(48px, 6vw, 88px) clamp(20px, 6vw, 96px)">
-<sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
-<div><div style="font-family: 'Playfair Display', serif; font-size: clamp(38px, 4vw, 58px); font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums">{{s.v}}</div><div>{{s.l}}</div></div>
-</sc-for>
-</section>
-
-<section class="mq" aria-label="Ảnh Mây bên cây đàn" style="overflow: hidden; padding: 0 0 clamp(48px, 6vw, 88px)">
-<div class="mqrow" style="display: flex; gap: 16px; width: max-content; animation: drift 70s linear infinite"><div style="display: flex; gap: 16px; padding-right: 0"><img src="%%THEME%%/assets/img/g04.jpg" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g11.jpg" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g13.jpg" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g05.jpg" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g14.jpg" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g16.jpg" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g03.jpg" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g15.jpg" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g08.jpg" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g17.jpg" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g12.jpg" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g07.jpg" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div><div style="display: flex; gap: 16px"><img src="%%THEME%%/assets/img/g04.jpg" aria-hidden="true" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g11.jpg" aria-hidden="true" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g13.jpg" aria-hidden="true" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g05.jpg" aria-hidden="true" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g14.jpg" aria-hidden="true" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g16.jpg" aria-hidden="true" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g03.jpg" aria-hidden="true" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g15.jpg" aria-hidden="true" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g08.jpg" aria-hidden="true" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g17.jpg" aria-hidden="true" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g12.jpg" aria-hidden="true" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="%%THEME%%/assets/img/g07.jpg" aria-hidden="true" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div></div>
-</section>
 
 <section id="chon-khoa" style="background: #5B2A3C; color: #F6EFEF; padding: clamp(56px, 7vw, 104px) clamp(20px, 6vw, 96px)">
 <h2 style="margin: 0 0 28px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bạn đang ở đâu trên hành trình?</h2>
@@ -115,6 +186,11 @@ button{font-family:inherit;cursor:pointer}
 <button type="button" class="press" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="border: 2px solid #F6EFEF; border-radius: 999px; padding: 12px 22px; min-height: 50px; font-size: 19px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}; transition: background .2s ease, color .2s ease">{{o.label}}</button>
 </sc-for>
 </div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: -12px 0 28px; font-size: 17px"><span id="gia-vung">Xem giá cho bạn ở</span><div role="group" aria-labelledby="gia-vung" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{regions}}" as="r" hint-placeholder-count="3">
+<button type="button" class="press" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}" style="border: 1.5px solid #F6EFEF; border-radius: 999px; padding: 6px 16px; min-height: 44px; font-size: 17px; font-weight: 600; background: {{r.bg}}; color: {{r.fg}}; transition: background .2s ease, color .2s ease">{{r.label}}</button>
+</sc-for>
+</div></div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px 56px; align-items: center; background: #F6EFEF; color: #2B1E24; border-radius: 12px; padding: clamp(24px, 4vw, 48px); animation: {{swap}} 450ms ease both">
 <div style="display: flex; flex-direction: column; gap: 12px">
 <div style="font-weight: 600">Mây gợi ý cho bạn</div>
@@ -127,52 +203,33 @@ button{font-family:inherit;cursor:pointer}
 <sc-for list="{{rec.gets}}" as="g" hint-placeholder-count="3">
 <div style="display: flex; gap: 12px; align-items: flex-start"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 4px" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"></path></svg><span>{{g.t}}</span></div>
 </sc-for>
-<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký khóa này</a><a href="#lo-trinh" style="padding: 14px 4px; font-weight: 600">Xem nội dung khóa học</a></div>
-</div>
-</div>
-</section>
-
-<section style="background: #F6EFEF; padding: clamp(56px, 7vw, 104px) clamp(20px, 6vw, 96px)">
-<h2 style="margin: 0 0 32px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1; max-width: 14em">Mỗi bài hát, Mây dạy bạn theo năm bước</h2>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px 56px; align-items: center">
-<div style="display: flex; flex-direction: column; gap: 10px">
-<sc-for list="{{steps}}" as="st" hint-placeholder-count="5">
-<button type="button" aria-pressed="{{st.pressed}}" onClick="{{st.pick}}" style="position: relative; overflow: hidden; text-align: left; border: 2px solid #2B1E24; border-radius: 10px; padding: 14px 20px; min-height: 56px; font-size: 20px; font-weight: 600; background: {{st.bg}}; color: {{st.fg}}; display: flex; gap: 16px; align-items: center; transition: background .25s ease, color .25s ease"><span style="font-family: 'Playfair Display', serif; font-size: 26px">{{st.num}}</span><span>{{st.title}}</span><span style="position: absolute; left: 0; bottom: 0; height: 5px; background: {{accent}}; animation: {{st.fill}} 4.5s linear both"></span></button>
-</sc-for>
-</div>
-<div style="background: #5B2A3C; color: #F6EFEF; border-radius: 12px; padding: clamp(28px, 4vw, 56px); min-height: 300px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; justify-content: center; animation: {{stepSwap}} 450ms ease both">
-<div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(90px, 11vw, 160px); line-height: .9; color: #E9B9C6">{{cur.num}}</div>
-<h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.15">{{cur.title}}</h3>
-<p style="margin: 0; font-size: 21px">{{cur.body}}</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><a href="%%SIGNUP%%?khoa={{rec.key}}" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký học</a><a href="#lo-trinh" onClick="{{seeRec}}" style="padding: 14px 4px; font-weight: 600">Xem nội dung khóa học</a></div>
 </div>
 </div>
 </section>
 
 <section id="lo-trinh" style="background: #FFFFFF; padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
 <h2 style="margin: 0 0 12px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Lộ trình solo, ba chặng</h2>
-<p style="margin: 0 0 36px; max-width: 36em">Bạn đi lần lượt từ chặng một nhé. Cột càng cao là bạn đã học cùng Mây càng nhiều giờ. Bấm vào từng chặng bên dưới để xem Mây dạy những bài nào.</p>
-<div role="img" aria-label="Biểu đồ bậc thang: tổng số giờ video sau mỗi chặng, từ 0 lên 4 giờ, 16 giờ rưỡi và gần 35 giờ" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 1.2vw, 16px); align-items: end; margin: 0 0 56px">
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">0</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Chưa biết nốt nào</div><div style="height: 20px; background: #D2BFC3; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) both"></div></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">4 giờ</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Solo Căn Bản: đọc nốt, đàn hai tay</div><div style="height: 52px; background: #E9B9C6; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) .15s both"></div></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">16,5 giờ</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Cover: đàn trọn 40 bài nhạc Việt</div><div style="height: 152px; background: {{accent}}; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) .3s both"></div></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">34,7 giờ</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Nâng Cao: tự soạn hợp âm, tự đệm</div><div style="height: 300px; background: #5B2A3C; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) .45s both"></div></div>
-</div>
+<p style="margin: 0 0 36px; max-width: 36em">Bạn đi lần lượt từ chặng một nhé. Bấm vào từng chặng để xem Mây dạy những bài nào.</p>
 <div style="display: flex; flex-direction: column">
 <sc-for list="{{solo}}" as="c" hint-placeholder-count="3">
-<article style="padding: 28px 0; border-top: 2px solid #2B1E24">
+<article ref="{{c.ref}}" style="padding: 28px 0; border-top: 2px solid #2B1E24; scroll-margin-top: 96px">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 40px; align-items: center">
 <div style="display: flex; gap: 18px; align-items: center"><div style="flex: none; width: 56px; height: 56px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px">{{c.step}}</div><h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3></div>
 <p style="margin: 0">{{c.desc}}</p>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
 </div>
 <button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="margin-top: 16px; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button>
-<a href="%%SIGNUP%%" class="press" style="display: inline-block; margin: 16px 0 0 10px; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký khóa này</a>
+<a href="%%SIGNUP%%?khoa={{c.key}}" class="press" style="display: inline-block; margin: 16px 0 0 10px; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a>
+<sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
+<p class="rise" role="status" style="margin: 20px 0 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
+</sc-if>
 <sc-if value="{{c.open}}" hint-placeholder-val="{{ false }}">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; align-items: start">
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -186,17 +243,20 @@ button{font-family:inherit;cursor:pointer}
 <p style="margin: 0 0 36px; max-width: 36em">Mây có hai khóa riêng cho bạn muốn vừa đàn vừa hát, ở nhà hay ở ca đoàn.</p>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px">
 <sc-for list="{{dem}}" as="c" hint-placeholder-count="2">
-<article style="border: 2px solid #2B1E24; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; align-self: start">
+<article ref="{{c.ref}}" style="scroll-margin-top: 96px; border: 2px solid #2B1E24; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; align-self: start">
 <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3>
 <p style="margin: 0">{{c.desc}}</p>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between; padding-top: 12px"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
-<button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="align-self: flex-start; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"><button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button><a href="%%SIGNUP%%?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a></div>
+<sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
+<p class="rise" role="status" style="margin: 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
+</sc-if>
 <sc-if value="{{c.open}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -207,34 +267,6 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </section>
 
-<section style="padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px 64px; align-items: end; margin-bottom: 40px">
-<div style="display: flex; flex-direction: column; gap: 14px">
-<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bao lâu thì bạn học xong?</h2>
-<p style="margin: 0; max-width: 28em">Bạn cho Mây biết mỗi ngày bạn dành được bao nhiêu phút, Mây tính giúp bạn nhé.</p>
-</div>
-<div style="display: flex; flex-direction: column; gap: 10px">
-<label for="phut" style="font-weight: 600">Mỗi ngày mình xem được <span style="font-family: 'Playfair Display', serif; font-size: 44px; line-height: 1; color: {{accent}}">{{mins}}</span> phút</label>
-<input id="phut" type="range" min="10" max="60" step="5" value="{{mins}}" onChange="{{setMins}}" onInput="{{setMins}}" style="width: 100%; height: 44px; accent-color: {{accent}}">
-<div style="display: flex; flex-wrap: wrap; gap: 10px">
-<sc-for list="{{picks}}" as="m" hint-placeholder-count="4">
-<button type="button" class="press" aria-pressed="{{m.pressed}}" onClick="{{m.pick}}" style="border: 2px solid #2B1E24; border-radius: 999px; padding: 8px 18px; min-height: 46px; font-size: 18px; font-weight: 600; background: {{m.bg}}; color: {{m.fg}}">{{m.label}}</button>
-</sc-for>
-</div>
-</div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px">
-<sc-for list="{{weeks}}" as="w" hint-placeholder-count="5">
-<div class="lift" style="background: {{w.bg}}; color: {{w.fg}}; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(16px, 2vw, 24px); display: flex; flex-direction: column; gap: 6px; min-height: clamp(190px, 20vw, 250px)">
-<div style="font-weight: 600; line-height: 1.3">{{w.name}}</div>
-<div style="margin-top: auto; display: flex; align-items: baseline; gap: 10px; animation: {{wkAnim}} 350ms ease both"><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(64px, 9vw, 128px); line-height: .9; font-variant-numeric: tabular-nums">{{w.n}}</span><span style="font-size: clamp(18px, 2vw, 26px); font-weight: 600">tuần</span></div>
-<div style="font-size: 17px">{{w.hours}} video</div>
-</div>
-</sc-for>
-</div>
-<p style="margin: 24px 0 0; font-size: 18px">Học trọn cả năm khóa, hơn 42 giờ video: khoảng <strong>{{totalWeeks}} tuần</strong>. Con số này mới tính thời gian xem video. Thời gian tập đàn thì tùy bạn nha.</p>
-</section>
-
 <section id="bai-hat" style="background: #FFFFFF; padding: clamp(56px, 8vw, 112px) 0">
 <div style="padding: 0 clamp(20px, 6vw, 96px)">
 <h2 style="margin: 0 0 24px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bạn sẽ đàn được những bài này</h2>
@@ -243,10 +275,11 @@ button{font-family:inherit;cursor:pointer}
 <button type="button" class="press" aria-pressed="{{g.pressed}}" onClick="{{g.pick}}" style="border: 2px solid #2B1E24; border-radius: 999px; padding: 10px 20px; min-height: 48px; font-size: 18px; font-weight: 600; background: {{g.bg}}; color: {{g.fg}}">{{g.label}}</button>
 </sc-for>
 </div>
+<p style="margin: -16px 0 32px; font-size: 18px">Bấm vào tên bài, Mây chỉ cho bạn bài đó nằm ở khóa nào, phần nào.</p>
 </div>
 <div class="mq" style="overflow: hidden; display: flex; flex-direction: column; gap: 10px">
-<div class="mqrow" style="display: flex; width: max-content; animation: drift 38s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap"><span style="padding-right: .5em">{{songRowA}}</span><span aria-hidden="true" style="padding-right: .5em">{{songRowA}}</span></div>
-<div class="mqrow" aria-hidden="true" style="display: flex; width: max-content; animation: driftBack 44s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap; color: {{accent}}"><span style="padding-right: .5em">{{songRowB}}</span><span style="padding-right: .5em">{{songRowB}}</span></div>
+<div class="mqrow" data-t="38" style="display: flex; width: max-content; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap"><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
+<div class="mqrow" data-t="44" data-back style="display: flex; width: max-content; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap; color: {{accent}}"><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
 </div>
 </section>
 
@@ -257,7 +290,11 @@ button{font-family:inherit;cursor:pointer}
 <p style="margin: 0">Mây thích dạy từ căn bản và cho bạn thực hành ngay trên bài hát thật. Sheet nhạc Mây soạn luôn cố gắng dễ hiểu, dễ tập cho mọi lứa tuổi.</p>
 <blockquote style="margin: 16px 0 0; padding: 0; font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.4">“Giảng viên xuất sắc nhất mà mình từng theo học piano. Khóa học cực kỳ hữu ích cho người tự học piano như mình!”<span style="display: block; font-family: 'Newsreader', serif; font-style: normal; font-size: 18px; margin-top: 10px">An Tran, học viên khóa Piano Cover</span></blockquote>
 </div>
-<img src="%%THEME%%/assets/img/p01.jpg" alt="Chân dung Mây trong tà áo dài" style="display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 620px; object-fit: cover; object-position: 40% 30%; border-radius: 12px 12px 280px 280px">
+<img loading="lazy" decoding="async" width="797" height="1000" src="%%THEME%%/assets/img/p01.jpg" alt="Chân dung Mây trong tà áo dài" style="display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 620px; object-fit: cover; object-position: 40% 30%; border-radius: 12px 12px 280px 280px">
+</section>
+
+<section class="mq" aria-label="Ảnh Mây bên cây đàn" style="overflow: hidden; background: #5B2A3C; padding: 0 0 clamp(56px, 8vw, 112px)">
+<div class="mqrow" data-t="70" style="display: flex; gap: 16px; width: max-content"><div style="display: flex; gap: 16px; padding-right: 0"><img loading="lazy" decoding="async" width="1000" height="666" src="%%THEME%%/assets/img/g04.jpg" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="793" height="1000" src="%%THEME%%/assets/img/g11.jpg" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="539" src="%%THEME%%/assets/img/g13.jpg" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="584" src="%%THEME%%/assets/img/g05.jpg" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="708" height="1000" src="%%THEME%%/assets/img/g14.jpg" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="549" src="%%THEME%%/assets/img/g16.jpg" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="666" src="%%THEME%%/assets/img/g03.jpg" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="562" src="%%THEME%%/assets/img/g15.jpg" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="667" src="%%THEME%%/assets/img/g08.jpg" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="542" src="%%THEME%%/assets/img/g17.jpg" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="806" height="1000" src="%%THEME%%/assets/img/g12.jpg" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="563" src="%%THEME%%/assets/img/g07.jpg" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div><div style="display: flex; gap: 16px"><img loading="lazy" decoding="async" width="1000" height="666" src="%%THEME%%/assets/img/g04.jpg" aria-hidden="true" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="793" height="1000" src="%%THEME%%/assets/img/g11.jpg" aria-hidden="true" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="539" src="%%THEME%%/assets/img/g13.jpg" aria-hidden="true" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="584" src="%%THEME%%/assets/img/g05.jpg" aria-hidden="true" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="708" height="1000" src="%%THEME%%/assets/img/g14.jpg" aria-hidden="true" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="549" src="%%THEME%%/assets/img/g16.jpg" aria-hidden="true" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="666" src="%%THEME%%/assets/img/g03.jpg" aria-hidden="true" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="562" src="%%THEME%%/assets/img/g15.jpg" aria-hidden="true" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="667" src="%%THEME%%/assets/img/g08.jpg" aria-hidden="true" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="542" src="%%THEME%%/assets/img/g17.jpg" aria-hidden="true" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="806" height="1000" src="%%THEME%%/assets/img/g12.jpg" aria-hidden="true" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img loading="lazy" decoding="async" width="1000" height="563" src="%%THEME%%/assets/img/g07.jpg" aria-hidden="true" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div></div>
 </section>
 
 <section id="cong-dong" style="padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
@@ -267,7 +304,7 @@ button{font-family:inherit;cursor:pointer}
 <p style="margin: 0; max-width: 30em">Cảm ơn bạn đã đồng hành cùng Mây suốt những năm qua. Đàn xong một bài, bạn đăng lên nhóm để Mây và mọi người cùng nghe nhé.</p>
 <p style="margin: 0; font-size: 17px">Số liệu cập nhật ngày 04/10/2026.</p>
 </div>
-<img src="%%THEME%%/assets/img/g02.jpg" alt="Nút bạc YouTube 100.000 người đăng ký của kênh May Piano" style="display: block; width: 100%; max-width: 420px; justify-self: center; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px; border: 2px solid #2B1E24; transform: rotate(3deg)">
+<img loading="lazy" decoding="async" width="666" height="1000" src="%%THEME%%/assets/img/g02.jpg" alt="Nút bạc YouTube 100.000 người đăng ký của kênh May Piano" style="display: block; width: 100%; max-width: 420px; justify-self: center; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px; border: 2px solid #2B1E24; transform: rotate(3deg)">
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; padding: 0 6px">
 <a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="tilt" style="transform: rotate(-2deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.500" y="5.500" width="19" height="13" rx="3.500"></rect><path d="M10 9.500l5 2.500-5 2.500z"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">134.000+</span><span style="font-weight: 600">bạn đăng ký kênh YouTube</span><span style="font-size: 18px">Hàng trăm bài Mây dạy miễn phí.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Xem kênh YouTube</span></a>
@@ -279,13 +316,13 @@ button{font-family:inherit;cursor:pointer}
 
 <section style="background: #FFFFFF; padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
 <div style="display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; margin-bottom: 36px">
-<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1; max-width: 12em">Các bài học miễn phí trên YouTube</h2>
+<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1; max-width: 12em">Ba bài mới nhất trên YouTube</h2>
 <a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" style="font-weight: 600; padding: 10px 0">Mở kênh YouTube</a>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px">
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden"><img src="%%THEME%%/assets/img/g04.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600">Bài học miễn phí trên YouTube</span></a>
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden"><img src="%%THEME%%/assets/img/g15.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600">Mây đàn mẫu và hướng dẫn</span></a>
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden"><img src="%%THEME%%/assets/img/g05.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600">Xem thêm trên kênh của Mây</span></a>
+<sc-for list="{{videos}}" as="v" hint-placeholder-count="3">
+<a href="{{v.url}}" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #D2BFC3"><img loading="lazy" data-dc-src="{{v.img}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600; line-height: 1.4">{{v.title}}</span></a>
+</sc-for>
 </div>
 </section>
 
@@ -336,9 +373,10 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </section>
 
+</main>
 <footer style="display: flex; flex-wrap: wrap; gap: 12px 32px; justify-content: space-between; padding: 28px clamp(20px, 6vw, 96px) 40px; border-top: 2px solid #2B1E24; font-size: 18px">
 <div>© 2026 Mây Piano</div>
-<div style="display: flex; flex-wrap: wrap; gap: 8px 24px"><a href="https://www.facebook.com/maypianist" style="padding: 10px 0">Fanpage</a><a href="https://www.facebook.com/groups/558515685499528/" style="padding: 10px 0">Nhóm Facebook</a><a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" style="padding: 10px 0">YouTube</a><a href="https://www.tiktok.com/@maypiano" style="padding: 10px 0">TikTok</a><a href="#dau-trang" style="padding: 10px 0">Điều khoản</a></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 24px"><a href="https://www.facebook.com/maypianist" style="padding: 10px 0">Fanpage</a><a href="https://www.facebook.com/groups/558515685499528/" style="padding: 10px 0">Nhóm Facebook</a><a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" style="padding: 10px 0">YouTube</a><a href="https://www.tiktok.com/@maypiano" style="padding: 10px 0">TikTok</a></div>
 </footer>
 </div>
 </x-dc>
@@ -346,126 +384,362 @@ button{font-family:inherit;cursor:pointer}
 class Component extends DCLogic {
 constructor(props) {
 super(props);
-this.state = { note: 'chưa bấm', hit: -1, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
+let muted = false; try { muted = localStorage.getItem('mp-nhac') === '0'; } catch (e) {}
+this.CUR = { VN: 'VND', AU: 'AUD', INTL: 'USD' };
+this.state = { videos: this.vids((window.MayPianoCfg || {}).videos) || this.vids([['n0U9Vot1l3Y', 'Chi Mai - Ennio Morricone [hướng dẫn đàn] May Piano'], ['ZkwbjtTlqE0', 'Love story - Indila | hướng dẫn đàn [May Piano]'], ['8-SIqVsGAz4', 'Track in Time -Dennis Kuo [hướng dẫn đàn] Mây Piano']].map((v) => ({ id: v[0], title: v[1] }))), note: 'chưa bấm', muted, locked: true, song: '', live: false, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, step: 0, tick: 0, region: '', prices: null };
 this.timers = [];
-this.statsRef = (el) => {
-if (!el || this.io || this.counted) return;
-if (!('IntersectionObserver' in window)) { this.runCount(); return; }
-this.io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { this.runCount(); this.io.disconnect(); } }, { threshold: 0.3 });
-this.io.observe(el);
-};
+this.SONGS = ['Trái Tim Mùa Thu', 'Hẹn Ước Xin Khuất Lời', 'Autumn Leaves', 'Tình Lỡ Cách Xa', 'Lãng Quên Chiều Thu', 'Đôi Bờ', 'Jardin Secret', 'Luân Vũ Ngày Mưa', 'Ánh Trăng Nói Hộ Lòng Tôi', 'Kỷ Niệm Nào Vội Quên', 'Hẹn Ước Bồ Công Anh', 'Cry On My Shoulder', 'The Winner Takes It All', '10 Ngàn Năm'];
+/* Left out of the rotation for now: the recording of 'Ánh Trăng Nói Hộ Lòng Tôi' (09.mp3) has a fault. */
+this.SKIP = [8];
+this.NAME = ['Đô', 'Đô thăng', 'Rê', 'Rê thăng', 'Mi', 'Fa', 'Fa thăng', 'Son', 'Son thăng', 'La', 'La thăng', 'Si'];
+this.stripRef = (el) => { this.strip = el; };
+this.score();
+this.noteRef = (el) => { this.noteEl = el; };
 }
 componentDidMount() {
-if (!this.io && !this.counted) this.runCount();
-this.auto = setInterval(() => { if (!this.manual) this.setState((s) => ({ step: (s.step + 1) % 5, tick: s.tick + 1 })); }, 4500);
+this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().catch(() => {}); if (this.bg && this.bg.paused) this.playBg(); };
+this.onVis = () => { if (document.hidden) { this.stopAuto(); if (this.bg) this.bg.pause(); } else { if (this.inView) this.startAuto(); this.playBg(); } };
+['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
+document.addEventListener('visibilitychange', this.onVis);
+this.fx(); setTimeout(() => this.newest(), 0); this.where(); this.inView = true; this.music(); this.playBg(); if (!document.hidden) this.startAuto();
 }
 componentWillUnmount() {
-clearInterval(this.auto);
+this.gone = true;
+this.stopAuto(); clearTimeout(this.backT); if (this.fxOff) this.fxOff();
+['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
+if (this.bg) { this.bg.pause(); this.bg.removeAttribute('src'); }
+document.removeEventListener('visibilitychange', this.onVis);
+clearInterval(this.dbgT);
+if (this.ctx) this.ctx.close();
 this.timers.forEach(clearTimeout);
-if (this.io) this.io.disconnect();
-if (this.raf) cancelAnimationFrame(this.raf);
 }
-runCount() {
-if (this.counted) return;
-this.counted = true;
-const t0 = performance.now();
-const run = (t) => {
-const p = Math.min(1, (t - t0) / 1600);
-this.setState({ count: 1 - Math.pow(1 - p, 3) });
-if (p < 1) this.raf = requestAnimationFrame(run);
-};
-this.raf = requestAnimationFrame(run);
-}
-play(f, name, id) {
-try {
+/* Sound: one output for the background music, so its level can be faded smoothly. */
+audio() {
+if (this.ctx) return this.ctx;
 const AC = window.AudioContext || window.webkitAudioContext;
-if (!this.ctx) this.ctx = new AC();
-if (this.ctx.state === 'suspended') this.ctx.resume();
-const t = this.ctx.currentTime;
-const g = this.ctx.createGain();
-g.gain.setValueAtTime(0.0001, t);
-g.gain.exponentialRampToValueAtTime(0.3, t + 0.015);
-g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
-g.connect(this.ctx.destination);
-[[1, 'triangle', 1], [2, 'sine', 0.25]].forEach((h) => {
-const o = this.ctx.createOscillator();
-const hg = this.ctx.createGain();
-o.type = h[1]; o.frequency.value = f * h[0]; hg.gain.value = h[2];
-o.connect(hg); hg.connect(g); o.start(t); o.stop(t + 1.45);
-});
-} catch (e) {}
-this.setState({ note: name, hit: id });
-}
-bass(f) {
+if (!AC) return null;
 try {
-if (!this.ctx) return;
-const t = this.ctx.currentTime;
-const o = this.ctx.createOscillator();
-const g = this.ctx.createGain();
-o.type = 'sine'; o.frequency.value = f;
-g.gain.setValueAtTime(0.0001, t);
-g.gain.exponentialRampToValueAtTime(0.28, t + 0.03);
-g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
-o.connect(g); g.connect(this.ctx.destination);
-o.start(t); o.stop(t + 1.85);
-} catch (e) {}
+const c = new AC();
+const out = c.createGain(); out.gain.value = 1; out.connect(c.destination);
+this.ctx = c; this.out = out;
+if (/[?&]thu-am/.test(location.search)) {
+const an = c.createAnalyser(); an.fftSize = 2048; out.connect(an);
+const d = new Float32Array(2048); this.dbg = { peak: 0 };
+const box = document.createElement('pre'); box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;margin:0;padding:8px 12px;background:#fff;border:2px solid #2B1E24;font:14px/1.4 monospace;max-width:92vw;white-space:pre-wrap';
+document.body.appendChild(box);
+this.dbgT = setInterval(() => { an.getFloatTimeDomainData(d); let pk = 0; for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); this.dbg.peak = Math.max(this.dbg.peak, pk);
+box.textContent = 'MPAUDIO state=' + c.state + ' rate=' + c.sampleRate + ' now=' + pk.toFixed(3) + ' peak=' + this.dbg.peak.toFixed(3) + ' muted=' + this.state.muted + ' out=' + c.destination.channelCount + '/' + c.destination.maxChannelCount + ' END'; }, 200);
+}
+const sync = () => { const locked = c.state !== 'running'; if (locked !== this.state.locked) this.setState({ locked }); };
+c.onstatechange = sync; sync();
+} catch (e) { this.ctx = null; }
+return this.ctx;
+}
+/* Background music: the opening of one of Mây's own recordings, picked at random for each visit and kept quiet. When one ends, another follows. */
+music() {
+if (this.bg || typeof Audio === 'undefined') return;
+const a = this.bg = new Audio(); a.preload = 'auto';
+const c = this.audio();
+try { const src = c.createMediaElementSource(a); this.bgGain = c.createGain(); this.bgGain.gain.value = 0.22; src.connect(this.bgGain); this.bgGain.connect(this.out); } catch (e) { this.bgGain = null; a.volume = 0.22; }
+a.addEventListener('playing', () => this.setState({ live: true }));
+a.addEventListener('pause', () => this.setState({ live: false }));
+a.addEventListener('ended', () => { this.nextSong(); this.playBg(); });
+this.nextSong();
+}
+nextSong() {
+let i; do { i = Math.floor(Math.random() * this.SONGS.length); } while (i === this.songI || this.SKIP.indexOf(i) >= 0);
+this.songI = i;
+this.bg.src = '%%THEME%%/assets/audio/' + 'nen/' + String(101 + i).slice(1) + '.mp3';
+this.setState({ song: this.SONGS[i], live: false });
+}
+playBg() {
+if (!this.bg || this.state.muted || document.hidden) return;
+const p = this.bg.play(); if (p && p.catch) p.catch(() => {});
+}
+/* Moves the music's level to v over dur seconds. */
+bgVol(v, dur, start) {
+if (this.bgGain && this.ctx) { const g = this.bgGain.gain, t = this.ctx.currentTime; g.cancelScheduledValues(t); g.setValueAtTime(start == null ? g.value : start, t); g.linearRampToValueAtTime(v, t + dur); return; }
+if (!this.bg) return;
+cancelAnimationFrame(this.volRaf);
+const a = this.bg, from = start == null ? a.volume : start, t0 = performance.now();
+const run = (now) => { const k = Math.min(1, (now - t0) / (dur * 1000)); a.volume = from + (v - from) * k; if (k < 1) this.volRaf = requestAnimationFrame(run); };
+this.volRaf = requestAnimationFrame(run);
+}
+paint() {
+if (!this.keyCss) { this.keyCss = document.createElement('style'); document.head.appendChild(this.keyCss); }
+const acc = this.props.accent || '#C2456B', L = this.lit || {};
+const key = (m) => m == null ? '' : '[data-k="' + m + '"]{background:' + (this.NAME[m % 12].length > 3 ? acc : '#E9B9C6') + '!important}';
+this.keyCss.textContent = key(L.a) + key(L.b) + (L.n == null ? '' : '[data-n="' + L.n + '"]{color:' + acc + '!important;filter:drop-shadow(0 0 7px ' + acc + ')}');
+}
+light(slot, m) {
+this.lit = Object.assign({}, this.lit, { [slot]: m });
+if (slot === 'a') { const name = this.NAME[m % 12]; this.state.note = name; if (this.noteEl) this.noteEl.textContent = name; }
+this.paint();
+}
+/* Keyboard and assistive-technology activation of a key. Pointer presses are answered on the way down, in fx(). */
+click(m) { if (performance.now() - (this.ptrAt || -1e4) > 700) this.press(m); }
+/* Touch and motion: keys that light up on the way down, rows that follow the finger and keep its speed, a menu bar that floats, and sections that arrive as you reach them. */
+fx() {
+const mm = (q) => !!(window.matchMedia && window.matchMedia(q).matches);
+const H = document.documentElement, off = [];
+const on = (t, type, fn, opt) => { t.addEventListener(type, fn, opt); off.push(() => t.removeEventListener(type, fn, opt)); };
+this.fxOff = () => { off.forEach((f) => f()); cancelAnimationFrame(this.rowRaf); if (this.rvIo) this.rvIo.disconnect(); };
+this.reduce = mm('(prefers-reduced-motion: reduce)');
+const waapi = !!(window.Element && Element.prototype.animate);
+if (waapi) H.classList.add('mp-fx');
+
+const stuck = () => H.classList.toggle('mp-stuck', window.scrollY > 8);
+on(window, 'scroll', stuck, { passive: true }); stuck();
+
+/* Keys. A mouse or pen press lights the key at once. A finger on the phone's sideways-scrolling keyboard waits 70ms, so a swipe to scroll lights nothing; lifting sooner lights it at once. */
+on(document, 'pointerdown', (e) => {
+const k = e.target.closest ? e.target.closest('[data-k]') : null;
+if (!k || e.button) return;
+const m = Number(k.getAttribute('data-k')), sc = k.closest('[data-keys]');
+this.ptrAt = performance.now();
+if (e.pointerType !== 'touch' || !sc || sc.scrollWidth <= sc.clientWidth + 1) { this.press(m); return; }
+const id = e.pointerId, x0 = e.clientX;
+let tm = 0;
+const done = (play) => { clearTimeout(tm); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', no, true); document.removeEventListener('pointermove', mv, true); if (play) { this.ptrAt = performance.now(); this.press(m); } };
+const up = (ev) => { if (ev.pointerId === id) done(true); };
+const no = (ev) => { if (ev.pointerId === id) done(false); };
+const mv = (ev) => { if (ev.pointerId === id && Math.abs(ev.clientX - x0) > 8) done(false); };
+document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', no, true); document.addEventListener('pointermove', mv, true);
+tm = setTimeout(() => done(true), 70);
+});
+
+/* Rows of song names and photos. Position is the time of a paused-or-playing animation, so the page's own redraws never disturb it. Speed is in animation-ms per ms: 1 is the normal drift, 0 is still. */
+if (waapi) {
+const rows = new Map(), live = new Set();
+const goal = (r) => (this.reduce || r.hover || r.focus) ? 0 : 1;
+const wrap = (r, t) => ((t % r.T) + r.T) % r.T;
+const tick = (now) => {
+this.rowRaf = 0;
+live.forEach((r) => {
+const dt = Math.min(50, Math.max(0, now - r.last)); r.last = now;
+if (r.drag) return;
+r.v = r.goal + (r.v - r.goal) * Math.pow(r.k, dt);
+r.t = wrap(r, r.t + r.v * dt);
+r.a.currentTime = r.t;
+if (Math.abs(r.v - r.goal) < 0.02) { r.v = r.goal; live.delete(r); if (r.goal) r.a.play(); }
+});
+if (live.size) this.rowRaf = requestAnimationFrame(tick);
+};
+/* Takes a row over from its own drift, from exactly where it is on screen. */
+const take = (r) => {
+if (!live.has(r)) { r.t = wrap(r, Number(r.a.currentTime) || 0); r.a.pause(); r.a.currentTime = r.t; r.last = performance.now(); live.add(r); }
+if (!this.rowRaf) this.rowRaf = requestAnimationFrame(tick);
+};
+const ease = (r) => { const g = goal(r); if (g === r.goal && !live.has(r)) return; r.goal = g; r.k = 0.99; take(r); };
+document.querySelectorAll('x-dc .mqrow').forEach((el) => {
+const back = el.hasAttribute('data-back'), T = (Number(el.getAttribute('data-t')) || 40) * 1000;
+const a = el.animate(back ? [{ transform: 'translateX(-50%)' }, { transform: 'translateX(0)' }] : [{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: T, iterations: Infinity });
+const r = { el, a, T, dir: back ? 1 : -1, v: 1, goal: 1, k: 0.99, t: 0, last: 0, drag: false, hover: false, focus: false };
+if (this.reduce) { a.pause(); r.v = 0; r.goal = 0; }
+rows.set(el, r);
+const box = el.closest('.mq') || el;
+on(box, 'pointerenter', (e) => { if (e.pointerType === 'mouse') { r.hover = true; ease(r); } });
+on(box, 'pointerleave', (e) => { if (e.pointerType === 'mouse') { r.hover = false; ease(r); } });
+on(box, 'focusin', () => { r.focus = true; ease(r); });
+on(box, 'focusout', () => { r.focus = false; ease(r); });
+});
+on(document, 'dragstart', (e) => { if (e.target.closest && e.target.closest('.mqrow')) e.preventDefault(); });
+/* A drag must not also count as a press on the song under the finger. */
+on(document, 'click', (e) => { if (performance.now() - (this.rowDragAt || -1e4) < 400 && e.target.closest && e.target.closest('.mqrow')) { e.stopPropagation(); e.preventDefault(); } }, true);
+on(document, 'pointerdown', (e) => {
+const el = e.target.closest ? e.target.closest('.mqrow') : null, r = el && rows.get(el);
+if (!r || e.button) return;
+const W = el.scrollWidth / 2;
+if (!W) return;
+take(r); r.drag = true; r.v = 0;
+const id = e.pointerId, x0 = e.clientX;
+let lx = x0, moved = false, hist = [[e.timeStamp, x0]];
+const mv = (ev) => {
+if (ev.pointerId !== id) return;
+if (!moved) { if (Math.abs(ev.clientX - x0) < 10) return; moved = true; lx = ev.clientX; hist = [[ev.timeStamp, lx]]; el.style.cursor = 'grabbing'; try { el.setPointerCapture(id); } catch (err) {} return; }
+r.t = wrap(r, r.t + (ev.clientX - lx) * r.dir * r.T / W); lx = ev.clientX; r.a.currentTime = r.t;
+hist.push([ev.timeStamp, lx]); while (hist.length > 2 && ev.timeStamp - hist[0][0] > 100) hist.shift();
+};
+const end = (ev) => {
+if (ev.pointerId !== id) return;
+document.removeEventListener('pointermove', mv, true); document.removeEventListener('pointerup', end, true); document.removeEventListener('pointercancel', end, true);
+r.drag = false; r.goal = goal(r); r.last = performance.now();
+if (moved) {
+el.style.cursor = '';
+const a = hist[0], b = hist[hist.length - 1], span = b[0] - a[0];
+const vx = span > 0 && ev.timeStamp - b[0] < 80 ? (b[1] - a[1]) / span : 0;
+r.v = vx * r.dir * r.T / W; r.k = 0.998; this.rowDragAt = performance.now();
+} else { r.v = 0; r.k = 0.99; }
+take(r);
+};
+document.addEventListener('pointermove', mv, true); document.addEventListener('pointerup', end, true); document.addEventListener('pointercancel', end, true);
+});
+}
+
+/* Sections below the first screen arrive once, as they are reached. Each is held at the first frame of a paused animation, so anything the page redraws or replaces simply shows. */
+if (waapi && 'IntersectionObserver' in window) {
+const held = new Map(), vh = window.innerHeight;
+const io = this.rvIo = new IntersectionObserver((es) => {
+let n = 0;
+es.forEach((e) => { if (!e.isIntersecting) return; const a = held.get(e.target); io.unobserve(e.target); held.delete(e.target); if (a) setTimeout(() => a.play(), Math.min(3, n++) * 70); });
+}, { rootMargin: '0px 0px -40px 0px', threshold: 0 });
+document.querySelectorAll('x-dc section > *').forEach((el) => {
+if (el.classList.contains('mqrow') || el.getBoundingClientRect().top < vh * 0.94) return;
+const a = el.animate(this.reduce ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'none' }], { duration: this.reduce ? 300 : 700, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+a.pause(); held.set(el, a); io.observe(el);
+});
+on(window, 'beforeprint', () => { held.forEach((a) => a.finish()); held.clear(); });
+}
+}
+/* Mây's three newest lessons on YouTube. Only a well-formed video id is accepted; links and pictures are built from it here. */
+vids(list) {
+if (!Array.isArray(list)) return null;
+const out = list.filter((v) => v && /^[\w-]{11}$/.test(v.id) && v.title).slice(0, 3).map((v) => ({ url: 'https://www.youtube.com/watch?v=' + v.id, img: 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg', title: String(v.title) }));
+return out.length === 3 ? out : null;
+}
+/* Prices follow where the visitor is: the site works it out, and the visitor can change it. A choice made here is kept for the sign-up page (same store). */
+where() {
+let saved = {};
+try { saved = JSON.parse(window.localStorage.getItem('maypiano_dang_ky') || '{}') || {}; } catch (e) {}
+const picked = this.CUR[saved.region] ? saved.region : '';
+if (picked) this.setState({ region: picked });
+if (!window.MayPianoApi) return;
+window.MayPianoApi('config', { region: picked }).then((cfg) => { if (!this.gone && cfg) this.setState((st) => ({ prices: cfg.prices || null, region: st.region || (this.CUR[cfg.region] ? cfg.region : 'VN') })); }).catch(() => {});
+}
+pickRegion(id) {
+this.setState({ region: id });
+try { const o = JSON.parse(window.localStorage.getItem('maypiano_dang_ky') || '{}') || {}; o.region = id; window.localStorage.setItem('maypiano_dang_ky', JSON.stringify(o)); } catch (e) {}
+}
+newest() {
+if (!window.MayPianoApi) return;
+window.MayPianoApi('videos').then((r) => { const v = this.vids(r && r.videos); if (v && !this.gone) this.setState({ videos: v }); }).catch(() => {});
+}
+/* A key the visitor presses: it lights up and shows its name, and the staff stops. Five seconds later the staff moves again. The keys make no sound; the only sound on the page is Mây's recording. */
+press(m) {
+this.stopAuto(); this.pos = 0; this.held = true;
+clearTimeout(this.backT);
+this.backT = setTimeout(() => { this.held = false; this.lit = {}; this.paint(); if (this.inView && !document.hidden) this.startAuto(); }, 5000);
+this.lit = { a: m }; this.light('a', m);
+}
+/* The notes drawn on the staff (the Canon figure: long notes, then eighths, then sixteenths). They scroll silently as decoration; the sound is Mây's recording. */
+score() {
+const M = [60, 62, 64, 65, 67, 69, 71, 72, 74, 76];
+const LH = [[48, 55, 60], [43, 50, 55], [45, 52, 57], [40, 47, 52], [41, 48, 53], [48, 55, 60], [41, 48, 53], [43, 50, 55]];
+const LONG = [9, 8, 7, 6, 5, 4, 5, 6];
+const ARP = [[9, 7, 4, 7], [8, 6, 4, 6], [7, 5, 2, 5], [6, 4, 2, 4], [5, 3, 0, 3], [4, 2, 0, 2], [5, 3, 7, 5], [6, 4, 8, 6]];
+const D = 1600, ev = [], staff = [], groups = [];
+let t = 0;
+const left = (i) => [0, 1, 2, 1].forEach((n, j) => ev.push({ t: t + j * D / 4, m: LH[i][n], v: j ? 0.26 : 0.38, h: 1.7, lh: 1 }));
+const tune = (at, k, v, h, kind) => { ev.push({ t: at, m: M[k], v, h, n: staff.length }); staff.push({ t: at, k, kind }); return staff.length - 1; };
+LONG.forEach((k, i) => { left(i); tune(t, k, 0.6, 2, 'h'); ev.push({ t: t + 12, m: M[k - 2], v: 0.3, h: 2 }); t += D; });
+ARP.forEach((g, i) => { left(i); groups.push(g.map((k, j) => tune(t + j * D / 4, k, j ? 0.48 : 0.62, 1.3, 'e'))); t += D; });
+ARP.forEach((g, i) => { left(i); const ids = [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].map((k, j) => tune(t + j * D / 8, k, j % 4 ? 0.4 : 0.58, 1, 's')); groups.push(ids.slice(0, 4), ids.slice(4)); t += D; });
+const end = t;
+ev.push({ t, m: 48, v: 0.42, h: 4.5, lh: 1 }); ev.push({ t: t + 110, m: 55, v: 0.42, h: 4.5, lh: 1 });
+tune(t + 220, 7, 0.55, 4.5, 'h');
+ev.push({ t: t + 330, m: 64, v: 0.4, h: 4.5 }); ev.push({ t: t + 440, m: 76, v: 0.45, h: 4.5 });
+this.total = t + 6400;
+/* Engraving: 4/4 with a half note per chord. Stems turn down from the middle line, eighths and sixteenths are beamed in fours. */
+const PX = this.PX = 0.2, Y = (k) => 141 - 10 * k, beams = [], bars = [];
+staff.forEach((n) => { n.x = n.t * PX; n.y = Y(n.k); n.up = n.k < 6; n.tip = n.up ? n.y - 70 : n.y + 70; });
+groups.forEach((ids) => {
+const g = ids.map((i) => staff[i]), ks = g.map((n) => n.k);
+const up = Math.max(...ks) - 6 < 6 - Math.min(...ks);
+const w = g[g.length - 1].x - g[0].x;
+const sl = Math.max(-12, Math.min(12, (g[g.length - 1].y - g[0].y) * 0.3));
+const at = g.map((n) => sl * (n.x - g[0].x) / w);
+const b0 = up ? Math.min(...g.map((n, j) => n.y - 62 - at[j])) : Math.max(...g.map((n, j) => n.y + 62 - at[j]));
+g.forEach((n, j) => { n.up = up; n.tip = b0 + at[j]; });
+const beam = (off) => beams.push({ x: g[0].x + (up ? 8.6 : -11), y: (up ? b0 + off : b0 - 9 - off), w: w + 2.4, a: Math.atan2(sl, w) * 180 / Math.PI });
+beam(0); if (g[0].kind === 's') beam(14);
+});
+for (let b = 2 * D; b <= end; b += 2 * D) bars.push({ x: b * PX - 24, w: 2 });
+bars.push({ x: (end + D) * PX, w: 2 }, { x: (end + D) * PX + 7, w: 6 });
+const loop = this.total * PX, again = (list, lim) => list.concat(list.filter((o) => o.x < lim).map((o) => Object.assign({}, o, { x: o.x + loop })));
+this.staff = again(staff.map((n, i) => Object.assign({ i }, n)), 2600); this.beams = again(beams, 2600); this.bars = again(bars, 2600);
+this.ev = ev.sort((a, b) => a.t - b.t);
+}
+startAuto() {
+if (this.running || this.held || this.reduce) return;
+const from = this.pos || 0;
+this.running = true;
+this.t0 = performance.now() - from;
+if (this.strip && this.strip.animate) {
+if (!this.anim || this.animEl !== this.strip) { this.animEl = this.strip; this.anim = this.strip.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(' + (-this.total * this.PX) + 'px)' }], { duration: this.total, iterations: Infinity }); }
+this.anim.currentTime = from; this.anim.play();
+}
+let i = this.ev.findIndex((e) => e.t >= from);
+if (i < 0) i = this.ev.length;
+const step = () => {
+const now = performance.now() - this.t0;
+while (i < this.ev.length && this.ev[i].t <= now + 6) {
+const e = this.ev[i++];
+if (e.n != null) { this.lit = { n: e.n }; this.paint(); }
+}
+if (i >= this.ev.length) { this.seqT = setTimeout(() => { this.t0 = performance.now(); if (this.anim) this.anim.currentTime = 0; i = 0; step(); }, Math.max(0, this.total - now)); return; }
+this.seqT = setTimeout(step, Math.max(0, this.ev[i].t - now));
+};
+step();
+}
+stopAuto() {
+if (!this.running) return;
+this.running = false;
+clearTimeout(this.seqT);
+if (this.anim) this.anim.pause();
+this.pos = (performance.now() - this.t0) % this.total;
+}
+toggleMute() {
+const muted = this.state.muted ? false : this.state.live;
+try { localStorage.setItem('mp-nhac', muted ? '0' : '1'); } catch (e) {}
+const c = this.audio();
+if (c && c.state !== 'running') c.resume().catch(() => {});
+if (this.bg) { if (muted) this.bg.pause(); else { if (this.bg.paused) { this.bgVol(0.22, 1.5, 0); } const p = this.bg.play(); if (p && p.catch) p.catch(() => {}); } }
+this.setState({ muted });
 }
 renderVals() {
 const accent = this.props.accent ?? '#C2456B';
 const s = this.state;
+const region = this.CUR[s.region] ? s.region : 'VN', cur = this.CUR[region];
+/* The price of a course where the visitor is. Until the site has answered, and for Vietnam when it cannot, the page's own VND price shows. */
+const P = (key, vnd) => {
+const n = s.prices && s.prices[key] ? s.prices[key][cur] : null;
+if (n == null) return cur === 'VND' ? vnd : 'Mây báo giá qua email';
+if (cur === 'VND') return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+return (cur === 'AUD' ? 'A$' : 'US$') + (Math.round(n * 100) / 100).toFixed(2).replace(/\.00$/, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+const regions = [['VN', 'Việt Nam'], ['AU', 'Úc'], ['INTL', 'Mỹ và nước khác']].map(([id, label]) => ({ label, pick: () => this.pickRegion(id), pressed: region === id ? 'true' : 'false', bg: region === id ? '#F6EFEF' : 'transparent', fg: region === id ? '#2B1E24' : '#F6EFEF' }));
 const INK = '#2B1E24';
 const on = (v) => v ? { bg: INK, fg: '#FFFFFF', pressed: 'true' } : { bg: '#FFFFFF', fg: INK, pressed: 'false' };
-const W = [['Đô', 261.63], ['Rê', 293.66], ['Mi', 329.63], ['Fa', 349.23], ['Son', 392.0], ['La', 440.0], ['Si', 493.88], ['Đô', 523.25], ['Rê', 587.33], ['Mi', 659.25]];
-const B = [[1, 'Đô thăng', 277.18], [2, 'Rê thăng', 311.13], [4, 'Fa thăng', 369.99], [5, 'Son thăng', 415.3], [6, 'La thăng', 466.16], [8, 'Đô thăng', 554.37], [9, 'Rê thăng', 622.25]];
-const whites = W.map((k, i) => ({ n: k[0], aria: 'Phím ' + k[0], bg: s.hit === i ? '#E9B9C6' : '#FFFFFF', play: () => this.play(k[1], k[0], i) }));
-const blacks = B.map((k) => ({ left: (k[0] * 10 - 3) + '%', aria: 'Phím ' + k[1], bg: s.hit === 100 + k[0] ? accent : INK, play: () => this.play(k[2], k[1], 100 + k[0]) }));
-const demo = () => {
-this.timers.forEach(clearTimeout); this.timers = [];
-const at = (ms, fn) => this.timers.push(setTimeout(fn, ms));
-const key = (i) => this.play(W[i][1], W[i][0], i);
-const BASS = [130.81, 98.0, 110.0, 82.41, 87.31, 130.81, 87.31, 98.0];
-const LONG = [9, 8, 7, 6, 5, 4, 5, 6];
-const ARP = [[9, 7, 4, 7], [8, 6, 4, 6], [7, 5, 2, 5], [6, 4, 2, 4], [5, 3, 0, 3], [4, 2, 0, 2], [5, 3, 7, 5], [6, 4, 8, 6]];
-let t = 0;
-LONG.forEach((k, i) => { at(t, () => { key(k); this.bass(BASS[i]); }); t += 640; });
-ARP.forEach((g, i) => { at(t, () => this.bass(BASS[i])); g.forEach((k, j) => at(t + j * 230, () => key(k))); t += 920; });
-ARP.forEach((g, i) => { at(t, () => this.bass(BASS[i])); [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].forEach((k, j) => at(t + j * 150, () => key(k))); t += 1200; });
-at(t, () => { this.bass(130.81); this.bass(196.0); key(7); });
-at(t + 60, () => key(9));
-};
-const tops = [51, 31, 41, 11, 1, 21, 41, 31];
-const ys = [100, 80, 90, 60, 70, 110, 90, 70];
-const kinds = ['q', 'e', 'h', 's', 'q', 'w', 'e', 's'];
-const notes = Array.from({ length: 16 }, (_, i) => { const k = kinds[i % 8]; const col = i % 4 === 2 ? accent : INK; return { left: (i * 6.25 + 1) + '%', top: (ys[i % 8] - 54) + 'px', col, fill: k === 'h' || k === 'w' ? '#E3D7D7' : col, stem: k === 'w' ? 0 : 1, f1: k === 'e' || k === 's' ? 1 : 0, f2: k === 's' ? 1 : 0, delay: ((i % 8) * 0.2) + 's' }; });
-const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-const c = s.count;
-const stats = [
-{ v: fmt(15 * c) + ' năm', l: 'Mây dạy đàn và nghiên cứu âm nhạc' },
-{ v: fmt(134000 * c) + '+', l: 'bạn đăng ký kênh YouTube' },
-{ v: fmt(122400 * c), l: 'bạn theo dõi TikTok' },
-{ v: fmt(3213 * c) + '+', l: 'học viên đã học online với Mây' }
-];
+const whites = [], blacks = [];
+for (let m = 48; m <= 76; m++) {
+const name = this.NAME[m % 12];
+if (name.length > 3) blacks.push({ id: m, left: (whites.length * 100 / 17 - 1.8) + '%', aria: 'Phím ' + name, play: () => this.click(m) });
+else whites.push({ id: m, n: name, aria: 'Phím ' + name, play: () => this.click(m) });
+}
+const mute = s.muted
+? { pressed: 'true', bg: INK, fg: '#FFFFFF', label: 'Bật nhạc', wave: 0, cross: 1 }
+: { pressed: 'false', bg: 'transparent', fg: INK, label: 'Tắt nhạc', wave: 1, cross: 0 };
+const np = s.live && !s.muted
+? { pressed: 'true', aria: 'Tắt nhạc nền. Đang phát: ' + s.song, label: 'Đang phát:', song: s.song, hint: 'Bấm để tắt nhạc', dot: INK, play: 0, pause: 1, pulse: 'none', run: 'running', eq: 1 }
+: { pressed: 'false', aria: 'Bật nhạc nền: ' + s.song, label: 'Nghe Mây đàn:', song: s.song, hint: 'Bấm để bật nhạc', dot: accent, play: 1, pause: 0, pulse: 'ring 1.8s ease-out infinite', run: 'paused', eq: .35 };
+const px = (v) => v.toFixed(1) + 'px';
+const barLines = this.bars.map((b) => ({ x: px(b.x), w: px(b.w) }));
+const beamLines = this.beams.map((b) => ({ x: px(b.x), y: px(b.y), w: px(b.w), a: b.a.toFixed(2) + 'deg' }));
+const notes = this.staff.map((n) => ({ i: n.i, x: px(n.x), hy: px(n.y - 8), sx: n.up ? '8.6px' : '-11px', st: px(n.up ? n.tip : n.y + 2), sh: px(Math.abs(n.tip - n.y) - 2), ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? 'transparent' : 'currentColor', bw: n.kind === 'h' ? '3px' : '0', left: (n.t * this.PX - 12).toFixed(1) + 'px', top: (87 - 10 * n.k) + 'px', ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? '#E3D7D7' : 'currentColor', f1: n.kind === 'h' ? 0 : 1, f2: n.kind === 's' ? 1 : 0 }));
 const recs = {
-moi: { name: 'Piano Solo Căn Bản', why: 'Bạn chưa cần biết gì trước đâu. Mây sẽ chỉ bạn từ tư thế ngồi đàn và nốt đầu tiên.', price: '899.000đ', meta: '58 bài, 4 giờ 04 phút', gets: [{ t: 'Đọc được nốt nhạc và sheet nhạc' }, { t: 'Đàn hai tay hơn 20 bản nhạc quen thuộc' }, { t: 'Biết đệm tay trái từ đơn giản tới nâng cao hơn' }] },
-haitay: { name: 'Piano Cover 40 Bài Nhạc Việt', why: 'Bạn đã biết nốt và hợp âm cơ bản. Giờ mình cùng đàn trọn những bài bạn thích nhé.', price: '1.499.000đ', meta: '40 bài, 12 giờ 30 phút', gets: [{ t: 'Đàn hai tay 40 bài nhạc Việt, có đủ dạo đầu' }, { t: 'Dùng được nhiều thế bấm và kiểu đệm' }, { t: 'Tự cover thêm bài khác theo cùng cách' }] },
-nangcao: { name: 'Piano Solo Nâng Cao', why: 'Bạn đã đàn được hai tay rồi. Mây sẽ giúp bạn tự làm chủ bản nhạc, không còn phụ thuộc sheet.', price: '2.000.000đ', meta: '110 bài, 18 giờ 08 phút', gets: [{ t: 'Tự soạn hợp âm và gạch nhịp cho một bản nhạc' }, { t: 'Đệm được ballad, valse, rumba, tango, bossanova' }, { t: 'Tự tạo dạo đầu, câu nối và đoạn kết' }] },
-hat: { name: 'Đệm Hát Piano', why: 'Bạn muốn vừa đàn vừa hát? Khóa này Mây soạn riêng cho bạn, không cần biết solo trước.', price: '799.000đ', meta: '39 bài, 3 giờ 55 phút', gets: [{ t: 'Nắm 14 hợp âm căn bản và các điệu phổ biến' }, { t: 'Phối nhiều kiểu đệm trong một bài' }, { t: 'Tự đệm bài mới mà không cần giáo viên' }] },
-thanhca: { name: 'Đệm Hát Thánh Ca', why: 'Mây lớn lên cùng cây đàn nhà thờ, nên khóa này Mây soạn rất kỹ cho bạn đệm ca đoàn.', price: '799.000đ', meta: '37 bài, 3 giờ 54 phút', gets: [{ t: 'Tự đặt hợp âm cho bài chưa có hợp âm sẵn' }, { t: 'Đệm đúng kiểu cho từng phần thánh lễ' }, { t: 'Đệm trọn bộ lễ Seraphim' }] }
+moi: { key: 'solo-can-ban', name: 'Piano Solo Căn Bản', why: 'Bạn chưa cần biết gì trước đâu. Mây sẽ chỉ bạn từ tư thế ngồi đàn và nốt đầu tiên.', price: '899.000đ', meta: '58 bài, 4 giờ 04 phút', gets: [{ t: 'Đọc được nốt nhạc và sheet nhạc' }, { t: 'Đàn hai tay hơn 20 bản nhạc quen thuộc' }, { t: 'Biết đệm tay trái từ đơn giản tới nâng cao hơn' }] },
+haitay: { key: 'cover-40', name: 'Piano Cover 40 Bài Nhạc Việt', why: 'Bạn đã biết nốt và hợp âm cơ bản. Giờ mình cùng đàn trọn những bài bạn thích nhé.', price: '1.499.000đ', meta: '40 bài, 12 giờ 30 phút', gets: [{ t: 'Đàn hai tay 40 bài nhạc Việt, có đủ dạo đầu' }, { t: 'Dùng được nhiều thế bấm và kiểu đệm' }, { t: 'Tự cover thêm bài khác theo cùng cách' }] },
+nangcao: { key: 'solo-nang-cao', name: 'Piano Solo Nâng Cao', why: 'Bạn đã đàn được hai tay rồi. Mây sẽ giúp bạn tự làm chủ bản nhạc, không còn phụ thuộc sheet.', price: '2.000.000đ', meta: '110 bài, 18 giờ 08 phút', gets: [{ t: 'Tự soạn hợp âm và gạch nhịp cho một bản nhạc' }, { t: 'Đệm được ballad, valse, rumba, tango, bossanova' }, { t: 'Tự tạo dạo đầu, câu nối và đoạn kết' }] },
+hat: { key: 'dem-hat', name: 'Đệm Hát Piano', why: 'Bạn muốn vừa đàn vừa hát? Khóa này Mây soạn riêng cho bạn, không cần biết solo trước.', price: '799.000đ', meta: '39 bài, 3 giờ 55 phút', gets: [{ t: 'Nắm 14 hợp âm căn bản và các điệu phổ biến' }, { t: 'Phối nhiều kiểu đệm trong một bài' }, { t: 'Tự đệm bài mới mà không cần giáo viên' }] },
+thanhca: { key: 'thanh-ca', name: 'Đệm Hát Thánh Ca', why: 'Mây lớn lên cùng cây đàn nhà thờ, nên khóa này Mây soạn rất kỹ cho bạn đệm ca đoàn.', price: '799.000đ', meta: '37 bài, 3 giờ 54 phút', gets: [{ t: 'Tự đặt hợp âm cho bài chưa có hợp âm sẵn' }, { t: 'Đệm đúng kiểu cho từng phần thánh lễ' }, { t: 'Đệm trọn bộ lễ Seraphim' }] }
 };
 const L = [['moi', 'Chưa từng học đàn'], ['haitay', 'Đã biết nốt và hợp âm'], ['nangcao', 'Đã đàn được hai tay'], ['hat', 'Muốn vừa đàn vừa hát'], ['thanhca', 'Đệm cho ca đoàn']];
+Object.keys(recs).forEach((k) => { recs[k].price = P(recs[k].key, recs[k].price); });
 const levels = L.map((o) => ({ label: o[1], pick: () => this.setState({ level: o[0], swap: s.swap + 1 }), bg: s.level === o[0] ? '#F6EFEF' : '#5B2A3C', fg: s.level === o[0] ? INK : '#F6EFEF', pressed: s.level === o[0] ? 'true' : 'false' }));
-const ST = [
-['Nghe bản mẫu', 'Bạn nghe Mây đàn trọn bài trước, để nắm tinh thần bài hát.'],
-['Chia nhỏ bài', 'Mình học từng phần một: dạo đầu, phiên khúc, rồi điệp khúc.'],
-['Tập từng tay', 'Tay phải đàn giai điệu. Tay trái đệm hợp âm. Mình tập riêng từng tay cho chắc.'],
-['Ghép hai tay', 'Mình ghép thật chậm từng đoạn, rồi tăng dần tốc độ.'],
-['Đàn cùng sheet', 'Mây đàn mẫu, sheet nhạc chạy theo từng dòng để bạn đàn cùng.']
-];
-const steps = ST.map((x, i) => ({ num: String(i + 1), title: x[0], pick: () => { this.manual = true; this.setState({ step: i, tick: s.tick + 1 }); }, bg: s.step === i ? INK : '#FFFFFF', fg: s.step === i ? '#FFFFFF' : INK, pressed: s.step === i ? 'true' : 'false', fill: s.step === i && !this.manual ? (s.tick % 2 ? 'fillA' : 'fillB') : 'none' }));
 const S = [
-{ step: '1', name: 'Piano Solo Căn Bản', desc: 'Đọc nốt, bấm hợp âm tay trái và ghép hai tay qua hơn 20 bản nhạc quen thuộc.', meta: '58 bài, 4 giờ 04 phút', price: '899.000đ', parts: [['Phần 1, 8 bài', 'Nốt nhạc cho khoá Sol tay phải'], ['Phần 2, 13 bài', 'Hợp âm tay trái và ghép hai tay'], ['Phần 3, 15 bài', 'Hợp âm 4, 5, 6 nốt trên những bài khó hơn'], ['Phần 4, 22 bài', 'Áp dụng vào 20 bản nhạc khác']] },
-{ step: '2', name: 'Piano Cover 40 Bài Nhạc Việt', desc: 'Đàn hai tay 40 bài từ nhạc xưa bất hủ tới hit mới, có đủ dạo đầu và nhiều kiểu đệm.', meta: '40 bài, 12 giờ 30 phút', price: '1.499.000đ', parts: [['Phần 1, 5 bài', 'Những bản nhạc xưa bất hủ'], ['Phần 2, 8 bài', 'Những bản nhạc trẻ bất hủ'], ['Phần 3, 8 bài', 'Những bản hit hiện đại'], ['Phần 4, 9 bài', 'Bài tự luyện, kèm sheet và video đàn mẫu'], ['Phần 5, 10 bài', 'Tặng kèm 10 bản nhạc hướng dẫn chi tiết']] },
-{ step: '3', name: 'Piano Solo Nâng Cao', desc: 'Tự soạn hợp âm, gạch nhịp và đệm nhiều điệu: ballad, valse, rumba, tango, bossanova.', meta: '110 bài, 18 giờ 08 phút', price: '2.000.000đ', parts: [['Phần 1', 'Hợp âm 7, maj7, add9, đảo bass, sus'], ['Phần 2', 'Kỹ thuật tay phải và 10 mẫu đệm tay trái'], ['Phần 3', 'Mẫu dạo đầu, câu nối và đoạn kết'], ['Phần 4', '10 bản nhạc hướng dẫn chi tiết'], ['Phần 5', 'Viết hợp âm và gạch nhịp cho một bản nhạc'], ['Phần 6', 'Bài tập bổ sung theo nhiều thể loại'], ['Phần 7', '22 bản nhạc Việt hay, hướng dẫn chi tiết']] }
+{ step: '1', key: 'solo-can-ban', name: 'Piano Solo Căn Bản', desc: 'Đọc nốt, bấm hợp âm tay trái và ghép hai tay qua hơn 20 bản nhạc quen thuộc.', meta: '58 bài, 4 giờ 04 phút', price: '899.000đ', parts: [['Phần 1, 8 bài', 'Nốt nhạc cho khoá Sol tay phải'], ['Phần 2, 13 bài', 'Hợp âm tay trái và ghép hai tay'], ['Phần 3, 15 bài', 'Hợp âm 4, 5, 6 nốt trên những bài khó hơn'], ['Phần 4, 22 bài', 'Áp dụng vào 20 bản nhạc khác']] },
+{ step: '2', key: 'cover-40', name: 'Piano Cover 40 Bài Nhạc Việt', desc: 'Đàn hai tay 40 bài từ nhạc xưa bất hủ tới hit mới, có đủ dạo đầu và nhiều kiểu đệm.', meta: '40 bài, 12 giờ 30 phút', price: '1.499.000đ', parts: [['Phần 1, 5 bài', 'Những bản nhạc xưa bất hủ'], ['Phần 2, 8 bài', 'Những bản nhạc trẻ bất hủ'], ['Phần 3, 8 bài', 'Những bản hit hiện đại'], ['Phần 4, 9 bài', 'Bài tự luyện, kèm sheet và video đàn mẫu'], ['Phần 5, 10 bài', 'Tặng kèm 10 bản nhạc hướng dẫn chi tiết']] },
+{ step: '3', key: 'solo-nang-cao', name: 'Piano Solo Nâng Cao', desc: 'Tự soạn hợp âm, gạch nhịp và đệm nhiều điệu: ballad, valse, rumba, tango, bossanova.', meta: '110 bài, 18 giờ 08 phút', price: '2.000.000đ', parts: [['Phần 1', 'Hợp âm 7, maj7, add9, đảo bass, sus'], ['Phần 2', 'Kỹ thuật tay phải và 10 mẫu đệm tay trái'], ['Phần 3', 'Mẫu dạo đầu, câu nối và đoạn kết'], ['Phần 4', '10 bản nhạc hướng dẫn chi tiết'], ['Phần 5', 'Viết hợp âm và gạch nhịp cho một bản nhạc'], ['Phần 6', 'Bài tập bổ sung theo nhiều thể loại'], ['Phần 7', '22 bản nhạc Việt hay, hướng dẫn chi tiết']] }
 ];
 const CUR = {
 'Piano Solo Căn Bản': [
@@ -758,13 +1032,34 @@ Thánh Thánh Thánh~3:18
 Lạy Chiên Thiên Chúa~3:28
 Tổng kết, kinh nghiệm đệm đàn nhà thờ~2:08`]]
 };
-const mk = (name) => CUR[name].map((p) => { const ls = p[1].split('\n').map((x) => { const a = x.split('~'); return { n: a[0], d: a[1] || 'sheet' }; }); return { t: p[0], count: ls.length + ' bài', lessons: ls }; });
-const course = (x, key) => ({ ...x, parts: s.open === key ? mk(x.name) : [], open: s.open === key, btn: s.open === key ? 'Thu gọn danh sách bài' : 'Xem từng bài học', toggle: () => this.setState({ open: s.open === key ? '' : key }) });
+const low = (t) => t.normalize('NFC').toLowerCase();
+const hasSong = (line, song) => !!song && low(line.split('~')[0]).includes(low(song));
+const mk = (name, song) => CUR[name].map((p) => { const ls = p[1].split('\n').map((x) => { const a = x.split('~'); const h = hasSong(x, song); return { n: a[0], d: a[1] || 'sheet', hit: h, fw: h ? 600 : 'inherit', bg: h ? '#F7D9E1' : 'transparent', sh: h ? '-10px 0 0 #F7D9E1, 10px 0 0 #F7D9E1' : 'none' }; }); return { t: p[0], count: ls.length + ' bài', lessons: ls, hit: ls.some((l) => l.hit) }; });
+const KEYS = S.map((x, i) => ['s' + i, x.name]).concat([['d0', 'Đệm Hát Piano'], ['d1', 'Đệm Hát Thánh Ca']]);
+/* Where a song is taught: the first course on the path that has it, plus the names of any later ones. */
+const locate = (song) => { const has = KEYS.filter((k) => CUR[k[1]].some((p) => p[1].split('\n').some((x) => hasSong(x, song)))); return has.length ? { key: has[0][0], song, also: has.slice(1).map((k) => k[1]) } : null; };
+/* "Xem nội dung khóa học": go to the recommended course itself, with its lesson list open. */
+const seeRec = (e) => { const k = KEYS.find((x) => x[1] === recs[s.level].name); if (!k) return; if (e && e.preventDefault) e.preventDefault(); this.jump = k[0]; this.setState({ open: k[0], hit: null, only: false, tick: s.tick + 1 }); };
+const goSong = (song) => { const h = locate(song); if (!h) return; this.jump = h.key; this.setState({ hit: h, open: h.key, only: true }); };
+const course = (x, key) => {
+const open = s.open === key;
+const found = open && !!s.hit && s.hit.key === key;
+const all = open ? mk(x.name, found ? s.hit.song : '') : [];
+const mine = all.filter((p) => p.hit);
+const short = found && s.only && mine.length > 0;
+const where = found ? 'nằm ở ' + mine.map((p) => p.t.split(':')[0] + ', bài ' + p.lessons.map((l, i) => l.hit ? i + 1 : 0).filter(Boolean).join(' và ')).join('; ') + ' của khóa này.' + (s.hit.also.length ? ' Bài này còn có trong khóa ' + s.hit.also.join(' và ') + '.' : '') : '';
+return { ...x, parts: short ? mine.map((p) => ({ ...p, lessons: p.lessons.filter((l) => l.hit) })) : all, open, found, song: found ? s.hit.song : '', where,
+btn: short ? 'Xem cả khóa học' : open ? 'Thu gọn danh sách bài' : 'Xem từng bài học',
+toggle: () => this.setState(short ? { only: false } : open ? { open: '', hit: null } : { open: key, hit: null, only: false }),
+ref: (el) => { if (el && this.jump === key) { this.jump = null; /* A block still waiting to slide in sits 22px low; settle it first so the jump lands exactly. */ for (let n = el; n && n.tagName !== 'SECTION'; n = n.parentElement) if (n.getAnimations) n.getAnimations().forEach((x) => { try { x.finish(); } catch (_) {} }); const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' }); } } };
+};
+S.forEach((x) => { x.price = P(x.key, x.price); });
 const solo = S.map((x, i) => course(x, 's' + i));
 const DEM = [
-{ name: 'Đệm Hát Piano', desc: 'Vừa đàn vừa hát bài mình thích. Đi sâu vào điệu ballad và cách phối nhiều kiểu đệm trong một bài.', meta: '39 bài, 3 giờ 55 phút', price: '799.000đ' },
-{ name: 'Đệm Hát Thánh Ca', desc: 'Đệm cho từng phần thánh lễ, từ Nhập lễ tới Kết lễ, và trọn bộ lễ Seraphim.', meta: '37 bài, 3 giờ 54 phút', price: '799.000đ' }
+{ key: 'dem-hat', name: 'Đệm Hát Piano', desc: 'Vừa đàn vừa hát bài mình thích. Đi sâu vào điệu ballad và cách phối nhiều kiểu đệm trong một bài.', meta: '39 bài, 3 giờ 55 phút', price: '799.000đ' },
+{ key: 'thanh-ca', name: 'Đệm Hát Thánh Ca', desc: 'Đệm cho từng phần thánh lễ, từ Nhập lễ tới Kết lễ, và trọn bộ lễ Seraphim.', meta: '37 bài, 3 giờ 54 phút', price: '799.000đ' }
 ];
+DEM.forEach((x) => { x.price = P(x.key, x.price); });
 const FAQ = [
 ['Tôi chưa biết gì về nhạc, có học được không?', 'Được bạn nhé. Khóa Piano Solo Căn Bản bắt đầu từ tư thế ngồi đàn và cách xác định nốt trên phím. Bạn không cần biết đọc nốt trước.'],
 ['Tôi học bằng cách nào?', 'Bạn xem video theo từng bài, mỗi bài có sheet nhạc đi kèm. Có gì chưa rõ, bạn cứ hỏi trong nhóm Facebook, Mây và mọi người sẽ giúp.'],
@@ -789,15 +1084,14 @@ tc: ['Thánh ca', ['Bao La Tình Chúa', 'Chung Lời Tạ Ơn', 'Về Nơi Đâ
 const genres = Object.keys(G).map((k) => ({ label: G[k][0], pick: () => this.setState({ genre: k }), ...on(s.genre === k) }));
 const list = G[s.genre][1];
 return {
-accent, lastNote: s.note, whites, blacks, demo, notes, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
+regions, accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, levels, rec: recs[s.level], seeRec,
 swap: s.swap % 2 ? 'swapA' : 'swapB',
-steps, cur: { num: String(s.step + 1), title: ST[s.step][0], body: ST[s.step][1] }, stepSwap: s.tick % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
-songRowA: list.slice(0, 4).join('  ♪  ') + '  ♪  ',
-songRowB: list.slice(4).join('  ♪  ') + '  ♪  ',
+songsA: list.slice(0, 4).map((n) => ({ name: n, go: () => goSong(n) })),
+songsB: list.slice(4).map((n) => ({ name: n, go: () => goSong(n) })),
 chartAria: bai ? 'Biểu đồ số bài học của năm khóa' : 'Biểu đồ số giờ video của năm khóa',
 dem: DEM.map((x, i) => course(x, 'd' + i)),
-faqs, email: s.email, sent: s.sent, notSent: !s.sent,
+faqs, videos: s.videos, email: s.email, sent: s.sent, notSent: !s.sent,
 setEmail: (e) => this.setState({ email: e.target.value }),
 sendEmail: (e) => { e.preventDefault(); if (!s.email) return; if (window.MayPianoSend) window.MayPianoSend('subscribe', { email: s.email.trim() }); this.setState({ sent: true }); }
 };

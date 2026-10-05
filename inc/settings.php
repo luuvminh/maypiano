@@ -17,7 +17,7 @@ function maypiano_fields() {
 		'maypiano_paypal'       => array( 'PayPal', 'Tên PayPal.Me (ví dụ: maypiano) hoặc email PayPal. Để trống thì Mây gửi cách trả qua email.', '' ),
 		'maypiano_processing'   => array( 'Thời gian kích hoạt tài khoản học', 'Ví dụ: 24 giờ.', '24 giờ' ),
 		'maypiano_support'      => array( 'Cách liên hệ khi cần giúp', 'Hiện cho khách ở bước thanh toán. Ví dụ: Zalo 09xx hoặc một email.', '' ),
-		'maypiano_notify'       => array( 'Email nhận thông báo đơn mới', 'Để trống thì dùng email quản trị của site.', '' ),
+		'maypiano_notify'       => array( 'Email nhận thông báo đơn mới', 'Người nhận email này duyệt được đơn bằng một nút bấm. Nhiều email thì cách nhau bằng dấu phẩy. Để trống thì dùng email quản trị của site.', '' ),
 	);
 }
 
@@ -141,6 +141,9 @@ function maypiano_settings_page() {
 	}
 	if ( ! $has_lms ) {
 		echo '<div class="notice notice-warning"><p>Tutor LMS đang tắt. Đơn vẫn được ghi, nhưng học viên không tự được cấp quyền học.</p></div>';
+	}
+	foreach ( maypiano_curriculum_report() as $line ) {
+		echo '<div class="notice notice-info inline"><p>Nội dung khóa học đã dựng từ file. ' . esc_html( $line ) . '</p></div>';
 	}
 	echo '<form method="post" action="options.php">';
 	settings_fields( 'maypiano' );
