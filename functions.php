@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.4.10' );
+define( 'MAYPIANO_VERSION', '1.5.0' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -22,6 +22,7 @@ require get_theme_file_path( 'inc/mailpoet.php' );
 require get_theme_file_path( 'inc/videos.php' );
 require get_theme_file_path( 'inc/curriculum.php' );
 require get_theme_file_path( 'inc/bunny.php' );
+require get_theme_file_path( 'inc/course-page.php' );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );

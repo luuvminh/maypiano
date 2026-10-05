@@ -1,6 +1,14 @@
 {
  "course": "dem-hat-piano",
  "video_prefix": "Đệm Hát",
+ "intro": "Bạn muốn vừa đàn vừa hát bài mình thích? Khóa này Mây soạn riêng cho bạn, không cần biết solo trước. Mình đi sâu vào điệu ballad, rồi học cách phối nhiều kiểu đệm trong một bài.",
+ "gets": [
+  "Nắm 14 hợp âm căn bản và các điệu phổ biến",
+  "Phối nhiều kiểu đệm trong một bài",
+  "Tự đệm bài mới mà không cần giáo viên"
+ ],
+ "photo": "g04.jpg",
+ "photo_alt": "Mây ngồi bên đàn grand piano",
  "topics": [
   {
    "title": "Phần 1: Đệm hát và cấu tạo hợp âm căn",

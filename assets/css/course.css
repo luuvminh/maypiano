@@ -1,0 +1,66 @@
+/* The page of one course. Same ground, outlines, type and pills as the home page. */
+body.mp-app.single-courses .mp-page{padding:0}
+.mpc{display:block}
+.mpc section{padding:clamp(40px,6vw,88px) var(--mp-side)}
+.mpc h2{margin:0 0 12px;font-size:clamp(30px,3.6vw,48px)}
+.mpc p{margin:0}
+
+.mpc-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px 56px;align-items:center;padding-top:clamp(20px,3vw,48px)!important}
+.mpc-hero-text{display:flex;flex-direction:column;gap:18px;min-width:0}
+.mpc-eyebrow{font-weight:600;letter-spacing:.02em}
+body.mp-app .mpc-hero h1{margin:0;font-size:clamp(40px,6vw,84px);line-height:1.04;overflow-wrap:anywhere}
+.mpc-intro{max-width:32em;font-size:clamp(20px,1.6vw,23px)}
+.mpc-meta{font-size:18px}
+.mpc-photo{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px}
+
+.mpc-buy{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin-top:6px}
+.mpc-price{font-family:var(--mp-head);font-weight:700;font-size:clamp(30px,3vw,40px);line-height:1}
+body.mp-app a.mpc-btn{display:inline-flex;align-items:center;min-height:56px;box-sizing:border-box;padding:14px 30px;border-radius:999px;background:var(--mp-accent);color:#fff;font-weight:600;text-decoration:none;transition:transform .12s ease,filter .12s ease}
+body.mp-app a.mpc-btn:hover{color:#fff;filter:brightness(1.08)}
+a.mpc-btn:active{transform:scale(.96)}
+a.mpc-more{font-weight:600;padding:14px 4px}
+
+.mpc-gets{background:var(--mp-white)}
+.mpc-gets ul{list-style:none;margin:24px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.mpc-gets li{display:flex;gap:14px;align-items:flex-start;border:2px solid var(--mp-ink);border-radius:12px;padding:22px 24px;background:var(--mp-white);line-height:1.4}
+.mpc-gets svg{flex:none;margin-top:3px;color:var(--mp-accent)}
+
+.mpc-list{scroll-margin-top:12px}
+.mpc-lead{max-width:36em;margin-bottom:28px!important}
+.mpc-part{border-top:2px solid var(--mp-ink)}
+.mpc-part:last-of-type{border-bottom:2px solid var(--mp-ink)}
+.mpc-part summary{display:flex;flex-wrap:wrap;gap:6px 24px;align-items:baseline;justify-content:space-between;padding:22px 44px 22px 0;min-height:56px;box-sizing:border-box;cursor:pointer;list-style:none;position:relative}
+.mpc-part summary::-webkit-details-marker{display:none}
+.mpc-part summary::after{content:"+";position:absolute;right:4px;top:50%;transform:translateY(-52%);font-family:var(--mp-head);font-size:34px;line-height:1;transition:transform .25s ease}
+.mpc-part[open] summary::after{transform:translateY(-52%) rotate(45deg)}
+.mpc-part-name{font-family:var(--mp-head);font-weight:600;font-size:clamp(23px,2.3vw,30px);line-height:1.2}
+.mpc-part-meta{font-size:18px;white-space:nowrap}
+.mpc-part ol{list-style:none;margin:0 0 26px;padding:6px 22px;background:var(--mp-blush);border-radius:10px}
+.mpc-part li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-top:1px solid var(--mp-muted);font-size:19px;line-height:1.4}
+.mpc-part li:first-child{border-top:0}
+.mpc-no{flex:none;width:1.9em;font-variant-numeric:tabular-nums;font-weight:600;color:var(--mp-plum)}
+.mpc-name{flex:1 1 auto;min-width:0}
+body.mp-app a.mpc-name{font-weight:600;text-underline-offset:3px}
+.mpc-free{flex:none;font-size:15px;font-weight:600;background:var(--mp-pink);border-radius:999px;padding:2px 12px;white-space:nowrap}
+.mpc-len{flex:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mpc-lock{flex:none;align-self:center;display:inline-flex;color:var(--mp-plum);opacity:.7}
+
+.mpc-may{background:var(--mp-plum);color:var(--mp-blush);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:40px 56px;align-items:center}
+body.mp-app .mpc-may h2{color:var(--mp-blush);margin-bottom:18px}
+.mpc-may p+p{margin-top:16px}
+.mpc-may img{display:block;width:100%;max-width:440px;justify-self:center;aspect-ratio:4/5;object-fit:cover;object-position:40% 30%;border-radius:12px 12px 280px 280px}
+
+.mpc-end{text-align:left}
+.mpc-end p{max-width:34em}
+.mpc-end .mpc-buy{margin-top:26px}
+
+@media (max-width:600px){
+	.mpc-part summary{padding-right:38px}
+	.mpc-part ol{padding:4px 14px}
+	.mpc-part li{gap:10px;font-size:18px}
+	.mpc-no{width:1.6em}
+	.mpc-buy{gap:10px 16px}
+	body.mp-app a.mpc-btn{flex:1 1 auto;justify-content:center}
+}
+
+body.mp-app .screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
