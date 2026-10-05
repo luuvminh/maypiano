@@ -54,6 +54,9 @@ body.mp-app table{border-collapse:collapse}
 body.mp-app :is(.woocommerce table.shop_table,.tutor-table){border:2px solid var(--mp-ink);border-radius:14px;background:#fff}
 body.mp-app :is(.woocommerce table.shop_table th,.woocommerce table.shop_table td,.tutor-table th,.tutor-table td){border-color:var(--mp-muted)}
 
+body.mp-app :is(.woocommerce-MyAccount-content,.woocommerce-MyAccount-navigation,.woocommerce-order,.woocommerce form.login,.woocommerce form.register,.wc-block-components-sidebar){box-sizing:border-box;max-width:100%;width:100%;float:none}
+body.mp-app img{max-width:100%;height:auto}
+
 /* Tutor LMS */
 body.mp-app .tutor-color-primary{color:var(--mp-accent)}
 body.mp-app :is(.tutor-progress-bar .tutor-progress-value,.tutor-bg-primary){background:var(--mp-accent)}
