@@ -31,6 +31,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `single-courses.php`, `inc/course-page.php`, `assets/css/course.css`: trang của một khóa học, theo giao diện May Piano, thay cho trang của Tutor LMS. Các phần và bài lấy từ Tutor LMS; lời giới thiệu, ba điều học được và ảnh lấy từ file của khóa trong `data/` (`intro`, `gets`, `photo`). Nút mua dẫn về `/dang-ky/` với đúng khóa đó; học viên đã ghi danh thấy nút Vào học và bấm được từng bài.
 - `assets/css/lesson.css`: giao diện May Piano cho trang học bài của Tutor LMS (cột danh sách bài, khung video, nút Trước và Tiếp). Trang này luôn dùng nền sáng, kể cả khi máy học viên đặt chế độ tối.
 - `inc/enrol-by-hand.php`: mục **Ghi danh tay** ở Cài đặt > May Piano. Chủ site mở một khóa cho một người mà không cần đơn hàng; site tạo tài khoản nếu chưa có và hiện đường dẫn đặt mật khẩu để gửi cho họ.
+- `inc/qna.php`: Hỏi đáp trong khóa học. Tên hiện bên cạnh câu hỏi là họ tên của học viên, không phải tên đăng nhập hay email.
 - `inc/teacher.php`: tài khoản người dạy tên Mây, lấy email ở Cài đặt > May Piano; mọi khóa, phần và bài thuộc về tài khoản này.
 - `assets/css/app.css`: design system cho các trang đó. Màu, font và kiểu nút lấy từ `design/TrangChu.dc.html`.
 - `woocommerce.php`: khuôn cho các trang WooCommerce còn dùng.
