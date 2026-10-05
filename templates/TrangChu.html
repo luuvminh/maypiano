@@ -17,6 +17,7 @@ button{font-family:inherit;cursor:pointer}
 @keyframes fillA{from{width:0}to{width:100%}}
 @keyframes fillB{from{width:0}to{width:100%}}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
 @keyframes swing{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
 .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
 .lift{transition:transform .25s ease,box-shadow .25s ease}
@@ -70,9 +71,15 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </header>
 
-<div aria-hidden="true" style="position: relative; margin: clamp(36px, 5vw, 64px) 0 0; height: 190px">
+<div style="display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: clamp(36px, 5vw, 64px) 0 0; padding: 0 clamp(20px, 6vw, 96px)">
+<div aria-live="polite" style="display: inline-flex; align-items: center; gap: 12px; min-height: 46px; padding: 6px 20px; border: 2px solid #2B1E24; border-radius: 999px; background: #FFFFFF; font-size: 18px"><span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 3px; height: 18px"><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.9s ease-in-out 0s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.7s ease-in-out 0.2s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 1.1s ease-in-out 0.4s infinite; animation-play-state: {{np.run}}"></span></span><span>{{np.label}}<strong style="margin-left: .35em">{{np.song}}</strong></span></div>
+<span style="font-size: 18px">Mây đàn, trích từ <a href="https://www.youtube.com/watch?v=d95HrWkox20">Những Bản Tình Ca Mùa Thu</a></span>
+</div>
+<div aria-hidden="true" style="position: relative; margin: 14px 0 0; height: 190px">
+<div style="position: absolute; left: 0; right: 0; top: 26px; height: 138px; background: linear-gradient(90deg, transparent, #E9B9C6 30%, #E9B9C6 70%, transparent); opacity: .28"></div>
+<div style="position: absolute; left: calc(clamp(190px, 30vw, 400px) - 22px); top: 34px; width: 44px; height: 122px; border-radius: 22px; background: {{accent}}; opacity: .16"></div>
 <div style="position: absolute; left: 0; right: 0; top: 54px; height: 82px; background: repeating-linear-gradient(180deg, #2B1E24 0 2px, transparent 2px 20px)"></div>
-<div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px)); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px))">
+<div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%)">
 <div ref="{{stripRef}}" style="position: absolute; left: clamp(190px, 30vw, 400px); top: 14px; width: 1px; height: 160px; will-change: transform">
 <sc-for list="{{barLines}}" as="b" hint-placeholder-count="4">
 <div style="position: absolute; left: {{b.x}}; top: 40px; width: {{b.w}}; height: 82px; background: #2B1E24"></div>
@@ -92,9 +99,9 @@ button{font-family:inherit;cursor:pointer}
 <div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-bottom: 18px">
 <div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2">Bạn bấm thử một phím nhé</h2>
-<p style="margin: 4px 0 0">Nốt đang vang: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
+<p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
 <sc-if value="{{locked}}" hint-placeholder-val="{{ false }}">
-<p style="margin: 2px 0 0; font-size: 18px; color: {{accent}}">Bạn chạm vào trang một lần để nghe tiếng đàn nhé.</p>
+<p style="margin: 2px 0 0; font-size: 18px; color: {{accent}}">Bạn chạm vào trang một lần để nghe nhạc nhé.</p>
 </sc-if>
 </div>
 <button type="button" class="press" aria-pressed="{{mute.pressed}}" onClick="{{toggleMute}}" style="border: 2px solid #2B1E24; border-radius: 999px; padding: 8px 20px; min-height: 50px; font-size: 18px; font-weight: 600; background: {{mute.bg}}; color: {{mute.fg}}; display: flex; gap: 10px; align-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"></path><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" style="opacity: {{mute.wave}}"></path><path d="M16 9.5l5 5M21 9.5l-5 5" style="opacity: {{mute.cross}}"></path></svg>{{mute.label}}</button>
@@ -348,9 +355,10 @@ button{font-family:inherit;cursor:pointer}
 class Component extends DCLogic {
 constructor(props) {
 super(props);
-let muted = true; try { muted = localStorage.getItem('mp-mute') !== '0'; } catch (e) {}
-this.state = { note: 'chưa bấm', muted, locked: true, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
+let muted = false; try { muted = localStorage.getItem('mp-nhac') === '0'; } catch (e) {}
+this.state = { note: 'chưa bấm', muted, locked: true, song: '', live: false, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
 this.timers = [];
+this.SONGS = ['Trái Tim Mùa Thu', 'Hẹn Ước Xin Khuất Lời', 'Autumn Leaves', 'Tình Lỡ Cách Xa', 'Lãng Quên Chiều Thu', 'Đôi Bờ', 'Jardin Secret', 'Luân Vũ Ngày Mưa', 'Ánh Trăng Nói Hộ Lòng Tôi', 'Kỷ Niệm Nào Vội Quên', 'Hẹn Ước Bồ Công Anh', 'Cry On My Shoulder', 'The Winner Takes It All', '10 Ngàn Năm'];
 this.NAME = ['Đô', 'Đô thăng', 'Rê', 'Rê thăng', 'Mi', 'Fa', 'Fa thăng', 'Son', 'Son thăng', 'La', 'La thăng', 'Si'];
 this.stripRef = (el) => { this.strip = el; };
 this.score();
@@ -364,15 +372,16 @@ this.io.observe(el);
 }
 componentDidMount() {
 if (!this.io && !this.counted) this.runCount();
-this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().catch(() => {}); };
-this.onVis = () => { if (document.hidden) this.stopAuto(); else if (this.inView) this.startAuto(); };
-['pointerdown', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
+this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().catch(() => {}); if (this.bg && this.bg.paused) this.playBg(); };
+this.onVis = () => { if (document.hidden) { this.stopAuto(); if (this.bg) this.bg.pause(); } else { if (this.inView) this.startAuto(); this.playBg(); } };
+['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
 document.addEventListener('visibilitychange', this.onVis);
-this.inView = true; this.loadPiano(); if (!document.hidden) this.startAuto();
+this.inView = true; this.loadPiano(); this.music(); this.playBg(); if (!document.hidden) this.startAuto();
 }
 componentWillUnmount() {
 this.stopAuto(); clearTimeout(this.backT);
-['pointerdown', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
+['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
+if (this.bg) { this.bg.pause(); this.bg.removeAttribute('src'); }
 document.removeEventListener('visibilitychange', this.onVis);
 clearInterval(this.dbgT);
 if (this.ctx) this.ctx.close();
@@ -422,6 +431,30 @@ c.onstatechange = sync; sync();
 } catch (e) { this.ctx = null; }
 return this.ctx;
 }
+/* Background music: the opening of one of Mây's own recordings, picked at random for each visit and kept quiet. When one ends, another follows. */
+music() {
+if (this.bg || typeof Audio === 'undefined') return;
+const a = this.bg = new Audio(); a.preload = 'auto';
+const c = this.audio();
+try { const src = c.createMediaElementSource(a); this.bgGain = c.createGain(); this.bgGain.gain.value = 0.22; src.connect(this.bgGain); this.bgGain.connect(this.out); } catch (e) { this.bgGain = null; a.volume = 0.22; }
+a.addEventListener('playing', () => this.setState({ live: true }));
+a.addEventListener('pause', () => this.setState({ live: false }));
+a.addEventListener('ended', () => { this.nextSong(); this.playBg(); });
+this.nextSong();
+}
+nextSong() {
+let i; do { i = Math.floor(Math.random() * this.SONGS.length); } while (i === this.songI);
+this.songI = i;
+this.bg.src = '%%THEME%%/assets/audio/' + 'nen/' + String(101 + i).slice(1) + '.mp3';
+this.setState({ song: this.SONGS[i], live: false });
+}
+playBg() {
+if (!this.bg || this.state.muted || document.hidden) return;
+const p = this.bg.play(); if (p && p.catch) p.catch(() => {});
+}
+bgVol(v) {
+if (this.bgGain && this.ctx) this.bgGain.gain.setTargetAtTime(v, this.ctx.currentTime, 0.25); else if (this.bg) this.bg.volume = v;
+}
 loadPiano() {
 if (this.buf) return;
 this.buf = {};
@@ -449,24 +482,25 @@ paint() {
 if (!this.keyCss) { this.keyCss = document.createElement('style'); document.head.appendChild(this.keyCss); }
 const acc = this.props.accent || '#C2456B', L = this.lit || {};
 const key = (m) => m == null ? '' : '[data-k="' + m + '"]{background:' + (this.NAME[m % 12].length > 3 ? acc : '#E9B9C6') + '!important}';
-this.keyCss.textContent = key(L.a) + key(L.b) + (L.n == null ? '' : '[data-n="' + L.n + '"]{color:' + acc + '!important}');
+this.keyCss.textContent = key(L.a) + key(L.b) + (L.n == null ? '' : '[data-n="' + L.n + '"]{color:' + acc + '!important;filter:drop-shadow(0 0 7px ' + acc + ')}');
 }
 light(slot, m) {
 this.lit = Object.assign({}, this.lit, { [slot]: m });
 if (slot === 'a') { const name = this.NAME[m % 12]; this.state.note = name; if (this.noteEl) this.noteEl.textContent = name; }
 this.paint();
 }
-/* A key the visitor presses: the Canon steps aside, and comes back after eight quiet seconds. */
+/* A key the visitor presses: the staff stops and the music drops back, and both return after eight quiet seconds. */
 press(m) {
 this.stopAuto(); this.pos = 0; this.held = true;
 clearTimeout(this.backT);
-this.backT = setTimeout(() => { this.held = false; if (this.inView && !document.hidden) this.startAuto(); }, 8000);
+this.bgVol(0.07);
+this.backT = setTimeout(() => { this.held = false; this.lit = {}; this.paint(); this.bgVol(0.22); if (this.inView && !document.hidden) this.startAuto(); }, 8000);
 this.loadPiano();
 const c = this.audio();
 if (c && c.state !== 'running') c.resume().then(() => this.tone(m, 0.85, 2.4)).catch(() => {}); else this.tone(m, 0.85, 2.4);
 this.lit = { a: m }; this.light('a', m);
 }
-/* Pachelbel's Canon, in C: long notes, then eighths, then sixteenths, over a rolling left hand. The same notes are drawn on the staff. */
+/* The notes drawn on the staff (the Canon figure: long notes, then eighths, then sixteenths). They scroll silently as decoration; the sound is Mây's recording. */
 score() {
 const M = [60, 62, 64, 65, 67, 69, 71, 72, 74, 76];
 const LH = [[48, 55, 60], [43, 50, 55], [45, 52, 57], [40, 47, 52], [41, 48, 53], [48, 55, 60], [41, 48, 53], [43, 50, 55]];
@@ -519,8 +553,7 @@ const step = () => {
 const now = performance.now() - this.t0;
 while (i < this.ev.length && this.ev[i].t <= now + 6) {
 const e = this.ev[i++];
-this.tone(e.m, e.v, e.h);
-if (e.n != null) { this.lit = Object.assign({}, this.lit, { n: e.n }); this.light('a', e.m); } else if (e.lh && e.m >= 48) this.light('b', e.m);
+if (e.n != null) { this.lit = { n: e.n }; this.paint(); }
 }
 if (i >= this.ev.length) { this.seqT = setTimeout(() => { this.t0 = performance.now(); if (this.anim) this.anim.currentTime = 0; i = 0; step(); }, Math.max(0, this.total - now)); return; }
 this.seqT = setTimeout(step, Math.max(0, this.ev[i].t - now));
@@ -536,9 +569,10 @@ this.pos = (performance.now() - this.t0) % this.total;
 }
 toggleMute() {
 const muted = !this.state.muted;
-try { localStorage.setItem('mp-mute', muted ? '1' : '0'); } catch (e) {}
+try { localStorage.setItem('mp-nhac', muted ? '0' : '1'); } catch (e) {}
 const c = this.audio();
 if (c) { this.out.gain.setTargetAtTime(muted ? 0 : 1, c.currentTime, 0.03); if (!muted && c.state !== 'running') c.resume().catch(() => {}); }
+if (this.bg) { if (muted) this.bg.pause(); else { const p = this.bg.play(); if (p && p.catch) p.catch(() => {}); } }
 this.setState({ muted });
 }
 renderVals() {
@@ -553,8 +587,9 @@ if (name.length > 3) blacks.push({ id: m, left: (whites.length * 100 / 17 - 1.8)
 else whites.push({ id: m, n: name, aria: 'Phím ' + name, play: () => this.press(m) });
 }
 const mute = s.muted
-? { pressed: 'true', bg: INK, fg: '#FFFFFF', label: 'Bật tiếng', wave: 0, cross: 1 }
-: { pressed: 'false', bg: 'transparent', fg: INK, label: 'Tắt tiếng', wave: 1, cross: 0 };
+? { pressed: 'true', bg: INK, fg: '#FFFFFF', label: 'Bật nhạc', wave: 0, cross: 1 }
+: { pressed: 'false', bg: 'transparent', fg: INK, label: 'Tắt nhạc', wave: 1, cross: 0 };
+const np = s.muted ? { label: 'Nhạc đang tắt', song: '', run: 'paused' } : { label: s.live ? 'Đang phát:' : 'Sắp phát:', song: s.song, run: s.live ? 'running' : 'paused' };
 const px = (v) => v.toFixed(1) + 'px';
 const barLines = this.bars.map((b) => ({ x: px(b.x), w: px(b.w) }));
 const beamLines = this.beams.map((b) => ({ x: px(b.x), y: px(b.y), w: px(b.w), a: b.a.toFixed(2) + 'deg' }));
@@ -920,7 +955,7 @@ tc: ['Thánh ca', ['Bao La Tình Chúa', 'Chung Lời Tạ Ơn', 'Về Nơi Đâ
 const genres = Object.keys(G).map((k) => ({ label: G[k][0], pick: () => this.setState({ genre: k }), ...on(s.genre === k) }));
 const list = G[s.genre][1];
 return {
-accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), locked: s.locked && !s.muted, stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
+accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
 swap: s.swap % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
 songsA: list.slice(0, 4).map((n) => ({ name: n, go: () => goSong(n) })),
