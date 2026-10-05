@@ -173,5 +173,7 @@ function maypiano_settings_page() {
 	}
 	echo '</table>';
 	submit_button();
-	echo '</form></div>';
+	echo '</form>';
+	maypiano_fx_settings_section();
+	echo '</div>';
 }
