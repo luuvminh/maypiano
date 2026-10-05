@@ -14,12 +14,29 @@ function maypiano_notify_address() {
 
 /** Sends one HTML email in the site's look. $body is trusted HTML built by the callers below. */
 function maypiano_mail( $to, $subject, $body ) {
-	$html = '<div style="background:#F6EFEF;padding:24px 12px;font-family:Georgia,\'Times New Roman\',serif;color:#2B1E24;font-size:17px;line-height:1.6">'
+	return wp_mail( $to, $subject, maypiano_mail_wrap( $body ), maypiano_mail_headers() );
+}
+
+/**
+ * Sent as "Mây Piano" from the address set in WooCommerce > Settings > Emails, so the order emails
+ * and WooCommerce's own share one sender. Without this WordPress signs them "WordPress <wordpress@…>".
+ */
+function maypiano_mail_headers() {
+	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+	$from    = get_option( 'woocommerce_email_from_address', '' );
+	if ( is_email( $from ) ) {
+		$headers[] = 'From: Mây Piano <' . $from . '>';
+		$headers[] = 'Reply-To: Mây Piano <' . $from . '>';
+	}
+	return $headers;
+}
+
+function maypiano_mail_wrap( $body ) {
+	return '<div style="background:#F6EFEF;padding:24px 12px;font-family:Georgia,\'Times New Roman\',serif;color:#2B1E24;font-size:17px;line-height:1.6">'
 		. '<div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:2px solid #2B1E24;border-radius:14px;padding:28px">'
 		. '<div style="font-size:24px;font-weight:bold;margin-bottom:16px">Mây Piano</div>'
 		. $body
 		. '</div></div>';
-	return wp_mail( $to, $subject, $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
 }
 
 function maypiano_mail_button( $url, $label ) {
@@ -166,3 +183,33 @@ function maypiano_mail_owner_access_problem( $order, $missing ) {
 		. '<p style="font-size:15px"><a href="' . esc_url( $order->get_edit_order_url() ) . '" style="color:#8A3350">Mở đơn trong WooCommerce</a></p>';
 	return maypiano_mail( maypiano_notify_address(), maypiano_mail_owner_subject( $order, 'CHƯA MỞ ĐƯỢC KHÓA' ), $body );
 }
+
+/** To the customer, when money goes back. */
+function maypiano_mail_refunded( $order, $amount, $full ) {
+	$code = maypiano_order_code( $order );
+	$sum  = maypiano_money( $amount, $order->get_currency() );
+	$body = '<p>Chào ' . esc_html( $order->get_billing_first_name() ) . ',</p>'
+		. '<p>Mây đã hoàn <strong>' . esc_html( $sum ) . '</strong> cho đơn <strong>' . esc_html( $code ) . '</strong>, theo đúng cách bạn đã trả.</p>'
+		. maypiano_mail_lines( $order );
+	if ( $full ) {
+		$body .= '<p>Khóa học của đơn này đã đóng. Khi nào bạn muốn học lại, Mây luôn chào đón bạn.</p>';
+	}
+	$body .= '<p>Vài ngày nữa mà bạn chưa thấy tiền về, bạn báo để Mây kiểm tra nhé.</p>' . maypiano_mail_support();
+	return maypiano_mail( $order->get_billing_email(), 'Mây đã hoàn tiền đơn ' . $code, $body );
+}
+
+add_action( 'woocommerce_order_refunded', function ( $order_id, $refund_id ) {
+	$order  = wc_get_order( $order_id );
+	$refund = wc_get_order( $refund_id );
+	if ( ! maypiano_is_ours( $order ) || ! $refund || $order->get_meta( '_mp_test' ) ) {
+		return;
+	}
+	maypiano_mail_refunded( $order, (float) $refund->get_amount(), (float) $order->get_remaining_refund_amount() <= 0 );
+}, 20, 2 );
+
+foreach ( array( 'customer_refunded_order', 'customer_partially_refunded_order' ) as $maypiano_email_id ) {
+	add_filter( 'woocommerce_email_enabled_' . $maypiano_email_id, function ( $enabled, $order = null ) {
+		return maypiano_is_ours( $order ) ? false : $enabled;
+	}, 20, 2 );
+}
+unset( $maypiano_email_id );
