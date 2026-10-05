@@ -65,3 +65,51 @@ body.mp-app .mpc-may h2{color:var(--mp-blush);margin-bottom:18px}
 body.mp-app .screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 body.mp-app ::selection{background:var(--mp-pink);color:var(--mp-ink)}
+
+/* ====== Refinement pass (1.7.0): tighter display type, a plain checklist instead of three boxes, lesson rows you press ====== */
+body.mp-app{--mp-hair:rgba(43,30,36,.16);--mp-ease:cubic-bezier(.22,1,.36,1)}
+body.mp-app .mpc-hero h1{letter-spacing:-.025em;text-wrap:balance}
+.mpc h2{letter-spacing:-.018em;text-wrap:balance}
+.mpc p{text-wrap:pretty}
+.mpc-photo{border-radius:20px}
+.mpc-meta{color:var(--mp-plum);font-variant-numeric:tabular-nums}
+body.mp-app a.mpc-btn{transition:transform .1s ease-out,filter .15s ease}
+body.mp-app a.mpc-btn:active{transform:scale(.97)}
+body.mp-app a.mpc-more{text-underline-offset:5px;text-decoration-thickness:1.5px}
+
+.mpc-gets ul{gap:0 40px;margin-top:20px;border-top:2px solid var(--mp-ink)}
+.mpc-gets li{border:0;border-bottom:1px solid var(--mp-hair);border-radius:0;padding:20px 0;background:transparent;font-size:clamp(20px,1.7vw,23px);line-height:1.35}
+.mpc-gets svg{margin-top:4px}
+
+.mpc-part summary{transition:color .15s ease}
+.mpc-part summary::after{transition:transform .35s var(--mp-ease)}
+@media (hover:hover){.mpc-part summary:hover{color:var(--mp-accent)}}
+.mpc-part-meta{color:var(--mp-plum);font-variant-numeric:tabular-nums}
+.mpc-part ol{padding:4px 8px;border-radius:16px}
+.mpc-part li{position:relative;padding:14px 14px;border-top:1px solid var(--mp-hair);border-radius:10px;transition:background-color .15s ease}
+.mpc-len{color:var(--mp-plum)}
+/* A lesson the visitor may open: the whole row is the link, with a small arrow instead of an underline */
+body.mp-app a.mpc-name{text-decoration:none;padding:0;margin:0}
+a.mpc-name::before{content:"";position:absolute;inset:0;border-radius:10px}
+.mpc-part li:has(a.mpc-name)::after{content:"";flex:none;align-self:center;width:8px;height:8px;border-right:2px solid var(--mp-ink);border-top:2px solid var(--mp-ink);transform:rotate(45deg);margin-left:2px;transition:transform .2s var(--mp-ease)}
+@media (hover:hover){
+	.mpc-part li:has(a.mpc-name):hover{background:var(--mp-white)}
+	.mpc-part li:has(a.mpc-name):hover::after{transform:translateX(3px) rotate(45deg)}
+	body.mp-app .mpc-part li:has(a.mpc-name):hover a.mpc-name{color:var(--mp-ink)}
+}
+.mpc-part li:has(a.mpc-name):active{background:var(--mp-pink)}
+body.mp-app a.mpc-name:focus-visible{outline:0}
+.mpc-part li:has(a.mpc-name:focus-visible){outline:3px solid var(--mp-ink);outline-offset:-3px}
+@supports (interpolate-size:allow-keywords){
+	body.mp-app{interpolate-size:allow-keywords}
+	.mpc-part::details-content{block-size:0;overflow:clip;transition:block-size .4s var(--mp-ease),content-visibility .4s allow-discrete}
+	.mpc-part[open]::details-content{block-size:auto}
+}
+.mpc-may h2+p{font-size:clamp(20px,1.6vw,22px)}
+@media (max-width:600px){
+	.mpc-part ol{padding:2px 4px}
+	.mpc-part li{padding:13px 10px}
+	.mpc-gets li{padding:16px 0}
+}
+@media (prefers-reduced-motion:reduce){.mpc-part::details-content{transition:none}}
+@media (prefers-contrast:more){body.mp-app{--mp-hair:var(--mp-ink)}}

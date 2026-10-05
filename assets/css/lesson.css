@@ -251,3 +251,96 @@ body.mp-app .mp-qna-more{display:flex;flex-wrap:wrap;gap:0 24px;margin:14px 0 0;
 	body.mp-app .mp-qna-box-body{padding:14px 14px 16px}
 	body.mp-app button.mp-qna-send{width:100%}
 }
+
+/* ====================================================================================================================
+   Refinement pass (1.7.0). Same May Piano look; quieter chrome, one gutter, one row of controls, and the lesson named
+   where the learner is looking. Bars are a frosted layer the page scrolls under; cards keep the ink outline.
+   ==================================================================================================================== */
+body.mp-app{--mp-hair:rgba(43,30,36,.16);--mp-ease:cubic-bezier(.22,1,.36,1);--mp-glass:rgba(227,215,215,.8)}
+
+/* Top bar: always says which course this is; the lesson's own name sits under the video */
+body.mp-app .tutor-learning-header{background:var(--mp-glass)!important;-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid var(--mp-hair)!important}
+body.mp-app .tutor-learning-header :is(.tutor-learning-header-inner,.tutor-learning-header-content){background:transparent!important}
+body.mp-app .tutor-learning-header-title{letter-spacing:-.01em;text-wrap:balance}
+body.mp-app .tutor-learning-header-title>.tutor-md-hidden{display:inline!important}
+body.mp-app .tutor-learning-header-title>.tutor-md-inline{display:none!important}
+body.mp-app .tutor-learning-header-back{border:0!important}
+body.mp-app .tutor-learning-area .tutor-btn-icon{transition:transform .1s ease-out,background-color .15s ease}
+
+/* The lesson's name and where it sits in the course */
+body.mp-app .mp-lesson-head{margin:22px 0 4px}
+body.mp-app .mp-lesson-head h1{margin:0;font-family:var(--mp-head)!important;font-weight:600;font-size:clamp(28px,3.1vw,40px);line-height:1.12;letter-spacing:-.02em;color:var(--mp-ink);text-wrap:balance}
+body.mp-app .mp-lesson-meta{margin:8px 0 0;font-size:17px;line-height:1.4;color:var(--mp-plum)}
+body.mp-app .mp-lesson-meta .mp-len{font-variant-numeric:tabular-nums;white-space:nowrap}
+body.mp-app .mp-lesson-meta span+.mp-len::before{content:"·";margin:0 8px}
+
+/* Video: the one dark object on the page */
+body.mp-app .tutor-lesson-video-wrapper{border-radius:16px}
+
+/* Buttons answer the press at once */
+body.mp-app .tutor-learning-area :is(.tutor-btn,.tutor-mark-as-complete-button,.mp-qna-send,.mp-qna-tab){transition:transform .1s ease-out,background-color .15s ease,filter .15s ease}
+body.mp-app .tutor-learning-area :is(.tutor-btn,.tutor-mark-as-complete-button,.mp-qna-send,.mp-qna-tab):active{transform:scale(.97)}
+body.mp-app .tutor-mark-as-complete-button.completed:active{transform:none}
+@media (hover:hover){
+	body.mp-app .tutor-learning-area-footer .tutor-btn:first-child:hover{background:var(--mp-blush)}
+	body.mp-app .tutor-learning-area-footer .tutor-btn:last-child:hover,body.mp-app .tutor-mark-as-complete-button:not(.completed):hover{filter:brightness(1.07)}
+}
+
+/* The list of lessons: calmer rows, clear current lesson, a themed scrollbar */
+body.mp-app .tutor-learning-sidebar-curriculum{border-radius:16px}
+body.mp-app .tutor-learning-nav{scrollbar-width:thin;scrollbar-color:var(--mp-muted) transparent}
+body.mp-app .tutor-learning-nav-item{transition:background-color .15s ease;padding-block:9px}
+body.mp-app .tutor-learning-nav-item:active{background:#F7D9E1}
+body.mp-app .tutor-learning-nav-item.active{background:#F7D9E1}
+body.mp-app .tutor-learning-nav-item .tutor-tiny-2{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+body.mp-app .tutor-learning-nav-item svg{color:var(--mp-plum)}
+body.mp-app .tutor-learning-nav-item.active svg{color:var(--mp-accent)}
+
+/* Questions under the video: opens smoothly; the answer is a soft panel, not a striped one */
+body.mp-app .mp-qna-box{border-radius:16px;scroll-margin-top:84px}
+body.mp-app .mp-qna-box>summary{border-radius:14px;transition:background-color .15s ease}
+body.mp-app .mp-qna-box[open]>summary{border-bottom:1px solid var(--mp-hair);border-radius:14px 14px 0 0}
+body.mp-app .mp-qna-box-arrow{transition:transform .3s var(--mp-ease)}
+body.mp-app .mp-qna-item{border-top:1px solid var(--mp-hair)}
+body.mp-app .mp-qna-answer{margin:12px 0 0 clamp(12px,3vw,28px);padding:14px 18px;border:0;border-radius:14px;background:var(--mp-blush)}
+body.mp-app .mp-qna-more{border-top:1px solid var(--mp-hair)}
+body.mp-app .mp-qna-ask textarea{transition:background-color .15s ease}
+@supports (interpolate-size:allow-keywords){
+	body.mp-app{interpolate-size:allow-keywords}
+	body.mp-app .mp-qna-box::details-content{block-size:0;overflow:clip;transition:block-size .38s var(--mp-ease),content-visibility .38s allow-discrete}
+	body.mp-app .mp-qna-box[open]::details-content{block-size:auto}
+}
+
+/* Questions page: one card, rows inside it, no card inside a card */
+body.mp-app .tutor-learning-area-qna{border:2px solid var(--mp-ink);border-radius:16px;overflow:hidden}
+body.mp-app .tutor-learning-area-qna :is(.tutor-border-b,.tutor-border-t){border-color:var(--mp-hair)!important}
+body.mp-app .tutor-discussion-card-wrapper{gap:0!important;padding-block:0!important}
+body.mp-app .tutor-learning-area-qna .tutor-discussion-card{border:0;border-top:1px solid var(--mp-hair);border-radius:0;padding:18px 0 12px;background:transparent}
+body.mp-app .tutor-learning-area-qna .tutor-discussion-card:first-child{border-top:0}
+body.mp-app .tutor-discussion-card-title{font-size:19px;line-height:1.4}
+body.mp-app .tutor-learning-area-qna .tutor-discussion-card .tutor-card{border-width:1px;border-color:var(--mp-hair);background:var(--mp-blush)}
+@media (max-width:576px){body.mp-app .tutor-learning-area-qna .tutor-discussion-card{padding-inline:16px}}
+
+/* Tablets held upright: no empty band above the video */
+@media (min-width:768px) and (max-width:991.98px){body.mp-app .tutor-learning-area .tutor-learning-area-content{padding-top:20px!important}}
+
+/* Phones: the video runs edge to edge, everything else shares one 16px gutter, and the controls are one row */
+@media (max-width:576px){
+	body.mp-app .tutor-learning-area .tutor-learning-area-content{padding-top:0!important}
+	body.mp-app .tutor-learning-area .tutor-learning-area-container{padding:0 16px 16px!important}
+	body.mp-app .tutor-lesson-video-wrapper{margin-inline:-16px!important;border:0!important;border-radius:0}
+	body.mp-app .mp-lesson-head{margin-top:18px}
+	body.mp-app .mp-qna-box{margin-top:20px}
+	body.mp-app .tutor-learning-area-footer{display:flex!important;flex-wrap:nowrap;align-items:center;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom))!important;background:var(--mp-glass)!important;-webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);border-top:1px solid var(--mp-hair)!important}
+	body.mp-app .tutor-learning-area-footer form{flex:1 1 auto;min-width:0;justify-content:center;gap:0 12px}
+	body.mp-app .tutor-learning-area-footer form .tutor-mark-as-complete-button{flex:1 1 auto;min-height:52px;padding-inline:12px!important}
+	body.mp-app .tutor-learning-area .tutor-learning-area-footer>a.tutor-btn:not(.tutor-btn-icon){flex:none;width:52px;min-width:52px;height:52px;min-height:52px!important;padding:0!important;font-size:0!important;gap:0;justify-content:center;margin:0!important}
+	body.mp-app .tutor-learning-area-footer>a.tutor-btn svg{width:24px;height:24px}
+	body.mp-app .tutor-learning-area-footer>a.tutor-btn svg path{stroke-width:2}
+	body.mp-app .tutor-learning-sidebar{padding-bottom:112px!important}
+}
+
+/* People who ask for less motion, less see-through, or more contrast */
+@media (prefers-reduced-motion:reduce){body.mp-app .mp-qna-box::details-content{transition:none}}
+@media (prefers-reduced-transparency:reduce){body.mp-app :is(.tutor-learning-header,.tutor-learning-area-footer){background:var(--mp-bg)!important;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@media (prefers-contrast:more){body.mp-app{--mp-hair:var(--mp-ink)}body.mp-app :is(.tutor-learning-header,.tutor-learning-area-footer){background:var(--mp-bg)!important}}

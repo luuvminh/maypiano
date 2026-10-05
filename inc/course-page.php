@@ -186,3 +186,39 @@ function maypiano_my_courses() {
 add_filter( 'private_title_format', function ( $format, $post = null ) {
 	return ( $post && in_array( get_post_type( $post ), array( 'courses', 'topics', 'lesson' ), true ) && ! is_admin() ) ? '%s' : $format;
 }, 10, 2 );
+
+/*
+ * The lesson page names the lesson right under the video, with the part it belongs to and how long it runs.
+ * The top bar keeps the course's name on every screen size.
+ */
+add_action( 'tutor_load_template_before', function ( $template ) {
+	if ( 'learning-area.lesson.footer' !== $template || ! is_singular( 'lesson' ) ) {
+		return;
+	}
+	$lesson = (int) get_queried_object_id();
+	$part   = (int) wp_get_post_parent_id( $lesson );
+	$video  = get_post_meta( $lesson, '_video', true );
+	$run    = is_array( $video ) && isset( $video['runtime'] ) ? (array) $video['runtime'] : array();
+	$secs   = 3600 * (int) ( $run['hours'] ?? 0 ) + 60 * (int) ( $run['minutes'] ?? 0 ) + (int) ( $run['seconds'] ?? 0 );
+	$where  = $part && 'topics' === get_post_type( $part ) ? get_the_title( $part ) : '';
+	echo '<div class="mp-lesson-head"><h1>' . esc_html( get_the_title( $lesson ) ) . '</h1>';
+	if ( '' !== $where || $secs ) {
+		echo '<p class="mp-lesson-meta">' . ( '' !== $where ? '<span>' . esc_html( $where ) . '</span>' : '' ) . ( $secs ? '<span class="mp-len">' . esc_html( sprintf( '%d:%02d', intdiv( $secs, 60 ), $secs % 60 ) ) . '</span>' : '' ) . '</p>';
+	}
+	echo '</div>';
+}, 5, 1 );
+
+/** In the list of lessons, a length reads "8:40" as on the course page, not "Video - 00:08:40 phút". */
+add_action( 'wp_footer', function () {
+	if ( ! maypiano_chrome_needed() ) {
+		return;
+	}
+	?>
+<script>
+document.querySelectorAll('.tutor-learning-nav-item .tutor-tiny-2').forEach(function (el) {
+	var m = el.textContent.match(/(\d+):(\d\d):(\d\d)/);
+	if (m) { el.textContent = (60 * (+m[1]) + (+m[2])) + ':' + m[3]; }
+});
+</script>
+	<?php
+}, 98 );
