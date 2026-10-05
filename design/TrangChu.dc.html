@@ -239,7 +239,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}<sc-if value="{{l.url}}"><span aria-hidden="true" style="display: inline-block; margin-left: 10px; color: {{accent}}; font-weight: 700">›</span></sc-if></span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -266,7 +266,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}<sc-if value="{{l.url}}"><span aria-hidden="true" style="display: inline-block; margin-left: 10px; color: {{accent}}; font-weight: 700">›</span></sc-if></span></div>
 </sc-for>
 </div>
 </sc-for>
