@@ -194,6 +194,11 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <button type="button" class="press" aria-pressed="{{o.pressed}}" onClick="{{o.pick}}" style="border: 2px solid #F6EFEF; border-radius: 999px; padding: 12px 22px; min-height: 50px; font-size: 19px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}; transition: background .2s ease, color .2s ease">{{o.label}}</button>
 </sc-for>
 </div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: -12px 0 28px; font-size: 17px"><span id="gia-vung">Xem giá cho bạn ở</span><div role="group" aria-labelledby="gia-vung" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{regions}}" as="r" hint-placeholder-count="3">
+<button type="button" class="press" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}" style="border: 1.5px solid #F6EFEF; border-radius: 999px; padding: 6px 16px; min-height: 44px; font-size: 17px; font-weight: 600; background: {{r.bg}}; color: {{r.fg}}; transition: background .2s ease, color .2s ease">{{r.label}}</button>
+</sc-for>
+</div></div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px 56px; align-items: center; background: #F6EFEF; color: #2B1E24; border-radius: 12px; padding: clamp(24px, 4vw, 48px); animation: {{swap}} 450ms ease both">
 <div style="display: flex; flex-direction: column; gap: 12px">
 <div style="font-weight: 600">Mây gợi ý cho bạn</div>
@@ -388,7 +393,8 @@ class Component extends DCLogic {
 constructor(props) {
 super(props);
 let muted = false; try { muted = localStorage.getItem('mp-nhac') === '0'; } catch (e) {}
-this.state = { videos: this.vids((window.MayPianoCfg || {}).videos) || this.vids([['n0U9Vot1l3Y', 'Chi Mai - Ennio Morricone [hướng dẫn đàn] May Piano'], ['ZkwbjtTlqE0', 'Love story - Indila | hướng dẫn đàn [May Piano]'], ['8-SIqVsGAz4', 'Track in Time -Dennis Kuo [hướng dẫn đàn] Mây Piano']].map((v) => ({ id: v[0], title: v[1] }))), note: 'chưa bấm', muted, locked: true, song: '', live: false, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, step: 0, tick: 0 };
+this.CUR = { VN: 'VND', AU: 'AUD', INTL: 'USD' };
+this.state = { videos: this.vids((window.MayPianoCfg || {}).videos) || this.vids([['n0U9Vot1l3Y', 'Chi Mai - Ennio Morricone [hướng dẫn đàn] May Piano'], ['ZkwbjtTlqE0', 'Love story - Indila | hướng dẫn đàn [May Piano]'], ['8-SIqVsGAz4', 'Track in Time -Dennis Kuo [hướng dẫn đàn] Mây Piano']].map((v) => ({ id: v[0], title: v[1] }))), note: 'chưa bấm', muted, locked: true, song: '', live: false, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, step: 0, tick: 0, region: '', prices: null };
 this.timers = [];
 this.SONGS = ['Trái Tim Mùa Thu', 'Hẹn Ước Xin Khuất Lời', 'Autumn Leaves', 'Tình Lỡ Cách Xa', 'Lãng Quên Chiều Thu', 'Đôi Bờ', 'Jardin Secret', 'Luân Vũ Ngày Mưa', 'Ánh Trăng Nói Hộ Lòng Tôi', 'Kỷ Niệm Nào Vội Quên', 'Hẹn Ước Bồ Công Anh', 'Cry On My Shoulder', 'The Winner Takes It All', '10 Ngàn Năm'];
 /* Left out of the rotation for now: the recording of 'Ánh Trăng Nói Hộ Lòng Tôi' (09.mp3) has a fault. */
@@ -403,7 +409,7 @@ this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.
 this.onVis = () => { if (document.hidden) { this.stopAuto(); if (this.bg) this.bg.pause(); } else { if (this.inView) this.startAuto(); this.playBg(); } };
 ['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
 document.addEventListener('visibilitychange', this.onVis);
-this.fx(); setTimeout(() => this.newest(), 0); this.inView = true; this.music(); this.playBg(); if (!document.hidden) this.startAuto();
+this.fx(); setTimeout(() => this.newest(), 0); this.where(); this.inView = true; this.music(); this.playBg(); if (!document.hidden) this.startAuto();
 }
 componentWillUnmount() {
 this.gone = true;
@@ -599,6 +605,19 @@ if (!Array.isArray(list)) return null;
 const out = list.filter((v) => v && /^[\w-]{11}$/.test(v.id) && v.title).slice(0, 3).map((v) => ({ url: 'https://www.youtube.com/watch?v=' + v.id, img: 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg', title: String(v.title) }));
 return out.length === 3 ? out : null;
 }
+/* Prices follow where the visitor is: the site works it out, and the visitor can change it. A choice made here is kept for the sign-up page (same store). */
+where() {
+let saved = {};
+try { saved = JSON.parse(window.localStorage.getItem('maypiano_dang_ky') || '{}') || {}; } catch (e) {}
+const picked = this.CUR[saved.region] ? saved.region : '';
+if (picked) this.setState({ region: picked });
+if (!window.MayPianoApi) return;
+window.MayPianoApi('config', { region: picked }).then((cfg) => { if (!this.gone && cfg) this.setState((st) => ({ prices: cfg.prices || null, region: st.region || (this.CUR[cfg.region] ? cfg.region : 'VN') })); }).catch(() => {});
+}
+pickRegion(id) {
+this.setState({ region: id });
+try { const o = JSON.parse(window.localStorage.getItem('maypiano_dang_ky') || '{}') || {}; o.region = id; window.localStorage.setItem('maypiano_dang_ky', JSON.stringify(o)); } catch (e) {}
+}
 newest() {
 if (!window.MayPianoApi) return;
 window.MayPianoApi('videos').then((r) => { const v = this.vids(r && r.videos); if (v && !this.gone) this.setState({ videos: v }); }).catch(() => {});
@@ -688,6 +707,15 @@ this.setState({ muted });
 renderVals() {
 const accent = this.props.accent ?? '#C2456B';
 const s = this.state;
+const region = this.CUR[s.region] ? s.region : 'VN', cur = this.CUR[region];
+/* The price of a course where the visitor is. Until the site has answered, and for Vietnam when it cannot, the page's own VND price shows. */
+const P = (key, vnd) => {
+const n = s.prices && s.prices[key] ? s.prices[key][cur] : null;
+if (n == null) return cur === 'VND' ? vnd : 'Mây báo giá qua email';
+if (cur === 'VND') return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+return (cur === 'AUD' ? 'A$' : 'US$') + (Math.round(n * 100) / 100).toFixed(2).replace(/\.00$/, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+const regions = [['VN', 'Việt Nam'], ['AU', 'Úc'], ['INTL', 'Mỹ và nước khác']].map(([id, label]) => ({ label, pick: () => this.pickRegion(id), pressed: region === id ? 'true' : 'false', bg: region === id ? '#F6EFEF' : 'transparent', fg: region === id ? '#2B1E24' : '#F6EFEF' }));
 const INK = '#2B1E24';
 const on = (v) => v ? { bg: INK, fg: '#FFFFFF', pressed: 'true' } : { bg: '#FFFFFF', fg: INK, pressed: 'false' };
 const whites = [], blacks = [];
@@ -714,6 +742,7 @@ hat: { key: 'dem-hat', name: 'Đệm Hát Piano', why: 'Bạn muốn vừa đàn
 thanhca: { key: 'thanh-ca', name: 'Đệm Hát Thánh Ca', why: 'Mây lớn lên cùng cây đàn nhà thờ, nên khóa này Mây soạn rất kỹ cho bạn đệm ca đoàn.', price: '799.000đ', meta: '37 bài, 3 giờ 54 phút', gets: [{ t: 'Tự đặt hợp âm cho bài chưa có hợp âm sẵn' }, { t: 'Đệm đúng kiểu cho từng phần thánh lễ' }, { t: 'Đệm trọn bộ lễ Seraphim' }] }
 };
 const L = [['moi', 'Chưa từng học đàn'], ['haitay', 'Đã biết nốt và hợp âm'], ['nangcao', 'Đã đàn được hai tay'], ['hat', 'Muốn vừa đàn vừa hát'], ['thanhca', 'Đệm cho ca đoàn']];
+Object.keys(recs).forEach((k) => { recs[k].price = P(recs[k].key, recs[k].price); });
 const levels = L.map((o) => ({ label: o[1], pick: () => this.setState({ level: o[0], swap: s.swap + 1 }), bg: s.level === o[0] ? '#F6EFEF' : '#5B2A3C', fg: s.level === o[0] ? INK : '#F6EFEF', pressed: s.level === o[0] ? 'true' : 'false' }));
 const S = [
 { step: '1', key: 'solo-can-ban', name: 'Piano Solo Căn Bản', desc: 'Đọc nốt, bấm hợp âm tay trái và ghép hai tay qua hơn 20 bản nhạc quen thuộc.', meta: '58 bài, 4 giờ 04 phút', price: '899.000đ', parts: [['Phần 1, 8 bài', 'Nốt nhạc cho khoá Sol tay phải'], ['Phần 2, 13 bài', 'Hợp âm tay trái và ghép hai tay'], ['Phần 3, 15 bài', 'Hợp âm 4, 5, 6 nốt trên những bài khó hơn'], ['Phần 4, 22 bài', 'Áp dụng vào 20 bản nhạc khác']] },
@@ -1032,11 +1061,13 @@ btn: short ? 'Xem cả khóa học' : open ? 'Thu gọn danh sách bài' : 'Xem 
 toggle: () => this.setState(short ? { only: false } : open ? { open: '', hit: null } : { open: key, hit: null, only: false }),
 ref: (el) => { if (el && this.jump === key) { this.jump = null; /* A block still waiting to slide in sits 22px low; settle it first so the jump lands exactly. */ for (let n = el; n && n.tagName !== 'SECTION'; n = n.parentElement) if (n.getAnimations) n.getAnimations().forEach((x) => { try { x.finish(); } catch (_) {} }); const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' }); } } };
 };
+S.forEach((x) => { x.price = P(x.key, x.price); });
 const solo = S.map((x, i) => course(x, 's' + i));
 const DEM = [
 { key: 'dem-hat', name: 'Đệm Hát Piano', desc: 'Vừa đàn vừa hát bài mình thích. Đi sâu vào điệu ballad và cách phối nhiều kiểu đệm trong một bài.', meta: '39 bài, 3 giờ 55 phút', price: '799.000đ' },
 { key: 'thanh-ca', name: 'Đệm Hát Thánh Ca', desc: 'Đệm cho từng phần thánh lễ, từ Nhập lễ tới Kết lễ, và trọn bộ lễ Seraphim.', meta: '37 bài, 3 giờ 54 phút', price: '799.000đ' }
 ];
+DEM.forEach((x) => { x.price = P(x.key, x.price); });
 const FAQ = [
 ['Tôi chưa biết gì về nhạc, có học được không?', 'Được bạn nhé. Khóa Piano Solo Căn Bản bắt đầu từ tư thế ngồi đàn và cách xác định nốt trên phím. Bạn không cần biết đọc nốt trước.'],
 ['Tôi học bằng cách nào?', 'Bạn xem video theo từng bài, mỗi bài có sheet nhạc đi kèm. Có gì chưa rõ, bạn cứ hỏi trong nhóm Facebook, Mây và mọi người sẽ giúp.'],
@@ -1061,7 +1092,7 @@ tc: ['Thánh ca', ['Bao La Tình Chúa', 'Chung Lời Tạ Ơn', 'Về Nơi Đâ
 const genres = Object.keys(G).map((k) => ({ label: G[k][0], pick: () => this.setState({ genre: k }), ...on(s.genre === k) }));
 const list = G[s.genre][1];
 return {
-accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, levels, rec: recs[s.level], seeRec,
+regions, accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, levels, rec: recs[s.level], seeRec,
 swap: s.swap % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
 songsA: list.slice(0, 4).map((n) => ({ name: n, go: () => goSong(n) })),
