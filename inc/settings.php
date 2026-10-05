@@ -17,7 +17,7 @@ function maypiano_fields() {
 		'maypiano_paypal'       => array( 'PayPal', 'Tên PayPal.Me (ví dụ: maypiano) hoặc email PayPal. Để trống thì Mây gửi cách trả qua email.', '' ),
 		'maypiano_processing'   => array( 'Thời gian kích hoạt tài khoản học', 'Ví dụ: 24 giờ.', '24 giờ' ),
 		'maypiano_support'      => array( 'Cách liên hệ khi cần giúp', 'Hiện cho khách ở bước thanh toán. Ví dụ: Zalo 09xx hoặc một email.', '' ),
-		'maypiano_notify'       => array( 'Email nhận thông báo đơn mới', 'Để trống thì dùng email quản trị của site.', '' ),
+		'maypiano_notify'       => array( 'Email nhận thông báo đơn mới', 'Người nhận email này duyệt được đơn bằng một nút bấm. Nhiều email thì cách nhau bằng dấu phẩy. Để trống thì dùng email quản trị của site.', '' ),
 	);
 }
 

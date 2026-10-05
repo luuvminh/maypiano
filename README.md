@@ -17,6 +17,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `functions.php`: nạp trang và các phần trong `inc/`.
 - `inc/catalog.php`: danh sách khóa, giá theo vùng, nối với sản phẩm WooCommerce và khóa Tutor LMS.
 - `inc/orders.php`: đặt đơn, báo đã trả, xác nhận, tạo tài khoản học, mở khóa học.
+- `inc/approve.php`: trang duyệt đơn bằng một nút cho chủ site, mở từ email.
 - `inc/emails.php`: email gửi khách và gửi chủ site.
 - `inc/mailpoet.php`: tiếng Việt cho MailPoet (email xác nhận đăng ký nhận bài học, trang báo đăng ký thành công, tên người gửi). Bảng dịch nằm ở `languages/mailpoet-vi.json`.
 - `inc/settings.php`: trang **Cài đặt > May Piano**.
@@ -35,7 +36,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 2. Site tạo một đơn trong **WooCommerce > Orders**, trạng thái On hold. Giá do máy chủ tính, không lấy từ trình duyệt.
 3. Khách ở Việt Nam thấy mã QR Techcombank có sẵn số tiền và nội dung `MP<số đơn>`. Khách ở nước ngoài thấy nút PayPal.
 4. Khách bấm "Mình đã chuyển khoản". Chủ site nhận email. Cột **May Piano** trong danh sách đơn ghi "KHÁCH BÁO ĐÃ TRẢ".
-5. Chủ site thấy tiền về thì đổi đơn sang **Completed**. Site tự tạo tài khoản học, mở khóa trong Tutor LMS và gửi email cho khách. Trang của khách tự chuyển sang "Khóa học của bạn đã mở".
+5. Chủ site thấy tiền về thì bấm nút **Duyệt đơn này** trong email (mở một trang nhỏ trên điện thoại, không cần đăng nhập, bấm thêm một nút để xác nhận). Đổi đơn sang **Completed** trong WooCommerce cũng được. Site tự tạo tài khoản học, mở khóa trong Tutor LMS và gửi email cho khách. Trang của khách tự chuyển sang "Khóa học của bạn đã mở".
 6. Hoàn tiền: đổi đơn sang Refunded, Tutor LMS tự đóng khóa của đơn đó.
 
 Nếu site không mở được khóa (chưa nối khóa, khóa còn là bản nháp), đơn được ghi chú và chủ site nhận email "CẦN GHI DANH TAY".

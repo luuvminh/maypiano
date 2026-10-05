@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 function maypiano_notify_address() {
-	$to = get_option( 'maypiano_notify', '' );
-	return is_email( $to ) ? $to : get_option( 'admin_email' );
+	$to = array_filter( array_map( 'trim', explode( ',', (string) get_option( 'maypiano_notify', '' ) ) ), 'is_email' );
+	return $to ? array_values( $to ) : get_option( 'admin_email' );
 }
 
 /** Sends one HTML email in the site's look. $body is trusted HTML built by the callers below. */
@@ -143,16 +143,18 @@ function maypiano_mail_owner_new_order( $order ) {
 	if ( $order->get_meta( '_mp_needs_quote' ) ) {
 		$body .= '<p><strong>Chưa có giá cho vùng của khách.</strong> Điền giá vào đơn, rồi gửi khách số tiền và cách trả.</p>';
 	} else {
-		$body .= '<p>Khi tiền về tài khoản, mở đơn và đổi trạng thái sang <strong>Completed</strong>. Site sẽ tự tạo tài khoản học, mở khóa học và gửi email cho khách.</p>';
+		$body .= '<p>Khi tiền về tài khoản, bạn bấm nút dưới đây để duyệt. Site sẽ tự tạo tài khoản học, mở khóa học và gửi email cho khách.</p>'
+			. maypiano_mail_button( maypiano_approve_url( $order ), 'Duyệt đơn này' );
 	}
-	$body .= maypiano_mail_button( $order->get_edit_order_url(), 'Mở đơn trong WooCommerce' );
+	$body .= '<p style="font-size:15px"><a href="' . esc_url( $order->get_edit_order_url() ) . '" style="color:#8A3350">Mở đơn trong WooCommerce</a></p>';
 	return maypiano_mail( maypiano_notify_address(), maypiano_mail_owner_subject( $order, 'Đơn mới' ), $body );
 }
 
 function maypiano_mail_owner_reported( $order ) {
-	$body = '<p><strong>Khách báo đã trả tiền.</strong> Kiểm tra tài khoản, thấy đúng số tiền và nội dung <strong>' . esc_html( maypiano_memo( $order ) ) . '</strong> thì đổi đơn sang <strong>Completed</strong>.</p>'
+	$body = '<p><strong>Khách báo đã trả tiền.</strong> Kiểm tra tài khoản, thấy đúng số tiền và nội dung <strong>' . esc_html( maypiano_memo( $order ) ) . '</strong> thì bấm nút duyệt.</p>'
+		. maypiano_mail_button( maypiano_approve_url( $order ), 'Duyệt đơn này' )
 		. maypiano_mail_owner_facts( $order )
-		. maypiano_mail_button( $order->get_edit_order_url(), 'Mở đơn để xác nhận' );
+		. '<p style="font-size:15px"><a href="' . esc_url( $order->get_edit_order_url() ) . '" style="color:#8A3350">Mở đơn trong WooCommerce</a></p>';
 	return maypiano_mail( maypiano_notify_address(), maypiano_mail_owner_subject( $order, 'Khách báo đã trả' ), $body );
 }
 
