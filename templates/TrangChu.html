@@ -25,7 +25,6 @@ button{font-family:inherit;cursor:pointer}
 @keyframes swing{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
 .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
 .lift{transition:transform .25s ease,box-shadow .25s ease}
-.tilt{transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease}
 .press{transition:transform .12s ease,filter .12s ease}
 .press:active{transform:scale(.96)}
 .wkey{transition:background .15s ease,transform .1s ease;transform-origin:top}
@@ -40,11 +39,9 @@ html:not(.mp-fx) .mq:hover .mqrow,html:not(.mp-fx) .mq:focus-within .mqrow{anima
 /* Hover effects only where there is a pointer that hovers; a touch gets its answer on press instead. */
 @media (hover:hover){a:hover{color:#C2456B}
 .lift:hover{transform:translateY(-5px);box-shadow:0 14px 0 -6px #C2456B}
-.tilt:hover{transform:rotate(0) translateY(-8px)!important;box-shadow:0 16px 0 -6px #C2456B}
 .press:hover{filter:brightness(1.08)}
 .song:hover{text-decoration-color:currentColor}}
 .lift:active{transform:scale(.985);transition-duration:.1s}
-.tilt:active{transform:rotate(0) scale(.985)!important;transition-duration:.1s}
 /* Menu bar: stays at the top as a translucent layer, the page scrolls underneath. */
 .page{overflow-x:hidden;overflow-x:clip}
 .bar{position:sticky;top:var(--wp-admin--admin-bar--height,0px);z-index:50;display:flex;gap:12px 32px;align-items:center;justify-content:space-between;padding:12px clamp(20px,6vw,96px);background:rgba(227,215,215,.97);transition:box-shadow .3s ease}
@@ -64,6 +61,27 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more){.bar{background:#E3D7D7!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
 @media (prefers-contrast:more){.bar{box-shadow:0 2px 0 #2B1E24!important}}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+/* Hours chart: columns side by side on a wide screen, bars one under another on a phone. */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(8px,1.2vw,16px);align-items:end}
+.step{display:flex;flex-direction:column;gap:10px}
+.stepn{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(28px,3.4vw,50px);line-height:1;white-space:nowrap}
+.stept{font-size:clamp(16px,1.3vw,18px);line-height:1.35}
+.stepb{height:var(--h);border-radius:10px 10px 0 0;transform-origin:bottom;animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
+@keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@media (max-width:700px){.steps{grid-template-columns:1fr;gap:20px}
+.step{display:grid;grid-template-columns:minmax(4.6em,auto) 1fr;gap:6px 14px;align-items:baseline}
+.stept{font-size:17px}
+.stepb{grid-column:1/-1;height:16px;width:var(--w);border-radius:0 8px 8px 0;transform-origin:left;animation-name:growX}}
+/* The keyboard is wider than a phone screen and scrolls sideways there. */
+.keyhint{display:none}
+@media (max-width:740px){.keyhint{display:block}}
+/* Community: one row per place, the whole row is the link. */
+.crow{display:grid;grid-template-columns:clamp(200px,24vw,320px) minmax(0,1fr) auto;gap:6px 32px;align-items:center;padding:22px 0;border-top:2px solid #2B1E24;text-decoration:none;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .12s ease}
+.crow:active{opacity:.6}
+@media (hover:hover){.crow:hover{transform:translateX(10px)}}
+.cnum{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(38px,4vw,56px);line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cgo{font-weight:600;text-decoration:underline;text-underline-offset:.16em;white-space:nowrap}
+@media (max-width:700px){.crow{grid-template-columns:1fr;padding:18px 0}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 /* Reduced motion: nothing slides or loops; colour and opacity changes stay, as short fades. */
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-property:opacity,color,background-color,text-decoration-color,box-shadow!important}.rise{animation:fade .4s ease both!important}}
@@ -79,7 +97,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <a class="barlink" href="#bai-hat" style="text-decoration: none; padding: 10px 0">Bài hát</a>
 <a class="barlink" href="#cong-dong" style="text-decoration: none; padding: 10px 0">Cộng đồng</a>
 <a href="%%LOGIN%%" class="press" style="text-decoration: none; border: 2px solid #2B1E24; padding: 10px 22px; border-radius: 999px; font-weight: 600; white-space: nowrap">Vào học</a>
-<a href="#chon-khoa" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 12px 24px; border-radius: 999px; font-weight: 600; white-space: nowrap">Bắt đầu học</a>
+<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 12px 24px; border-radius: 999px; font-weight: 600; white-space: nowrap">Đăng ký học</a>
 </div>
 </nav>
 <div class="sublinks" role="navigation" aria-label="Các phần của trang">
@@ -100,7 +118,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <p class="rise" style="margin: 0; font-size: clamp(20px, 1.7vw, 23px); max-width: 30em; animation-delay: .6s">Mây dạy bạn từ nốt nhạc đầu tiên, bằng chính những bài hát bạn đã thuộc, tới lúc bạn tự soạn hợp âm cho bài mình thích.</p>
 <div class="rise" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; animation-delay: .75s">
 <a href="#hoc-thu" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Nhận bài học miễn phí</a>
-<a href="#chon-khoa" class="press" style="text-decoration: none; background: #2B1E24; color: #F6EFEF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Tìm khóa hợp với bạn</a>
+<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: #2B1E24; color: #F6EFEF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Đăng ký học</a>
 </div>
 </div>
 <div class="rise" style="position: relative; animation-delay: .4s">
@@ -136,11 +154,12 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <span style="position: absolute; left: clamp(16px, 3vw, 44px); top: 40px; font-family: 'Noto Music', 'Apple Symbols', 'Segoe UI Symbol', serif; font-size: 100px; line-height: 1; color: #2B1E24">𝄞</span>
 </div>
 
-<section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) 0">
+<section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
 <div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-bottom: 18px">
 <div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2">Bạn bấm thử một phím nhé</h2>
 <p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
+<p class="keyhint" style="margin: 4px 0 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
 </div>
 </div>
 <div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 700px; height: clamp(160px, 17vw, 220px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
@@ -153,11 +172,6 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </div></div>
 </section>
 
-<section ref="{{statsRef}}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px 40px; padding: clamp(48px, 6vw, 88px) clamp(20px, 6vw, 96px)">
-<sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
-<div><div style="font-family: 'Playfair Display', serif; font-size: clamp(38px, 4vw, 58px); font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums">{{s.v}}</div><div>{{s.l}}</div></div>
-</sc-for>
-</section>
 
 <section id="chon-khoa" style="background: #5B2A3C; color: #F6EFEF; padding: clamp(56px, 7vw, 104px) clamp(20px, 6vw, 96px)">
 <h2 style="margin: 0 0 28px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bạn đang ở đâu trên hành trình?</h2>
@@ -178,20 +192,14 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <sc-for list="{{rec.gets}}" as="g" hint-placeholder-count="3">
 <div style="display: flex; gap: 12px; align-items: flex-start"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 4px" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"></path></svg><span>{{g.t}}</span></div>
 </sc-for>
-<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký khóa này</a><a href="#lo-trinh" onClick="{{seeRec}}" style="padding: 14px 4px; font-weight: 600">Xem nội dung khóa học</a></div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký học</a><a href="#lo-trinh" onClick="{{seeRec}}" style="padding: 14px 4px; font-weight: 600">Xem nội dung khóa học</a></div>
 </div>
 </div>
 </section>
 
 <section id="lo-trinh" style="background: #FFFFFF; padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
 <h2 style="margin: 0 0 12px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Lộ trình solo, ba chặng</h2>
-<p style="margin: 0 0 36px; max-width: 36em">Bạn đi lần lượt từ chặng một nhé. Cột càng cao là bạn đã học cùng Mây càng nhiều giờ. Bấm vào từng chặng bên dưới để xem Mây dạy những bài nào.</p>
-<div role="img" aria-label="Biểu đồ bậc thang: tổng số giờ video sau mỗi chặng, từ 0 lên 4 giờ, 16 giờ rưỡi và gần 35 giờ" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, 1.2vw, 16px); align-items: end; margin: 0 0 56px">
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">0</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Chưa biết nốt nào</div><div style="height: 20px; background: #D2BFC3; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) both"></div></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">4 giờ</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Solo Căn Bản: đọc nốt, đàn hai tay</div><div style="height: 52px; background: #E9B9C6; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) .15s both"></div></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">16,5 giờ</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Cover: đàn trọn 40 bài nhạc Việt</div><div style="height: 152px; background: {{accent}}; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) .3s both"></div></div>
-<div style="display: flex; flex-direction: column; gap: 10px"><div style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(26px, 3.4vw, 50px); line-height: 1">34,7 giờ</div><div style="font-size: clamp(14px, 1.3vw, 18px); line-height: 1.35">Nâng Cao: tự soạn hợp âm, tự đệm</div><div style="height: 300px; background: #5B2A3C; border-radius: 10px 10px 0 0; transform-origin: bottom; animation: grow .9s cubic-bezier(.2,.7,.2,1) .45s both"></div></div>
-</div>
+<p style="margin: 0 0 36px; max-width: 36em">Bạn đi lần lượt từ chặng một nhé. Bấm vào từng chặng để xem Mây dạy những bài nào.</p>
 <div style="display: flex; flex-direction: column">
 <sc-for list="{{solo}}" as="c" hint-placeholder-count="3">
 <article ref="{{c.ref}}" style="padding: 28px 0; border-top: 2px solid #2B1E24; scroll-margin-top: 96px">
@@ -201,7 +209,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
 </div>
 <button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="margin-top: 16px; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button>
-<a href="%%SIGNUP%%" class="press" style="display: inline-block; margin: 16px 0 0 10px; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký khóa này</a>
+<a href="%%SIGNUP%%" class="press" style="display: inline-block; margin: 16px 0 0 10px; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a>
 <sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
 <p class="rise" role="status" style="margin: 20px 0 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
 </sc-if>
@@ -249,11 +257,16 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </section>
 
 <section style="padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px 64px; align-items: end; margin-bottom: 40px">
-<div style="display: flex; flex-direction: column; gap: 14px">
-<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bao lâu thì bạn học xong?</h2>
-<p style="margin: 0; max-width: 28em">Bạn cho Mây biết mỗi ngày bạn dành được bao nhiêu phút, Mây tính giúp bạn nhé.</p>
+<h2 style="margin: 0 0 12px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bao lâu thì bạn học xong?</h2>
+<p style="margin: 0 0 36px; max-width: 36em">Ba chặng solo cộng lại gần 35 giờ video. Cột càng dài là bạn đã học cùng Mây càng nhiều giờ.</p>
+<div class="steps" role="img" aria-label="Biểu đồ: tổng số giờ video sau mỗi chặng solo, từ 0 lên 4 giờ, 16 giờ rưỡi và gần 35 giờ">
+<div class="step"><div class="stepn">0</div><div class="stept">Chưa biết nốt nào</div><div class="stepb" style="--h: 20px; --w: 4%; background: #D2BFC3"></div></div>
+<div class="step"><div class="stepn">4 giờ</div><div class="stept">Solo Căn Bản: đọc nốt, đàn hai tay</div><div class="stepb" style="--h: 52px; --w: 17%; background: #E9B9C6; animation-delay: .15s"></div></div>
+<div class="step"><div class="stepn">16,5 giờ</div><div class="stept">Cover: đàn trọn 40 bài nhạc Việt</div><div class="stepb" style="--h: 152px; --w: 51%; background: {{accent}}; animation-delay: .3s"></div></div>
+<div class="step"><div class="stepn">34,7 giờ</div><div class="stept">Nâng Cao: tự soạn hợp âm, tự đệm</div><div class="stepb" style="--h: 300px; --w: 100%; background: #5B2A3C; animation-delay: .45s"></div></div>
 </div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px 64px; align-items: end; margin: clamp(40px, 5vw, 64px) 0 32px">
+<p style="margin: 0; max-width: 28em">Bạn cho Mây biết mỗi ngày bạn dành được bao nhiêu phút, Mây đổi số giờ đó ra số tuần giúp bạn nhé.</p>
 <div style="display: flex; flex-direction: column; gap: 10px">
 <label for="phut" style="font-weight: 600">Mỗi ngày mình xem được <span style="font-family: 'Playfair Display', serif; font-size: 44px; line-height: 1; color: {{accent}}">{{mins}}</span> phút</label>
 <input id="phut" type="range" min="10" max="60" step="5" value="{{mins}}" onChange="{{setMins}}" onInput="{{setMins}}" style="width: 100%; height: 44px; accent-color: {{accent}}">
@@ -315,23 +328,23 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </div>
 <img src="%%THEME%%/assets/img/g02.jpg" alt="Nút bạc YouTube 100.000 người đăng ký của kênh May Piano" style="display: block; width: 100%; max-width: 420px; justify-self: center; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 14px; border: 2px solid #2B1E24; transform: rotate(3deg)">
 </div>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; padding: 0 6px">
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="tilt" style="transform: rotate(-2deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.500" y="5.500" width="19" height="13" rx="3.500"></rect><path d="M10 9.500l5 2.500-5 2.500z"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">134.000+</span><span style="font-weight: 600">bạn đăng ký kênh YouTube</span><span style="font-size: 18px">Hàng trăm bài Mây dạy miễn phí.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Xem kênh YouTube</span></a>
-<a href="https://www.tiktok.com/@maypiano" class="tilt" style="transform: rotate(2deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v11.500a3.500 3.500 0 1 1-3.500-3.500"></path><path d="M14 3c.400 2.600 2.200 4.300 5 4.600"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">122.400</span><span style="font-weight: 600">bạn theo dõi TikTok</span><span style="font-size: 18px">Những đoạn đàn ngắn mỗi ngày.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Xem TikTok</span></a>
-<a href="https://www.facebook.com/maypianist" class="tilt" style="transform: rotate(-1.500deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 8.500V7c0-1.100.700-1.800 1.800-1.800H17V2.500h-2.200C12.300 2.500 11 4.200 11 6.600v1.900H8.500V11.500H11v10h3v-10h2.600l.4-3z"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">74.000+</span><span style="font-weight: 600">bạn theo dõi fanpage</span><span style="font-size: 18px">Tin mới và thông báo khóa học.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Theo dõi fanpage</span></a>
-<a href="https://www.facebook.com/groups/558515685499528/" class="tilt" style="transform: rotate(2.500deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.500"></circle><path d="M2.500 20c.600-3.600 3.200-5.500 6.500-5.500s5.900 1.900 6.500 5.500"></path><circle cx="17" cy="9" r="2.600"></circle><path d="M17.500 14.200c2.200.400 3.600 2 4 4.300"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">33.198</span><span style="font-weight: 600">thành viên nhóm Facebook</span><span style="font-size: 18px">Hỏi bài, đăng video bạn tự đàn.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Vào nhóm</span></a>
+<div style="border-bottom: 2px solid #2B1E24">
+<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="crow"><span class="cnum">134.000+</span><span><strong style="font-weight: 600">bạn đăng ký kênh YouTube</strong><span style="display: block; font-size: 18px">Hàng trăm bài Mây dạy miễn phí.</span></span><span class="cgo">Xem kênh YouTube</span></a>
+<a href="https://www.tiktok.com/@maypiano" class="crow"><span class="cnum">122.400</span><span><strong style="font-weight: 600">bạn theo dõi TikTok</strong><span style="display: block; font-size: 18px">Những đoạn đàn ngắn mỗi ngày.</span></span><span class="cgo">Xem TikTok</span></a>
+<a href="https://www.facebook.com/maypianist" class="crow"><span class="cnum">74.000+</span><span><strong style="font-weight: 600">bạn theo dõi fanpage</strong><span style="display: block; font-size: 18px">Tin mới và thông báo khóa học.</span></span><span class="cgo">Theo dõi fanpage</span></a>
+<a href="https://www.facebook.com/groups/558515685499528/" class="crow"><span class="cnum">33.198</span><span><strong style="font-weight: 600">thành viên nhóm Facebook</strong><span style="display: block; font-size: 18px">Hỏi bài, đăng video bạn tự đàn.</span></span><span class="cgo">Vào nhóm</span></a>
 </div>
 </section>
 
 <section style="background: #FFFFFF; padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
 <div style="display: flex; flex-wrap: wrap; gap: 16px 32px; align-items: flex-end; justify-content: space-between; margin-bottom: 36px">
-<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1; max-width: 12em">Các bài học miễn phí trên YouTube</h2>
+<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1; max-width: 12em">Ba bài mới nhất trên YouTube</h2>
 <a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" style="font-weight: 600; padding: 10px 0">Mở kênh YouTube</a>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px">
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden"><img src="%%THEME%%/assets/img/g04.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600">Bài học miễn phí trên YouTube</span></a>
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden"><img src="%%THEME%%/assets/img/g15.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600">Mây đàn mẫu và hướng dẫn</span></a>
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden"><img src="%%THEME%%/assets/img/g05.jpg" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600">Xem thêm trên kênh của Mây</span></a>
+<sc-for list="{{videos}}" as="v" hint-placeholder-count="3">
+<a href="{{v.url}}" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #D2BFC3"><img loading="lazy" src="{{v.img}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600; line-height: 1.4">{{v.title}}</span></a>
+</sc-for>
 </div>
 </section>
 
@@ -384,7 +397,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 
 <footer style="display: flex; flex-wrap: wrap; gap: 12px 32px; justify-content: space-between; padding: 28px clamp(20px, 6vw, 96px) 40px; border-top: 2px solid #2B1E24; font-size: 18px">
 <div>© 2026 Mây Piano<div style="font-size: 15px; opacity: .75">Tiếng đàn: Salamander Grand Piano của Alexander Holm (CC BY 3.0)</div></div>
-<div style="display: flex; flex-wrap: wrap; gap: 8px 24px"><a href="https://www.facebook.com/maypianist" style="padding: 10px 0">Fanpage</a><a href="https://www.facebook.com/groups/558515685499528/" style="padding: 10px 0">Nhóm Facebook</a><a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" style="padding: 10px 0">YouTube</a><a href="https://www.tiktok.com/@maypiano" style="padding: 10px 0">TikTok</a><a href="#dau-trang" style="padding: 10px 0">Điều khoản</a></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 24px"><a href="https://www.facebook.com/maypianist" style="padding: 10px 0">Fanpage</a><a href="https://www.facebook.com/groups/558515685499528/" style="padding: 10px 0">Nhóm Facebook</a><a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" style="padding: 10px 0">YouTube</a><a href="https://www.tiktok.com/@maypiano" style="padding: 10px 0">TikTok</a></div>
 </footer>
 </div>
 </x-dc>
@@ -393,7 +406,7 @@ class Component extends DCLogic {
 constructor(props) {
 super(props);
 let muted = false; try { muted = localStorage.getItem('mp-nhac') === '0'; } catch (e) {}
-this.state = { note: 'chưa bấm', muted, locked: true, song: '', live: false, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
+this.state = { videos: this.vids((window.MayPianoCfg || {}).videos) || this.vids([['n0U9Vot1l3Y', 'Chi Mai - Ennio Morricone [hướng dẫn đàn] May Piano'], ['ZkwbjtTlqE0', 'Love story - Indila | hướng dẫn đàn [May Piano]'], ['8-SIqVsGAz4', 'Track in Time -Dennis Kuo [hướng dẫn đàn] Mây Piano']].map((v) => ({ id: v[0], title: v[1] }))), note: 'chưa bấm', muted, locked: true, song: '', live: false, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, step: 0, tick: 0 };
 this.timers = [];
 this.SONGS = ['Trái Tim Mùa Thu', 'Hẹn Ước Xin Khuất Lời', 'Autumn Leaves', 'Tình Lỡ Cách Xa', 'Lãng Quên Chiều Thu', 'Đôi Bờ', 'Jardin Secret', 'Luân Vũ Ngày Mưa', 'Ánh Trăng Nói Hộ Lòng Tôi', 'Kỷ Niệm Nào Vội Quên', 'Hẹn Ước Bồ Công Anh', 'Cry On My Shoulder', 'The Winner Takes It All', '10 Ngàn Năm'];
 /* Left out of the rotation for now: the recording of 'Ánh Trăng Nói Hộ Lòng Tôi' (09.mp3) has a fault. */
@@ -402,22 +415,16 @@ this.NAME = ['Đô', 'Đô thăng', 'Rê', 'Rê thăng', 'Mi', 'Fa', 'Fa thăng'
 this.stripRef = (el) => { this.strip = el; };
 this.score();
 this.noteRef = (el) => { this.noteEl = el; };
-this.statsRef = (el) => {
-if (!el || this.io || this.counted) return;
-if (!('IntersectionObserver' in window)) { this.runCount(); return; }
-this.io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { this.runCount(); this.io.disconnect(); } }, { threshold: 0.3 });
-this.io.observe(el);
-};
 }
 componentDidMount() {
-if (!this.io && !this.counted) this.runCount();
 this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().then(() => this.flushWant()).catch(() => {}); else this.flushWant(); if (this.bg && this.bg.paused) this.playBg(); };
 this.onVis = () => { if (document.hidden) { this.stopAuto(); if (this.bg) this.bg.pause(); } else { if (this.inView) this.startAuto(); this.playBg(); } };
 ['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
 document.addEventListener('visibilitychange', this.onVis);
-this.fx(); this.inView = true; this.loadPiano(); this.music(); this.playBg(); if (!document.hidden) this.startAuto();
+this.fx(); setTimeout(() => this.newest(), 0); this.inView = true; this.loadPiano(); this.music(); this.playBg(); if (!document.hidden) this.startAuto();
 }
 componentWillUnmount() {
+this.gone = true;
 this.stopAuto(); clearTimeout(this.backT); if (this.fxOff) this.fxOff();
 ['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
 if (this.bg) { this.bg.pause(); this.bg.removeAttribute('src'); }
@@ -425,19 +432,6 @@ document.removeEventListener('visibilitychange', this.onVis);
 clearInterval(this.dbgT);
 if (this.ctx) this.ctx.close();
 this.timers.forEach(clearTimeout);
-if (this.io) this.io.disconnect();
-if (this.raf) cancelAnimationFrame(this.raf);
-}
-runCount() {
-if (this.counted) return;
-this.counted = true;
-const t0 = performance.now();
-const run = (t) => {
-const p = Math.min(1, (t - t0) / 1600);
-this.setState({ count: 1 - Math.pow(1 - p, 3) });
-if (p < 1) this.raf = requestAnimationFrame(run);
-};
-this.raf = requestAnimationFrame(run);
 }
 /* Sound: grand piano recordings (Salamander Grand Piano V3, Alexander Holm, CC BY 3.0), one every three semitones, played through a concert-hall reverb. */
 audio() {
@@ -654,6 +648,16 @@ a.pause(); held.set(el, a); io.observe(el);
 on(window, 'beforeprint', () => { held.forEach((a) => a.finish()); held.clear(); });
 }
 }
+/* Mây's three newest lessons on YouTube. Only a well-formed video id is accepted; links and pictures are built from it here. */
+vids(list) {
+if (!Array.isArray(list)) return null;
+const out = list.filter((v) => v && /^[\w-]{11}$/.test(v.id) && v.title).slice(0, 3).map((v) => ({ url: 'https://www.youtube.com/watch?v=' + v.id, img: 'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg', title: String(v.title) }));
+return out.length === 3 ? out : null;
+}
+newest() {
+if (!window.MayPianoApi) return;
+window.MayPianoApi('videos').then((r) => { const v = this.vids(r && r.videos); if (v && !this.gone) this.setState({ videos: v }); }).catch(() => {});
+}
 /* A key the visitor presses: the music fades out fast, just ahead of the note, and the staff stops. Five quiet seconds later the music fades back in slowly. */
 press(m) {
 this.stopAuto(); this.pos = 0; this.held = true;
@@ -762,14 +766,6 @@ const px = (v) => v.toFixed(1) + 'px';
 const barLines = this.bars.map((b) => ({ x: px(b.x), w: px(b.w) }));
 const beamLines = this.beams.map((b) => ({ x: px(b.x), y: px(b.y), w: px(b.w), a: b.a.toFixed(2) + 'deg' }));
 const notes = this.staff.map((n) => ({ i: n.i, x: px(n.x), hy: px(n.y - 8), sx: n.up ? '8.6px' : '-11px', st: px(n.up ? n.tip : n.y + 2), sh: px(Math.abs(n.tip - n.y) - 2), ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? 'transparent' : 'currentColor', bw: n.kind === 'h' ? '3px' : '0', left: (n.t * this.PX - 12).toFixed(1) + 'px', top: (87 - 10 * n.k) + 'px', ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? '#E3D7D7' : 'currentColor', f1: n.kind === 'h' ? 0 : 1, f2: n.kind === 's' ? 1 : 0 }));
-const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-const c = s.count;
-const stats = [
-{ v: fmt(5 * c) + ' khóa', l: 'từ nốt đầu tiên tới tự soạn hợp âm' },
-{ v: fmt(284 * c) + ' bài', l: 'bài học, có sheet nhạc đi kèm' },
-{ v: fmt(42 * c) + ' giờ', l: 'video Mây hướng dẫn từng bước' },
-{ v: fmt(3213 * c) + '+', l: 'học viên đã học online với Mây' }
-];
 const recs = {
 moi: { name: 'Piano Solo Căn Bản', why: 'Bạn chưa cần biết gì trước đâu. Mây sẽ chỉ bạn từ tư thế ngồi đàn và nốt đầu tiên.', price: '899.000đ', meta: '58 bài, 4 giờ 04 phút', gets: [{ t: 'Đọc được nốt nhạc và sheet nhạc' }, { t: 'Đàn hai tay hơn 20 bản nhạc quen thuộc' }, { t: 'Biết đệm tay trái từ đơn giản tới nâng cao hơn' }] },
 haitay: { name: 'Piano Cover 40 Bài Nhạc Việt', why: 'Bạn đã biết nốt và hợp âm cơ bản. Giờ mình cùng đàn trọn những bài bạn thích nhé.', price: '1.499.000đ', meta: '40 bài, 12 giờ 30 phút', gets: [{ t: 'Đàn hai tay 40 bài nhạc Việt, có đủ dạo đầu' }, { t: 'Dùng được nhiều thế bấm và kiểu đệm' }, { t: 'Tự cover thêm bài khác theo cùng cách' }] },
@@ -1125,14 +1121,14 @@ tc: ['Thánh ca', ['Bao La Tình Chúa', 'Chung Lời Tạ Ơn', 'Về Nơi Đâ
 const genres = Object.keys(G).map((k) => ({ label: G[k][0], pick: () => this.setState({ genre: k }), ...on(s.genre === k) }));
 const list = G[s.genre][1];
 return {
-accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, stats, statsRef: this.statsRef, levels, rec: recs[s.level], seeRec,
+accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, levels, rec: recs[s.level], seeRec,
 swap: s.swap % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
 songsA: list.slice(0, 4).map((n) => ({ name: n, go: () => goSong(n) })),
 songsB: list.slice(4).map((n) => ({ name: n, go: () => goSong(n) })),
 chartAria: bai ? 'Biểu đồ số bài học của năm khóa' : 'Biểu đồ số giờ video của năm khóa',
 dem: DEM.map((x, i) => course(x, 'd' + i)),
-faqs, email: s.email, sent: s.sent, notSent: !s.sent,
+faqs, videos: s.videos, email: s.email, sent: s.sent, notSent: !s.sent,
 setEmail: (e) => this.setState({ email: e.target.value }),
 sendEmail: (e) => { e.preventDefault(); if (!s.email) return; if (window.MayPianoSend) window.MayPianoSend('subscribe', { email: s.email.trim() }); this.setState({ sent: true }); }
 };

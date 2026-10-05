@@ -16,9 +16,6 @@ BLOB = {
 # Wording used on the live site where the design still has an open question.
 TEXT = {
     'TrangChu': [
-        ('[Tên video YouTube 1]', 'Bài học miễn phí trên YouTube'),
-        ('[Tên video YouTube 2]', 'Mây đàn mẫu và hướng dẫn'),
-        ('[Tên video YouTube 3]', 'Xem thêm trên kênh của Mây'),
         ("'Ở Việt Nam, bạn chuyển khoản ngân hàng. [Cách thanh toán cho người ở nước ngoài]'",
          "'Ở Việt Nam, bạn chuyển khoản ngân hàng. Ở nước ngoài, bạn trả qua PayPal.'"),
         ("['Tôi được học trong bao lâu?', '[Thời hạn truy cập khóa học]']", ''),
