@@ -11,7 +11,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Noto+Music&display=swap" rel="stylesheet">
 <style>
 body{margin:0}
-a{color:#2B1E24}a:hover{color:#C2456B}
+a{color:#2B1E24}
+a,button{-webkit-tap-highlight-color:transparent}
+h2{letter-spacing:-.015em;text-wrap:balance}
+[id]{scroll-margin-top:84px}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #2B1E24;outline-offset:3px}
 button{font-family:inherit;cursor:pointer}
 @keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
@@ -30,37 +33,73 @@ button{font-family:inherit;cursor:pointer}
 @keyframes swing{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
 .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
 .lift{transition:transform .25s ease,box-shadow .25s ease}
-.lift:hover{transform:translateY(-5px);box-shadow:0 14px 0 -6px #C2456B}
 .tilt{transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s ease}
-.tilt:hover{transform:rotate(0) translateY(-8px)!important;box-shadow:0 16px 0 -6px #C2456B}
 .press{transition:transform .12s ease,filter .12s ease}
-.press:hover{filter:brightness(1.08)}
 .press:active{transform:scale(.96)}
 .wkey{transition:background .15s ease,transform .1s ease;transform-origin:top}
 .wkey:active{transform:scaleY(.97)}
-.mq:hover .mqrow,.mq:focus-within .mqrow{animation-play-state:paused}
+.mqrow{touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
+.mqrow img{-webkit-user-drag:none;pointer-events:none}
+html:not(.mp-fx) .mqrow{animation:drift 40s linear infinite}
+html:not(.mp-fx) .mqrow[data-back]{animation-name:driftBack}
+html:not(.mp-fx) .mq:hover .mqrow,html:not(.mp-fx) .mq:focus-within .mqrow{animation-play-state:paused}
 .song{font:inherit;color:inherit;background:none;border:0;padding:6px 0;margin:0;text-decoration:underline transparent;text-decoration-thickness:2px;text-underline-offset:.16em;transition:text-decoration-color .2s ease}
-.song:hover,.song:focus-visible{text-decoration-color:currentColor}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.song:focus-visible{text-decoration-color:currentColor}
+/* Hover effects only where there is a pointer that hovers; a touch gets its answer on press instead. */
+@media (hover:hover){a:hover{color:#C2456B}
+.lift:hover{transform:translateY(-5px);box-shadow:0 14px 0 -6px #C2456B}
+.tilt:hover{transform:rotate(0) translateY(-8px)!important;box-shadow:0 16px 0 -6px #C2456B}
+.press:hover{filter:brightness(1.08)}
+.song:hover{text-decoration-color:currentColor}}
+.lift:active{transform:scale(.985);transition-duration:.1s}
+.tilt:active{transform:rotate(0) scale(.985)!important;transition-duration:.1s}
+/* Menu bar: stays at the top as a translucent layer, the page scrolls underneath. */
+.page{overflow-x:hidden;overflow-x:clip}
+.bar{position:sticky;top:var(--wp-admin--admin-bar--height,0px);z-index:50;display:flex;gap:12px 32px;align-items:center;justify-content:space-between;padding:12px clamp(20px,6vw,96px);background:rgba(227,215,215,.97);transition:box-shadow .3s ease}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){.bar{background:rgba(227,215,215,.72);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}}
+html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(43,30,36,.5)}
+.sublinks{display:none}
+@media (max-width:820px){.barlink{display:none}
+.bar{padding-top:8px;padding-bottom:8px;gap:10px}
+.bargroup{gap:8px!important}
+.bar .press{padding:8px 15px!important;font-size:17px}
+.barlogo{font-size:24px!important}
+.sublinks{display:flex;gap:26px;padding:2px clamp(20px,6vw,96px) 6px;overflow-x:auto;white-space:nowrap;font-weight:500;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sublinks::-webkit-scrollbar{display:none}}
+@media (max-width:600px){.bar{top:0}}
+@media (max-width:420px){.bar{padding-left:14px;padding-right:14px}.bargroup{gap:6px!important}}
+@media (max-width:380px){.bar .press{padding:7px 11px!important;font-size:16px}.barlogo{font-size:20px!important}}
+@media (prefers-reduced-transparency:reduce),(prefers-contrast:more){.bar{background:#E3D7D7!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}}
+@media (prefers-contrast:more){.bar{box-shadow:0 2px 0 #2B1E24!important}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+/* Reduced motion: nothing slides or loops; colour and opacity changes stay, as short fades. */
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition-property:opacity,color,background-color,text-decoration-color,box-shadow!important}.rise{animation:fade .4s ease both!important}}
 </style>
 </helmet>
-<div style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.6; overflow-x: hidden">
+<div class="page" style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.6">
 
-<nav style="display: flex; flex-wrap: wrap; gap: 12px 32px; align-items: center; justify-content: space-between; padding: 22px clamp(20px, 6vw, 96px)">
-<a href="#dau-trang" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; text-decoration: none">Mây Piano</a>
-<div style="display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: center; font-weight: 500">
+<nav class="bar" aria-label="Chính">
+<a href="#dau-trang" class="barlogo" style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px; text-decoration: none; white-space: nowrap">Mây Piano</a>
+<div class="bargroup" style="display: flex; gap: 8px 28px; align-items: center; font-weight: 500">
+<a class="barlink" href="#chon-khoa" style="text-decoration: none; padding: 10px 0">Chọn khóa</a>
+<a class="barlink" href="#lo-trinh" style="text-decoration: none; padding: 10px 0">Lộ trình</a>
+<a class="barlink" href="#bai-hat" style="text-decoration: none; padding: 10px 0">Bài hát</a>
+<a class="barlink" href="#cong-dong" style="text-decoration: none; padding: 10px 0">Cộng đồng</a>
+<a href="DangNhap.dc.html" class="press" style="text-decoration: none; border: 2px solid #2B1E24; padding: 10px 22px; border-radius: 999px; font-weight: 600; white-space: nowrap">Vào học</a>
+<a href="#chon-khoa" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 12px 24px; border-radius: 999px; font-weight: 600; white-space: nowrap">Bắt đầu học</a>
+</div>
+</nav>
+<div class="sublinks" role="navigation" aria-label="Các phần của trang">
 <a href="#chon-khoa" style="text-decoration: none; padding: 10px 0">Chọn khóa</a>
 <a href="#lo-trinh" style="text-decoration: none; padding: 10px 0">Lộ trình</a>
 <a href="#bai-hat" style="text-decoration: none; padding: 10px 0">Bài hát</a>
 <a href="#cong-dong" style="text-decoration: none; padding: 10px 0">Cộng đồng</a>
-<a href="DangNhap.dc.html" class="press" style="text-decoration: none; border: 2px solid #2B1E24; padding: 10px 22px; border-radius: 999px; font-weight: 600">Vào học</a>
-<a href="#chon-khoa" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 12px 24px; border-radius: 999px; font-weight: 600">Bắt đầu học</a>
 </div>
-</nav>
 
 <header id="dau-trang" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px 56px; align-items: center; padding: clamp(28px, 4vw, 64px) clamp(20px, 6vw, 96px) 0">
 <div style="display: flex; flex-direction: column; gap: 26px">
-<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(42px, 5.8vw, 84px); line-height: 1.08; letter-spacing: -0.015em">
+<h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(42px, 5.8vw, 84px); line-height: 1.08; letter-spacing: -0.02em">
 <span class="rise" style="display: block">Học piano</span>
 <span class="rise" style="display: block; animation-delay: .15s">cùng Mây,</span>
 <span class="rise" style="display: block; animation-delay: .3s">từ con số 0</span>
@@ -112,7 +151,7 @@ button{font-family:inherit;cursor:pointer}
 <p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
 </div>
 </div>
-<div style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 700px; height: clamp(160px, 17vw, 220px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
+<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 700px; height: clamp(160px, 17vw, 220px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
 <sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
 <button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 15px; font-weight: 500">{{k.n}}</button>
 </sc-for>
@@ -256,8 +295,8 @@ button{font-family:inherit;cursor:pointer}
 <p style="margin: -16px 0 32px; font-size: 18px">Bấm vào tên bài, Mây chỉ cho bạn bài đó nằm ở khóa nào, phần nào.</p>
 </div>
 <div class="mq" style="overflow: hidden; display: flex; flex-direction: column; gap: 10px">
-<div class="mqrow" style="display: flex; width: max-content; animation: drift 38s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap"><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
-<div class="mqrow" style="display: flex; width: max-content; animation: driftBack 44s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap; color: {{accent}}"><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
+<div class="mqrow" data-t="38" style="display: flex; width: max-content; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap"><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
+<div class="mqrow" data-t="44" data-back style="display: flex; width: max-content; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap; color: {{accent}}"><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
 </div>
 </section>
 
@@ -272,7 +311,7 @@ button{font-family:inherit;cursor:pointer}
 </section>
 
 <section class="mq" aria-label="Ảnh Mây bên cây đàn" style="overflow: hidden; background: #5B2A3C; padding: 0 0 clamp(56px, 8vw, 112px)">
-<div class="mqrow" style="display: flex; gap: 16px; width: max-content; animation: drift 70s linear infinite"><div style="display: flex; gap: 16px; padding-right: 0"><img src="/_blob/9dc936d841e9bca8e74b2ad281b88140" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/c30b026dcfb858775e846238c6e4dc48" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d88dfb98c13b8dae5c87dbc1e76981ff" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d3a9efe407d9798a514cdd5c4f18f56c" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/82cfd3e6abbb7e0718eab4ecd009ef4f" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/673c88e1bacff56f8dcb62bffd478f26" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/1314b86e9af2c1f6ecf5fc14fe6445d9" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/2a8a36b7bb645bdfe2d1f8223897a863" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/83723b08c33cfad30ce6e2b553d0c008" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/3834d18e3912dad1467ed4245ab30735" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/084d2e3081ba2f6b3aae7abb162ff4a4" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/fd7bff4c09ae663c49f232d4edddbc0c" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div><div style="display: flex; gap: 16px"><img src="/_blob/9dc936d841e9bca8e74b2ad281b88140" aria-hidden="true" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/c30b026dcfb858775e846238c6e4dc48" aria-hidden="true" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d88dfb98c13b8dae5c87dbc1e76981ff" aria-hidden="true" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d3a9efe407d9798a514cdd5c4f18f56c" aria-hidden="true" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/82cfd3e6abbb7e0718eab4ecd009ef4f" aria-hidden="true" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/673c88e1bacff56f8dcb62bffd478f26" aria-hidden="true" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/1314b86e9af2c1f6ecf5fc14fe6445d9" aria-hidden="true" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/2a8a36b7bb645bdfe2d1f8223897a863" aria-hidden="true" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/83723b08c33cfad30ce6e2b553d0c008" aria-hidden="true" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/3834d18e3912dad1467ed4245ab30735" aria-hidden="true" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/084d2e3081ba2f6b3aae7abb162ff4a4" aria-hidden="true" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/fd7bff4c09ae663c49f232d4edddbc0c" aria-hidden="true" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div></div>
+<div class="mqrow" data-t="70" style="display: flex; gap: 16px; width: max-content"><div style="display: flex; gap: 16px; padding-right: 0"><img src="/_blob/9dc936d841e9bca8e74b2ad281b88140" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/c30b026dcfb858775e846238c6e4dc48" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d88dfb98c13b8dae5c87dbc1e76981ff" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d3a9efe407d9798a514cdd5c4f18f56c" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/82cfd3e6abbb7e0718eab4ecd009ef4f" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/673c88e1bacff56f8dcb62bffd478f26" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/1314b86e9af2c1f6ecf5fc14fe6445d9" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/2a8a36b7bb645bdfe2d1f8223897a863" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/83723b08c33cfad30ce6e2b553d0c008" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/3834d18e3912dad1467ed4245ab30735" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/084d2e3081ba2f6b3aae7abb162ff4a4" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/fd7bff4c09ae663c49f232d4edddbc0c" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div><div style="display: flex; gap: 16px"><img src="/_blob/9dc936d841e9bca8e74b2ad281b88140" aria-hidden="true" alt="Mây ngồi bên đàn grand piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/c30b026dcfb858775e846238c6e4dc48" aria-hidden="true" alt="Mây cầm hoa cúc bên cây đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d88dfb98c13b8dae5c87dbc1e76981ff" aria-hidden="true" alt="Mây đàn piano bên bờ biển" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/d3a9efe407d9798a514cdd5c4f18f56c" aria-hidden="true" alt="Mây đàn bên cây thông Noel" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/82cfd3e6abbb7e0718eab4ecd009ef4f" aria-hidden="true" alt="Mây đàn piano, ảnh đen trắng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/673c88e1bacff56f8dcb62bffd478f26" aria-hidden="true" alt="Mây biểu diễn trên sân khấu" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/1314b86e9af2c1f6ecf5fc14fe6445d9" aria-hidden="true" alt="Mây mặc áo dài trắng bên cây đàn gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/2a8a36b7bb645bdfe2d1f8223897a863" aria-hidden="true" alt="Mây đàn trong chiếc áo len hồng" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/83723b08c33cfad30ce6e2b553d0c008" aria-hidden="true" alt="Mây cười bên phím đàn" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/3834d18e3912dad1467ed4245ab30735" aria-hidden="true" alt="Mây biểu diễn với đàn piano pha lê" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/084d2e3081ba2f6b3aae7abb162ff4a4" aria-hidden="true" alt="Mây ngồi bên đàn piano" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"><img src="/_blob/fd7bff4c09ae663c49f232d4edddbc0c" aria-hidden="true" alt="Mây bên cây đàn piano gỗ" style="height: clamp(180px, 22vw, 300px); width: auto; border-radius: 12px; display: block"></div></div>
 </section>
 
 <section id="cong-dong" style="padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
@@ -380,14 +419,14 @@ this.io.observe(el);
 }
 componentDidMount() {
 if (!this.io && !this.counted) this.runCount();
-this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().catch(() => {}); if (this.bg && this.bg.paused) this.playBg(); };
+this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().then(() => this.flushWant()).catch(() => {}); else this.flushWant(); if (this.bg && this.bg.paused) this.playBg(); };
 this.onVis = () => { if (document.hidden) { this.stopAuto(); if (this.bg) this.bg.pause(); } else { if (this.inView) this.startAuto(); this.playBg(); } };
 ['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
 document.addEventListener('visibilitychange', this.onVis);
-this.inView = true; this.loadPiano(); this.music(); this.playBg(); if (!document.hidden) this.startAuto();
+this.fx(); this.inView = true; this.loadPiano(); this.music(); this.playBg(); if (!document.hidden) this.startAuto();
 }
 componentWillUnmount() {
-this.stopAuto(); clearTimeout(this.backT);
+this.stopAuto(); clearTimeout(this.backT); if (this.fxOff) this.fxOff();
 ['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
 if (this.bg) { this.bg.pause(); this.bg.removeAttribute('src'); }
 document.removeEventListener('visibilitychange', this.onVis);
@@ -503,6 +542,126 @@ this.lit = Object.assign({}, this.lit, { [slot]: m });
 if (slot === 'a') { const name = this.NAME[m % 12]; this.state.note = name; if (this.noteEl) this.noteEl.textContent = name; }
 this.paint();
 }
+/* A note asked for before the browser let sound start: it plays the moment sound unlocks, if that is soon enough to still feel like the same press. */
+flushWant() {
+const w = this.want; this.want = null;
+if (w && performance.now() - w.at < 1500) this.tone(w.m, 0.85, 2.4, 0);
+}
+/* Keyboard and assistive-technology activation of a key. Pointer presses are answered on the way down, in fx(). */
+click(m) { if (performance.now() - (this.ptrAt || -1e4) > 700) this.press(m); }
+/* Touch and motion: keys that sound on the way down, rows that follow the finger and keep its speed, a menu bar that floats, and sections that arrive as you reach them. */
+fx() {
+const mm = (q) => !!(window.matchMedia && window.matchMedia(q).matches);
+const H = document.documentElement, off = [];
+const on = (t, type, fn, opt) => { t.addEventListener(type, fn, opt); off.push(() => t.removeEventListener(type, fn, opt)); };
+this.fxOff = () => { off.forEach((f) => f()); cancelAnimationFrame(this.rowRaf); if (this.rvIo) this.rvIo.disconnect(); };
+this.reduce = mm('(prefers-reduced-motion: reduce)');
+const waapi = !!(window.Element && Element.prototype.animate);
+if (waapi) H.classList.add('mp-fx');
+
+const stuck = () => H.classList.toggle('mp-stuck', window.scrollY > 8);
+on(window, 'scroll', stuck, { passive: true }); stuck();
+
+/* Keys. A mouse or pen press sounds at once. A finger on the phone's sideways-scrolling keyboard waits 70ms, so a swipe to scroll stays silent; lifting sooner sounds at once. */
+on(document, 'pointerdown', (e) => {
+const k = e.target.closest ? e.target.closest('[data-k]') : null;
+if (!k || e.button) return;
+const m = Number(k.getAttribute('data-k')), sc = k.closest('[data-keys]');
+this.ptrAt = performance.now();
+if (e.pointerType !== 'touch' || !sc || sc.scrollWidth <= sc.clientWidth + 1) { this.press(m); return; }
+const id = e.pointerId, x0 = e.clientX;
+let tm = 0;
+const done = (play) => { clearTimeout(tm); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', no, true); document.removeEventListener('pointermove', mv, true); if (play) { this.ptrAt = performance.now(); this.press(m); } };
+const up = (ev) => { if (ev.pointerId === id) done(true); };
+const no = (ev) => { if (ev.pointerId === id) done(false); };
+const mv = (ev) => { if (ev.pointerId === id && Math.abs(ev.clientX - x0) > 8) done(false); };
+document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', no, true); document.addEventListener('pointermove', mv, true);
+tm = setTimeout(() => done(true), 70);
+});
+
+/* Rows of song names and photos. Position is the time of a paused-or-playing animation, so the page's own redraws never disturb it. Speed is in animation-ms per ms: 1 is the normal drift, 0 is still. */
+if (waapi) {
+const rows = new Map(), live = new Set();
+const goal = (r) => (this.reduce || r.hover || r.focus) ? 0 : 1;
+const wrap = (r, t) => ((t % r.T) + r.T) % r.T;
+const tick = (now) => {
+this.rowRaf = 0;
+live.forEach((r) => {
+const dt = Math.min(50, Math.max(0, now - r.last)); r.last = now;
+if (r.drag) return;
+r.v = r.goal + (r.v - r.goal) * Math.pow(r.k, dt);
+r.t = wrap(r, r.t + r.v * dt);
+r.a.currentTime = r.t;
+if (Math.abs(r.v - r.goal) < 0.02) { r.v = r.goal; live.delete(r); if (r.goal) r.a.play(); }
+});
+if (live.size) this.rowRaf = requestAnimationFrame(tick);
+};
+/* Takes a row over from its own drift, from exactly where it is on screen. */
+const take = (r) => {
+if (!live.has(r)) { r.t = wrap(r, Number(r.a.currentTime) || 0); r.a.pause(); r.a.currentTime = r.t; r.last = performance.now(); live.add(r); }
+if (!this.rowRaf) this.rowRaf = requestAnimationFrame(tick);
+};
+const ease = (r) => { const g = goal(r); if (g === r.goal && !live.has(r)) return; r.goal = g; r.k = 0.99; take(r); };
+document.querySelectorAll('x-dc .mqrow').forEach((el) => {
+const back = el.hasAttribute('data-back'), T = (Number(el.getAttribute('data-t')) || 40) * 1000;
+const a = el.animate(back ? [{ transform: 'translateX(-50%)' }, { transform: 'translateX(0)' }] : [{ transform: 'translateX(0)' }, { transform: 'translateX(-50%)' }], { duration: T, iterations: Infinity });
+const r = { el, a, T, dir: back ? 1 : -1, v: 1, goal: 1, k: 0.99, t: 0, last: 0, drag: false, hover: false, focus: false };
+if (this.reduce) { a.pause(); r.v = 0; r.goal = 0; }
+rows.set(el, r);
+const box = el.closest('.mq') || el;
+on(box, 'pointerenter', (e) => { if (e.pointerType === 'mouse') { r.hover = true; ease(r); } });
+on(box, 'pointerleave', (e) => { if (e.pointerType === 'mouse') { r.hover = false; ease(r); } });
+on(box, 'focusin', () => { r.focus = true; ease(r); });
+on(box, 'focusout', () => { r.focus = false; ease(r); });
+});
+on(document, 'dragstart', (e) => { if (e.target.closest && e.target.closest('.mqrow')) e.preventDefault(); });
+/* A drag must not also count as a press on the song under the finger. */
+on(document, 'click', (e) => { if (performance.now() - (this.rowDragAt || -1e4) < 400 && e.target.closest && e.target.closest('.mqrow')) { e.stopPropagation(); e.preventDefault(); } }, true);
+on(document, 'pointerdown', (e) => {
+const el = e.target.closest ? e.target.closest('.mqrow') : null, r = el && rows.get(el);
+if (!r || e.button) return;
+const W = el.scrollWidth / 2;
+if (!W) return;
+take(r); r.drag = true; r.v = 0;
+const id = e.pointerId, x0 = e.clientX;
+let lx = x0, moved = false, hist = [[e.timeStamp, x0]];
+const mv = (ev) => {
+if (ev.pointerId !== id) return;
+if (!moved) { if (Math.abs(ev.clientX - x0) < 10) return; moved = true; lx = ev.clientX; hist = [[ev.timeStamp, lx]]; el.style.cursor = 'grabbing'; try { el.setPointerCapture(id); } catch (err) {} return; }
+r.t = wrap(r, r.t + (ev.clientX - lx) * r.dir * r.T / W); lx = ev.clientX; r.a.currentTime = r.t;
+hist.push([ev.timeStamp, lx]); while (hist.length > 2 && ev.timeStamp - hist[0][0] > 100) hist.shift();
+};
+const end = (ev) => {
+if (ev.pointerId !== id) return;
+document.removeEventListener('pointermove', mv, true); document.removeEventListener('pointerup', end, true); document.removeEventListener('pointercancel', end, true);
+r.drag = false; r.goal = goal(r); r.last = performance.now();
+if (moved) {
+el.style.cursor = '';
+const a = hist[0], b = hist[hist.length - 1], span = b[0] - a[0];
+const vx = span > 0 && ev.timeStamp - b[0] < 80 ? (b[1] - a[1]) / span : 0;
+r.v = vx * r.dir * r.T / W; r.k = 0.998; this.rowDragAt = performance.now();
+} else { r.v = 0; r.k = 0.99; }
+take(r);
+};
+document.addEventListener('pointermove', mv, true); document.addEventListener('pointerup', end, true); document.addEventListener('pointercancel', end, true);
+});
+}
+
+/* Sections below the first screen arrive once, as they are reached. Each is held at the first frame of a paused animation, so anything the page redraws or replaces simply shows. */
+if (waapi && 'IntersectionObserver' in window) {
+const held = new Map(), vh = window.innerHeight;
+const io = this.rvIo = new IntersectionObserver((es) => {
+let n = 0;
+es.forEach((e) => { if (!e.isIntersecting) return; const a = held.get(e.target); io.unobserve(e.target); held.delete(e.target); if (a) setTimeout(() => a.play(), Math.min(3, n++) * 70); });
+}, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+document.querySelectorAll('x-dc section > *').forEach((el) => {
+if (el.classList.contains('mqrow') || el.getBoundingClientRect().top < vh * 0.94) return;
+const a = el.animate(this.reduce ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'none' }], { duration: this.reduce ? 300 : 700, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+a.pause(); held.set(el, a); io.observe(el);
+});
+on(window, 'beforeprint', () => { held.forEach((a) => a.finish()); held.clear(); });
+}
+}
 /* A key the visitor presses: the music fades out fast, just ahead of the note, and the staff stops. Five quiet seconds later the music fades back in slowly. */
 press(m) {
 this.stopAuto(); this.pos = 0; this.held = true;
@@ -512,7 +671,7 @@ this.ducked = true; this.bgVol(0, 0.08);
 this.backT = setTimeout(() => { this.held = false; this.ducked = false; this.lit = {}; this.paint(); this.bgVol(0.22, 3.5); if (this.inView && !document.hidden) this.startAuto(); }, 5000);
 this.loadPiano();
 const c = this.audio();
-if (c && c.state !== 'running') c.resume().then(() => this.tone(m, 0.85, 2.4, wait)).catch(() => {}); else this.tone(m, 0.85, 2.4, wait);
+if (c && c.state !== 'running') { this.want = { m, at: performance.now() }; c.resume().then(() => this.flushWant()).catch(() => {}); } else this.tone(m, 0.85, 2.4, wait);
 this.lit = { a: m }; this.light('a', m);
 }
 /* The notes drawn on the staff (the Canon figure: long notes, then eighths, then sixteenths). They scroll silently as decoration; the sound is Mây's recording. */
@@ -554,7 +713,7 @@ this.staff = again(staff.map((n, i) => Object.assign({ i }, n)), 2600); this.bea
 this.ev = ev.sort((a, b) => a.t - b.t);
 }
 startAuto() {
-if (this.running || this.held) return;
+if (this.running || this.held || this.reduce) return;
 const from = this.pos || 0;
 this.running = true;
 this.t0 = performance.now() - from;
@@ -598,8 +757,8 @@ const on = (v) => v ? { bg: INK, fg: '#FFFFFF', pressed: 'true' } : { bg: '#FFFF
 const whites = [], blacks = [];
 for (let m = 48; m <= 76; m++) {
 const name = this.NAME[m % 12];
-if (name.length > 3) blacks.push({ id: m, left: (whites.length * 100 / 17 - 1.8) + '%', aria: 'Phím ' + name, play: () => this.press(m) });
-else whites.push({ id: m, n: name, aria: 'Phím ' + name, play: () => this.press(m) });
+if (name.length > 3) blacks.push({ id: m, left: (whites.length * 100 / 17 - 1.8) + '%', aria: 'Phím ' + name, play: () => this.click(m) });
+else whites.push({ id: m, n: name, aria: 'Phím ' + name, play: () => this.click(m) });
 }
 const mute = s.muted
 ? { pressed: 'true', bg: INK, fg: '#FFFFFF', label: 'Bật nhạc', wave: 0, cross: 1 }
