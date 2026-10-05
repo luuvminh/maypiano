@@ -392,11 +392,11 @@ this.score();
 this.noteRef = (el) => { this.noteEl = el; };
 }
 componentDidMount() {
-this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().then(() => this.flushWant()).catch(() => {}); else this.flushWant(); if (this.bg && this.bg.paused) this.playBg(); };
+this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.resume().catch(() => {}); if (this.bg && this.bg.paused) this.playBg(); };
 this.onVis = () => { if (document.hidden) { this.stopAuto(); if (this.bg) this.bg.pause(); } else { if (this.inView) this.startAuto(); this.playBg(); } };
 ['pointerdown', 'pointerup', 'click', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
 document.addEventListener('visibilitychange', this.onVis);
-this.fx(); setTimeout(() => this.newest(), 0); this.inView = true; this.loadPiano(); this.music(); this.playBg(); if (!document.hidden) this.startAuto();
+this.fx(); setTimeout(() => this.newest(), 0); this.inView = true; this.music(); this.playBg(); if (!document.hidden) this.startAuto();
 }
 componentWillUnmount() {
 this.gone = true;
@@ -408,7 +408,7 @@ clearInterval(this.dbgT);
 if (this.ctx) this.ctx.close();
 this.timers.forEach(clearTimeout);
 }
-/* Sound: grand piano recordings (Salamander Grand Piano V3, Alexander Holm, CC BY 3.0), one every three semitones, played through a concert-hall reverb. */
+/* Sound: one output for the background music, so its level can be faded smoothly. */
 audio() {
 if (this.ctx) return this.ctx;
 const AC = window.AudioContext || window.webkitAudioContext;
@@ -416,23 +416,14 @@ if (!AC) return null;
 try {
 const c = new AC();
 const out = c.createGain(); out.gain.value = 1; out.connect(c.destination);
-const comp = c.createDynamicsCompressor(); comp.threshold.value = -9; comp.ratio.value = 4; comp.connect(out);
-const bus = c.createGain(); bus.gain.value = 1.9; bus.connect(comp);
-const len = Math.floor(c.sampleRate * 3.2), pre = Math.floor(c.sampleRate * 0.018);
-const ir = c.createBuffer(2, len, c.sampleRate);
-for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = pre; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
-const conv = c.createConvolver(); conv.buffer = ir;
-const warm = c.createBiquadFilter(); warm.type = 'lowpass'; warm.frequency.value = 3600;
-const wet = c.createGain(); wet.gain.value = 0.42;
-bus.connect(conv); conv.connect(warm); warm.connect(wet); wet.connect(comp);
-this.ctx = c; this.out = out; this.bus = bus;
+this.ctx = c; this.out = out;
 if (/[?&]thu-am/.test(location.search)) {
 const an = c.createAnalyser(); an.fftSize = 2048; out.connect(an);
-const d = new Float32Array(2048); this.dbg = { ok: 0, err: [], tones: 0, peak: 0 };
+const d = new Float32Array(2048); this.dbg = { peak: 0 };
 const box = document.createElement('pre'); box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;margin:0;padding:8px 12px;background:#fff;border:2px solid #2B1E24;font:14px/1.4 monospace;max-width:92vw;white-space:pre-wrap';
 document.body.appendChild(box);
 this.dbgT = setInterval(() => { an.getFloatTimeDomainData(d); let pk = 0; for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); this.dbg.peak = Math.max(this.dbg.peak, pk);
-box.textContent = 'MPAUDIO state=' + c.state + ' rate=' + c.sampleRate + ' loaded=' + this.dbg.ok + '/14 tones=' + this.dbg.tones + ' now=' + pk.toFixed(3) + ' peak=' + this.dbg.peak.toFixed(3) + ' muted=' + this.state.muted + ' out=' + c.destination.channelCount + '/' + c.destination.maxChannelCount + ' err=' + this.dbg.err.join(';') + ' END'; }, 200);
+box.textContent = 'MPAUDIO state=' + c.state + ' rate=' + c.sampleRate + ' now=' + pk.toFixed(3) + ' peak=' + this.dbg.peak.toFixed(3) + ' muted=' + this.state.muted + ' out=' + c.destination.channelCount + '/' + c.destination.maxChannelCount + ' END'; }, 200);
 }
 const sync = () => { const locked = c.state !== 'running'; if (locked !== this.state.locked) this.setState({ locked }); };
 c.onstatechange = sync; sync();
@@ -469,29 +460,6 @@ const a = this.bg, from = start == null ? a.volume : start, t0 = performance.now
 const run = (now) => { const k = Math.min(1, (now - t0) / (dur * 1000)); a.volume = from + (v - from) * k; if (k < 1) this.volRaf = requestAnimationFrame(run); };
 this.volRaf = requestAnimationFrame(run);
 }
-loadPiano() {
-if (this.buf) return;
-this.buf = {};
-const c = this.audio();
-if (!c) return;
-[['Ds2', 39], ['Fs2', 42], ['A2', 45], ['C3', 48], ['Ds3', 51], ['Fs3', 54], ['A3', 57], ['C4', 60], ['Ds4', 63], ['Fs4', 66], ['A4', 69], ['C5', 72], ['Ds5', 75], ['Fs5', 78]].forEach((n) => {
-fetch('/_audio/' + n[0] + '.mp3').then((r) => { if (!r.ok) throw 0; return r.arrayBuffer(); })
-.then((a) => new Promise((ok, no) => c.decodeAudioData(a, ok, no)))
-.then((b) => { if (this.dbg) this.dbg.ok++; const d = b.getChannelData(0); let i = 0; while (i < d.length && Math.abs(d[i]) < 0.004) i++; this.buf[n[1]] = { b, off: Math.max(0, i / b.sampleRate - 0.003) }; })
-.catch((e) => { if (this.dbg) this.dbg.err.push(n[0] + ':' + e); });
-});
-}
-tone(m, vel, hold, wait) {
-const c = this.ctx;
-if (!c || c.state !== 'running' || !this.buf) return;
-let best = null;
-Object.keys(this.buf).forEach((k) => { if (best === null || Math.abs(k - m) < Math.abs(best - m)) best = Number(k); });
-if (best === null) return;
-const s = this.buf[best], t = c.currentTime + (wait || 0);
-const src = c.createBufferSource(); src.buffer = s.b; src.playbackRate.value = Math.pow(2, (m - best) / 12);
-const g = c.createGain(); g.gain.setValueAtTime(vel, t); g.gain.setTargetAtTime(0, t + hold, 0.4);
-src.connect(g); g.connect(this.bus); src.start(t, s.off); if (this.dbg) this.dbg.tones++; src.stop(t + hold + 3);
-}
 paint() {
 if (!this.keyCss) { this.keyCss = document.createElement('style'); document.head.appendChild(this.keyCss); }
 const acc = this.props.accent || '#C2456B', L = this.lit || {};
@@ -503,14 +471,9 @@ this.lit = Object.assign({}, this.lit, { [slot]: m });
 if (slot === 'a') { const name = this.NAME[m % 12]; this.state.note = name; if (this.noteEl) this.noteEl.textContent = name; }
 this.paint();
 }
-/* A note asked for before the browser let sound start: it plays the moment sound unlocks, if that is soon enough to still feel like the same press. */
-flushWant() {
-const w = this.want; this.want = null;
-if (w && performance.now() - w.at < 1500) this.tone(w.m, 0.85, 2.4, 0);
-}
 /* Keyboard and assistive-technology activation of a key. Pointer presses are answered on the way down, in fx(). */
 click(m) { if (performance.now() - (this.ptrAt || -1e4) > 700) this.press(m); }
-/* Touch and motion: keys that sound on the way down, rows that follow the finger and keep its speed, a menu bar that floats, and sections that arrive as you reach them. */
+/* Touch and motion: keys that light up on the way down, rows that follow the finger and keep its speed, a menu bar that floats, and sections that arrive as you reach them. */
 fx() {
 const mm = (q) => !!(window.matchMedia && window.matchMedia(q).matches);
 const H = document.documentElement, off = [];
@@ -523,7 +486,7 @@ if (waapi) H.classList.add('mp-fx');
 const stuck = () => H.classList.toggle('mp-stuck', window.scrollY > 8);
 on(window, 'scroll', stuck, { passive: true }); stuck();
 
-/* Keys. A mouse or pen press sounds at once. A finger on the phone's sideways-scrolling keyboard waits 70ms, so a swipe to scroll stays silent; lifting sooner sounds at once. */
+/* Keys. A mouse or pen press lights the key at once. A finger on the phone's sideways-scrolling keyboard waits 70ms, so a swipe to scroll lights nothing; lifting sooner lights it at once. */
 on(document, 'pointerdown', (e) => {
 const k = e.target.closest ? e.target.closest('[data-k]') : null;
 if (!k || e.button) return;
@@ -633,16 +596,11 @@ newest() {
 if (!window.MayPianoApi) return;
 window.MayPianoApi('videos').then((r) => { const v = this.vids(r && r.videos); if (v && !this.gone) this.setState({ videos: v }); }).catch(() => {});
 }
-/* A key the visitor presses: the music fades out fast, just ahead of the note, and the staff stops. Five quiet seconds later the music fades back in slowly. */
+/* A key the visitor presses: it lights up and shows its name, and the staff stops. Five seconds later the staff moves again. The keys make no sound; the only sound on the page is Mây's recording. */
 press(m) {
 this.stopAuto(); this.pos = 0; this.held = true;
 clearTimeout(this.backT);
-const wait = this.state.live && !this.ducked ? 0.09 : 0;
-this.ducked = true; this.bgVol(0, 0.08);
-this.backT = setTimeout(() => { this.held = false; this.ducked = false; this.lit = {}; this.paint(); this.bgVol(0.22, 3.5); if (this.inView && !document.hidden) this.startAuto(); }, 5000);
-this.loadPiano();
-const c = this.audio();
-if (c && c.state !== 'running') { this.want = { m, at: performance.now() }; c.resume().then(() => this.flushWant()).catch(() => {}); } else this.tone(m, 0.85, 2.4, wait);
+this.backT = setTimeout(() => { this.held = false; this.lit = {}; this.paint(); if (this.inView && !document.hidden) this.startAuto(); }, 5000);
 this.lit = { a: m }; this.light('a', m);
 }
 /* The notes drawn on the staff (the Canon figure: long notes, then eighths, then sixteenths). They scroll silently as decoration; the sound is Mây's recording. */
@@ -717,7 +675,7 @@ const muted = this.state.muted ? false : this.state.live;
 try { localStorage.setItem('mp-nhac', muted ? '0' : '1'); } catch (e) {}
 const c = this.audio();
 if (c && c.state !== 'running') c.resume().catch(() => {});
-if (this.bg) { if (muted) this.bg.pause(); else { if (this.bg.paused && !this.ducked) { this.bgVol(0.22, 1.5, 0); } const p = this.bg.play(); if (p && p.catch) p.catch(() => {}); } }
+if (this.bg) { if (muted) this.bg.pause(); else { if (this.bg.paused) { this.bgVol(0.22, 1.5, 0); } const p = this.bg.play(); if (p && p.catch) p.catch(() => {}); } }
 this.setState({ muted });
 }
 renderVals() {
