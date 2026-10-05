@@ -190,8 +190,7 @@ function maypiano_bunny_settings_section() {
 }
 
 /**
- * Under a lesson's video: back 10 seconds and forward 10 seconds. The two talk to the Bunny player the standard way (player.js messages).
- * Also here: the Previous and Next buttons follow the order of the lesson list, and an empty text panel under the video is put away.
+ * An empty text panel under a lesson's video is put away. (Back and forward 10 seconds are buttons of the Bunny player itself.)
  */
 add_action( 'wp_footer', function () {
 	if ( ! is_singular( 'lesson' ) ) {
@@ -199,32 +198,9 @@ add_action( 'wp_footer', function () {
 	}
 	?>
 <script>
-/* Tutor LMS swaps the lesson in place when the learner moves to another one, and redraws parts of the page after it loads.
-   So nothing here is done once: sync() runs again after every change to the page and puts things back where they belong. */
+/* Tutor LMS swaps the lesson in place when the learner moves to another one, so this runs again after every change to the page. */
 (function () {
-	var ORIGIN = 'https://iframe.mediadelivery.net', want = 0;
-	var say = function (m) { var f = document.querySelector('iframe.mp-bunny'); if (!f || !f.contentWindow) { return; } m.context = 'player.js'; m.version = '0.0.11'; f.contentWindow.postMessage(JSON.stringify(m), ORIGIN); };
-	window.addEventListener('message', function (e) {
-		if (e.origin !== ORIGIN) { return; }
-		var d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (x) { return; }
-		if (!d || d.context !== 'player.js' || d.listener !== 'mp-skip' || d.event !== 'getCurrentTime') { return; }
-		say({ method: 'setCurrentTime', value: Math.max(0, Number(d.value) + want) });
-	});
-	var bar = document.createElement('div');
-	bar.className = 'mp-skip';
-	[[-10, 'Lùi 10 giây', 'M11 5 4 12l7 7M4 12h16'], [10, 'Tới 10 giây', 'm13 5 7 7-7 7M20 12H4']].forEach(function (b) {
-		var el = document.createElement('button');
-		el.type = 'button';
-		el.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + b[2] + '"></path></svg><span>' + b[1] + '</span>';
-		if (b[0] > 0) { el.appendChild(el.firstChild); }
-		el.addEventListener('click', function () { want = b[0]; say({ method: 'getCurrentTime', listener: 'mp-skip' }); });
-		bar.appendChild(el);
-	});
 	var sync = function () {
-		var row = document.querySelector('.tutor-learning-area-footer');
-		var has = !!document.querySelector('iframe.mp-bunny');
-		if (row && has && bar.parentNode !== row) { row.insertBefore(bar, row.lastElementChild); row.classList.add('mp-has-skip'); }
-		if (!has && bar.parentNode) { bar.parentNode.removeChild(bar); }
 		document.querySelectorAll('.tutor-lesson-wrapper').forEach(function (w) {
 			var empty = !w.textContent.trim() && !w.querySelector('img,iframe,video,audio,a');
 			var box = w.closest('.tutor-tabs-content') || w;
@@ -236,7 +212,6 @@ add_action( 'wp_footer', function () {
 	sync();
 	if (window.MutationObserver) { new MutationObserver(soon).observe(document.documentElement, { childList: true, subtree: true }); }
 	window.addEventListener('load', sync);
-	setInterval(sync, 1500);
 })();
 </script>
 	<?php

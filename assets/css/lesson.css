@@ -50,16 +50,7 @@ body.mp-app .tutor-learning-area-footer .tutor-btn{background:#fff;color:var(--m
 body.mp-app .tutor-learning-area-footer .tutor-btn:last-child{background:var(--mp-accent);border-color:var(--mp-accent);color:#fff;margin-inline-start:auto}
 body.mp-app .tutor-learning-area-footer .tutor-btn.disabled,body.mp-app .tutor-learning-area-footer .tutor-btn[disabled]{opacity:.4}
 
-/* Back and forward 10 seconds, under the video */
-.mp-skip{display:flex;flex-wrap:wrap;gap:10px 12px;justify-content:center}
-body.mp-app .tutor-learning-area-footer.mp-has-skip{flex-wrap:wrap;align-items:center;justify-content:space-between}
-body.mp-app .tutor-learning-area-footer.mp-has-skip .mp-skip{flex:1 1 auto}
-body.mp-app .tutor-learning-area-footer.mp-has-skip .tutor-btn:last-child{margin-inline-start:0}
 body.mp-app .mp-empty{display:none!important}
-@media (max-width:700px){body.mp-app .tutor-learning-area-footer.mp-has-skip .mp-skip{order:-1;flex-basis:100%}body.mp-app .mp-skip button{flex:1 1 0;justify-content:center;padding:8px 12px}}
-body.mp-app .mp-skip button{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:8px 20px;border:2px solid var(--mp-ink);border-radius:999px;background:#fff;color:var(--mp-ink);font-family:var(--mp-body);font-size:18px;font-weight:600;cursor:pointer;transition:transform .12s ease,background-color .12s ease}
-body.mp-app .mp-skip button:hover{background:var(--mp-blush)}
-.mp-skip button:active{transform:scale(.96)}
 
 /* ---------- The learner's own pages (Tutor LMS dashboard): my courses, discussions, profile, settings ---------- */
 body.mp-app .tutor-dashboard-layout{background:var(--mp-bg);color:var(--mp-ink);font-family:var(--mp-body);font-size:18px;line-height:1.5}
@@ -137,3 +128,20 @@ body.mp-app :is(.tutor-learning-area,.tutor-dashboard-layout) ::selection{backgr
 body.mp-app .tutor-dashboard-main{min-width:0;max-width:100%}
 body.mp-app .tutor-dashboard-header-user-avatar{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
 html:has(.tutor-learning-area),html:has(.tutor-dashboard-layout),body.mp-app:has(.tutor-learning-area),body.mp-app:has(.tutor-dashboard-layout){overflow-x:clip}
+
+/* ---------- Lesson page, wide screens: one ground, one type, nothing cut off ---------- */
+body.mp-app :is(.tutor-learning-header,.tutor-learning-header-inner,.tutor-learning-header-content){background:var(--mp-bg)!important}
+body.mp-app .tutor-learning-area :is(div,span,a,button,p,li,input){font-family:var(--mp-body)!important}
+body.mp-app .tutor-learning-area :is(.tutor-learning-header-title,.tutor-learning-header-title span,.tutor-learning-nav-header-title){font-family:var(--mp-head)!important}
+body.mp-app .tutor-learning-area .tutor-btn:not(.tutor-btn-icon){font-size:17px!important;font-weight:600;border-radius:999px;min-height:46px;padding:8px 20px;white-space:nowrap}
+body.mp-app .tutor-learning-area .tutor-btn-secondary{background:#fff;color:var(--mp-ink);border:2px solid var(--mp-ink);box-shadow:none}
+body.mp-app .tutor-learning-area .tutor-btn-secondary:hover{background:var(--mp-blush)}
+body.mp-app .tutor-learning-nav-header-title{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;display:block!important;-webkit-line-clamp:unset!important}
+body.mp-app .tutor-learning-nav-header{height:auto!important;padding-block:10px}
+body.mp-app .tutor-mark-as-complete-button{display:inline-flex!important;align-items:center;justify-content:center;gap:10px;width:auto!important;min-height:52px;padding:10px 24px!important;border-radius:999px!important;border:2px solid var(--mp-accent)!important;background:var(--mp-accent)!important;color:#fff!important;font-family:var(--mp-body)!important;font-size:18px!important;font-weight:600;white-space:nowrap;overflow:visible;box-shadow:none;cursor:pointer}
+body.mp-app .tutor-mark-as-complete-button>span{width:auto!important}
+body.mp-app .tutor-mark-as-complete-button svg{position:static!important;flex:none;transform:none!important;margin:0!important}
+body.mp-app .tutor-mark-as-complete-button.completed{background:#fff!important;border-color:var(--mp-ink)!important;color:var(--mp-ink)!important;opacity:1!important;cursor:default}
+body.mp-app .tutor-learning-sidebar-pages{background:transparent!important;border:0!important;box-shadow:none!important;padding-inline:0}
+body.mp-app .tutor-learning-sidebar-pages .tutor-learning-pages-item{background:#fff;border:2px solid var(--mp-ink)}
+@media (max-width:700px){body.mp-app .tutor-mark-as-complete-button{padding:8px 16px!important;font-size:17px!important;min-height:48px}}
