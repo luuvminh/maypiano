@@ -36,7 +36,9 @@ button{font-family:inherit;cursor:pointer}
 .press:active{transform:scale(.96)}
 .wkey{transition:background .15s ease,transform .1s ease;transform-origin:top}
 .wkey:active{transform:scaleY(.97)}
-.mq:hover .mqrow{animation-play-state:paused}
+.mq:hover .mqrow,.mq:focus-within .mqrow{animation-play-state:paused}
+.song{font:inherit;color:inherit;background:none;border:0;padding:6px 0;margin:0;text-decoration:underline transparent;text-decoration-thickness:2px;text-underline-offset:.16em;transition:text-decoration-color .2s ease}
+.song:hover,.song:focus-visible{text-decoration-color:currentColor}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </helmet>
@@ -176,7 +178,7 @@ button{font-family:inherit;cursor:pointer}
 </div>
 <div style="display: flex; flex-direction: column">
 <sc-for list="{{solo}}" as="c" hint-placeholder-count="3">
-<article style="padding: 28px 0; border-top: 2px solid #2B1E24">
+<article ref="{{c.ref}}" style="padding: 28px 0; border-top: 2px solid #2B1E24; scroll-margin-top: 12px">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 40px; align-items: center">
 <div style="display: flex; gap: 18px; align-items: center"><div style="flex: none; width: 56px; height: 56px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px">{{c.step}}</div><h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3></div>
 <p style="margin: 0">{{c.desc}}</p>
@@ -184,12 +186,15 @@ button{font-family:inherit;cursor:pointer}
 </div>
 <button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="margin-top: 16px; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button>
 <a href="MuaKhoaHoc.dc.html" class="press" style="display: inline-block; margin: 16px 0 0 10px; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký khóa này</a>
+<sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
+<p class="rise" role="status" style="margin: 20px 0 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
+</sc-if>
 <sc-if value="{{c.open}}" hint-placeholder-val="{{ false }}">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; align-items: start">
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -203,17 +208,20 @@ button{font-family:inherit;cursor:pointer}
 <p style="margin: 0 0 36px; max-width: 36em">Mây có hai khóa riêng cho bạn muốn vừa đàn vừa hát, ở nhà hay ở ca đoàn.</p>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px">
 <sc-for list="{{dem}}" as="c" hint-placeholder-count="2">
-<article style="border: 2px solid #2B1E24; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; align-self: start">
+<article ref="{{c.ref}}" style="scroll-margin-top: 12px; border: 2px solid #2B1E24; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; align-self: start">
 <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3>
 <p style="margin: 0">{{c.desc}}</p>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between; padding-top: 12px"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
 <button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="align-self: flex-start; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button>
+<sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
+<p class="rise" role="status" style="margin: 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
+</sc-if>
 <sc-if value="{{c.open}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><span>{{l.n}}</span><span style="white-space: nowrap; font-variant-numeric: tabular-nums">{{l.d}}</span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -260,10 +268,11 @@ button{font-family:inherit;cursor:pointer}
 <button type="button" class="press" aria-pressed="{{g.pressed}}" onClick="{{g.pick}}" style="border: 2px solid #2B1E24; border-radius: 999px; padding: 10px 20px; min-height: 48px; font-size: 18px; font-weight: 600; background: {{g.bg}}; color: {{g.fg}}">{{g.label}}</button>
 </sc-for>
 </div>
+<p style="margin: -16px 0 32px; font-size: 18px">Bấm vào tên bài, Mây chỉ cho bạn bài đó nằm ở khóa nào, phần nào.</p>
 </div>
 <div class="mq" style="overflow: hidden; display: flex; flex-direction: column; gap: 10px">
-<div class="mqrow" style="display: flex; width: max-content; animation: drift 38s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap"><span style="padding-right: .5em">{{songRowA}}</span><span aria-hidden="true" style="padding-right: .5em">{{songRowA}}</span></div>
-<div class="mqrow" aria-hidden="true" style="display: flex; width: max-content; animation: driftBack 44s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap; color: {{accent}}"><span style="padding-right: .5em">{{songRowB}}</span><span style="padding-right: .5em">{{songRowB}}</span></div>
+<div class="mqrow" style="display: flex; width: max-content; animation: drift 38s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap"><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
+<div class="mqrow" style="display: flex; width: max-content; animation: driftBack 44s linear infinite; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap; color: {{accent}}"><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
 </div>
 </section>
 
@@ -364,7 +373,7 @@ class Component extends DCLogic {
 constructor(props) {
 super(props);
 let muted = true; try { muted = localStorage.getItem('mp-mute') !== '0'; } catch (e) {}
-this.state = { note: 'chưa bấm', muted, locked: true, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
+this.state = { note: 'chưa bấm', muted, locked: true, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', hit: null, only: false, mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
 this.timers = [];
 this.NAME = ['Đô', 'Đô thăng', 'Rê', 'Rê thăng', 'Mi', 'Fa', 'Fa thăng', 'Son', 'Son thăng', 'La', 'La thăng', 'Si'];
 this.stripRef = (el) => { this.strip = el; };
@@ -897,8 +906,25 @@ Thánh Thánh Thánh~3:18
 Lạy Chiên Thiên Chúa~3:28
 Tổng kết, kinh nghiệm đệm đàn nhà thờ~2:08`]]
 };
-const mk = (name) => CUR[name].map((p) => { const ls = p[1].split('\n').map((x) => { const a = x.split('~'); return { n: a[0], d: a[1] || 'sheet' }; }); return { t: p[0], count: ls.length + ' bài', lessons: ls }; });
-const course = (x, key) => ({ ...x, parts: s.open === key ? mk(x.name) : [], open: s.open === key, btn: s.open === key ? 'Thu gọn danh sách bài' : 'Xem từng bài học', toggle: () => this.setState({ open: s.open === key ? '' : key }) });
+const low = (t) => t.normalize('NFC').toLowerCase();
+const hasSong = (line, song) => !!song && low(line.split('~')[0]).includes(low(song));
+const mk = (name, song) => CUR[name].map((p) => { const ls = p[1].split('\n').map((x) => { const a = x.split('~'); const h = hasSong(x, song); return { n: a[0], d: a[1] || 'sheet', hit: h, fw: h ? 600 : 'inherit', bg: h ? '#F7D9E1' : 'transparent', sh: h ? '-10px 0 0 #F7D9E1, 10px 0 0 #F7D9E1' : 'none' }; }); return { t: p[0], count: ls.length + ' bài', lessons: ls, hit: ls.some((l) => l.hit) }; });
+const KEYS = S.map((x, i) => ['s' + i, x.name]).concat([['d0', 'Đệm Hát Piano'], ['d1', 'Đệm Hát Thánh Ca']]);
+/* Where a song is taught: the first course on the path that has it, plus the names of any later ones. */
+const locate = (song) => { const has = KEYS.filter((k) => CUR[k[1]].some((p) => p[1].split('\n').some((x) => hasSong(x, song)))); return has.length ? { key: has[0][0], song, also: has.slice(1).map((k) => k[1]) } : null; };
+const goSong = (song) => { const h = locate(song); if (!h) return; this.jump = h.key; this.setState({ hit: h, open: h.key, only: true }); };
+const course = (x, key) => {
+const open = s.open === key;
+const found = open && !!s.hit && s.hit.key === key;
+const all = open ? mk(x.name, found ? s.hit.song : '') : [];
+const mine = all.filter((p) => p.hit);
+const short = found && s.only && mine.length > 0;
+const where = found ? 'nằm ở ' + mine.map((p) => p.t.split(':')[0] + ', bài ' + p.lessons.map((l, i) => l.hit ? i + 1 : 0).filter(Boolean).join(' và ')).join('; ') + ' của khóa này.' + (s.hit.also.length ? ' Bài này còn có trong khóa ' + s.hit.also.join(' và ') + '.' : '') : '';
+return { ...x, parts: short ? mine.map((p) => ({ ...p, lessons: p.lessons.filter((l) => l.hit) })) : all, open, found, song: found ? s.hit.song : '', where,
+btn: short ? 'Xem cả khóa học' : open ? 'Thu gọn danh sách bài' : 'Xem từng bài học',
+toggle: () => this.setState(short ? { only: false } : open ? { open: '', hit: null } : { open: key, hit: null, only: false }),
+ref: (el) => { if (el && this.jump === key) { this.jump = null; const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' }); } } };
+};
 const solo = S.map((x, i) => course(x, 's' + i));
 const DEM = [
 { name: 'Đệm Hát Piano', desc: 'Vừa đàn vừa hát bài mình thích. Đi sâu vào điệu ballad và cách phối nhiều kiểu đệm trong một bài.', meta: '39 bài, 3 giờ 55 phút', price: '799.000đ' },
@@ -932,8 +958,8 @@ accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMut
 swap: s.swap % 2 ? 'swapA' : 'swapB',
 steps, cur: { num: String(s.step + 1), title: ST[s.step][0], body: ST[s.step][1] }, stepSwap: s.tick % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
-songRowA: list.slice(0, 4).join('  ♪  ') + '  ♪  ',
-songRowB: list.slice(4).join('  ♪  ') + '  ♪  ',
+songsA: list.slice(0, 4).map((n) => ({ name: n, go: () => goSong(n) })),
+songsB: list.slice(4).map((n) => ({ name: n, go: () => goSong(n) })),
 chartAria: bai ? 'Biểu đồ số bài học của năm khóa' : 'Biểu đồ số giờ video của năm khóa',
 dem: DEM.map((x, i) => course(x, 'd' + i)),
 faqs, email: s.email, sent: s.sent, notSent: !s.sent,
