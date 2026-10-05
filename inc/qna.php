@@ -39,7 +39,8 @@ add_filter( 'tutor_qna_insert_data', function ( $data ) {
  *   pending = waiting for an answer
  *   draft   = an answer has been written into the entry's excerpt and waits for a yes
  *   private = answered; the excerpt, if any, has been posted under the question
- * Entries are never public.
+ * Entries are never public. Each entry carries the address of its lesson's page ("Link bài"), where the question and its
+ * answers are read under the video.
  */
 
 const MAYPIANO_QNA_TYPE   = 'mp_hoi';
@@ -82,6 +83,42 @@ function maypiano_qna_entry_of( $question_id ) {
 	return (int) get_comment_meta( (int) $question_id, 'mp_entry', true );
 }
 
+/**
+ * Where a question is read on the site: its lesson's page, with the questions box under the video open.
+ * A question without a lesson opens on the course's questions page instead.
+ */
+function maypiano_qna_link( $question ) {
+	$qid    = (int) $question->comment_ID;
+	$lesson = (int) get_comment_meta( $qid, 'mp_lesson', true );
+	if ( $lesson && 'publish' === get_post_status( $lesson ) ) {
+		return get_permalink( $lesson ) . '#mp-hoi-dap';
+	}
+	return add_query_arg( array( 'subpage' => 'qna', 'question_id' => $qid ), get_permalink( (int) $question->comment_post_ID ) );
+}
+
+/** Entries made before they carried the link get the line, right under the lesson's name. Nothing else in the entry changes. */
+function maypiano_qna_add_links() {
+	global $wpdb;
+	$rows = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_content FROM {$wpdb->posts} WHERE post_type = %s AND post_content NOT LIKE %s LIMIT 500", MAYPIANO_QNA_TYPE, '%Link bài: %' ) ); // phpcs:ignore WordPress.DB
+	foreach ( (array) $rows as $row ) {
+		$question = get_comment( (int) get_post_meta( (int) $row->ID, '_mp_question', true ) );
+		if ( ! $question ) {
+			continue;
+		}
+		$line  = esc_html( 'Link bài: ' . maypiano_qna_link( $question ) );
+		$count = 0;
+		$text  = preg_replace_callback( '/^Bài học: .*$/mu', function ( $m ) use ( $line ) {
+			return $m[0] . "\n" . $line;
+		}, (string) $row->post_content, 1, $count );
+		if ( ! $count ) {
+			$text = $line . "\n" . $row->post_content;
+		}
+		// Written straight to the table: saving the entry the usual way would run the step that posts answers.
+		$wpdb->update( $wpdb->posts, array( 'post_content' => $text ), array( 'ID' => (int) $row->ID ) ); // phpcs:ignore WordPress.DB
+		clean_post_cache( (int) $row->ID );
+	}
+}
+
 /** Makes the entry for one question, unless it has one. Returns the entry's ID or 0. */
 function maypiano_qna_make_entry( $question ) {
 	if ( ! $question || 'tutor_q_and_a' !== $question->comment_type || (int) $question->comment_parent ) {
@@ -102,6 +139,7 @@ function maypiano_qna_make_entry( $question ) {
 		'Mã câu hỏi: ' . $qid,
 		'Khóa học: ' . $course,
 		'Bài học: ' . ( $lesson ? get_the_title( $lesson ) : '(không rõ)' ),
+		'Link bài: ' . maypiano_qna_link( $question ),
 		'Người hỏi: ' . $name,
 		'Ngày hỏi: ' . $question->comment_date,
 		'',
@@ -460,6 +498,7 @@ add_action( 'init', function () {
 	if ( MAYPIANO_VERSION !== get_option( 'maypiano_qna_ran' ) ) {
 		update_option( 'maypiano_qna_ran', MAYPIANO_VERSION, false );
 		maypiano_qna_sync();
+		maypiano_qna_add_links();
 	}
 }, 30 );
 
