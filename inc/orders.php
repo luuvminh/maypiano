@@ -121,7 +121,7 @@ function maypiano_order_view( $order ) {
 		'payUrl'     => 'card' === $method && 'live' === maypiano_card_mode() && $order->needs_payment() ? $order->get_checkout_payment_url() : '',
 	);
 	if ( 'paid' === $state ) {
-		$view['learnUrl']   = wp_login_url( maypiano_learn_url() );
+		$view['learnUrl']   = maypiano_login_url();
 		$view['newAccount'] = (bool) $order->get_meta( '_mp_new_account' );
 		$view['access']     = (string) $order->get_meta( '_mp_access' );
 	}

@@ -94,14 +94,14 @@ function maypiano_mail_access( $order, $user_id, $opened, $missing ) {
 	if ( $user && $opened ) {
 		$body .= '<p>Khóa học đã mở cho tài khoản <strong>' . esc_html( $user->user_email ) . '</strong>.</p>';
 		if ( $order->get_meta( '_mp_new_account' ) ) {
-			$key = get_password_reset_key( $user );
-			if ( ! is_wp_error( $key ) ) {
+			$url = maypiano_password_url( $user );
+			if ( $url ) {
 				$body .= '<p>Đây là lần đầu bạn học ở Mây Piano, nên bạn đặt mật khẩu trước rồi vào học:</p>'
-					. maypiano_mail_button( network_site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user->user_login ), 'login' ), 'Đặt mật khẩu và vào học' )
-					. '<p style="font-size:15px">Nút này dùng được trong 24 giờ. Quá hạn, bạn bấm "Quên mật khẩu" ở <a href="' . esc_url( wp_login_url( maypiano_learn_url() ) ) . '" style="color:#8A3350">trang đăng nhập</a> để nhận nút mới.</p>';
+					. maypiano_mail_button( $url, 'Đặt mật khẩu và vào học' )
+					. '<p style="font-size:15px">Nút này dùng được trong 24 giờ. Quá hạn, bạn bấm "Quên mật khẩu" ở <a href="' . esc_url( maypiano_login_url() ) . '" style="color:#8A3350">trang đăng nhập</a> để nhận nút mới.</p>';
 			}
 		} else {
-			$body .= '<p>Bạn đăng nhập bằng mật khẩu đang dùng:</p>' . maypiano_mail_button( wp_login_url( maypiano_learn_url() ), 'Đăng nhập và vào học' );
+			$body .= '<p>Bạn đăng nhập bằng mật khẩu đang dùng:</p>' . maypiano_mail_button( maypiano_login_url(), 'Đăng nhập và vào học' );
 		}
 	}
 	if ( $missing ) {

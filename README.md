@@ -18,6 +18,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `inc/catalog.php`: danh sách khóa, giá theo vùng, nối với sản phẩm WooCommerce và khóa Tutor LMS.
 - `inc/orders.php`: đặt đơn, báo đã trả, xác nhận, tạo tài khoản học, mở khóa học.
 - `inc/approve.php`: trang duyệt đơn bằng một nút cho chủ site, mở từ email.
+- `inc/account.php`: trang đăng nhập, quên mật khẩu và đặt mật khẩu cho học viên, giao diện May Piano, tiếng Việt (`/?tk=dang-nhap`, `/?tk=quen-mat-khau`, `/?tk=dat-mat-khau`). Đường dẫn đặt mật khẩu kiểu WordPress cũ tự chuyển về đây.
 - `inc/emails.php`: email gửi khách và gửi chủ site.
 - `inc/mailpoet.php`: tiếng Việt cho MailPoet (email xác nhận đăng ký nhận bài học, trang báo đăng ký thành công, tên người gửi). Bảng dịch nằm ở `languages/mailpoet-vi.json`.
 - `inc/settings.php`: trang **Cài đặt > May Piano**.
