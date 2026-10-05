@@ -79,16 +79,16 @@ button{font-family:inherit;cursor:pointer}
 <div aria-hidden="true" style="position: relative; margin: clamp(36px, 5vw, 64px) 0 0; height: 190px">
 <div style="position: absolute; left: 0; right: 0; top: 54px; height: 82px; background: repeating-linear-gradient(180deg, #2B1E24 0 2px, transparent 2px 20px)"></div>
 <div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px)); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px))">
-<div style="position: absolute; left: 0; top: 14px; width: 200%; height: 160px; animation: drift 30s linear infinite">
+<div ref="{{stripRef}}" style="position: absolute; left: clamp(190px, 30vw, 400px); top: 14px; width: 1px; height: 160px; will-change: transform">
 <sc-for list="{{notes}}" as="n" hint-placeholder-count="16">
-<svg width="40" height="66" viewBox="0 0 40 66" fill="none" style="position: absolute; left: {{n.left}}; top: {{n.top}}; overflow: visible; animation: bob2 1.8s ease-in-out {{n.delay}} infinite"><ellipse cx="12" cy="54" rx="10.500" ry="7.500" transform="rotate(-20 12 54)" fill="{{n.fill}}" stroke="{{n.col}}" stroke-width="3"></ellipse><path d="M21.500 51V5" stroke="{{n.col}}" stroke-width="3" stroke-linecap="round" opacity="{{n.stem}}"></path><path d="M21.500 5c2 9 13 11 11 23" stroke="{{n.col}}" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f1}}"></path><path d="M21.500 17c2 9 13 11 11 23" stroke="{{n.col}}" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f2}}"></path></svg>
+<svg data-n="{{n.i}}" width="40" height="66" viewBox="0 0 40 66" fill="none" style="position: absolute; left: {{n.left}}; top: {{n.top}}; overflow: visible; color: #2B1E24; transition: color .12s ease"><path d="M-5 54H29" stroke="#2B1E24" stroke-width="2" opacity="{{n.ledger}}"></path><ellipse cx="12" cy="54" rx="10.500" ry="7.500" transform="rotate(-20 12 54)" fill="{{n.fill}}" stroke="currentColor" stroke-width="3"></ellipse><path d="M21.500 51V5" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path><path d="M21.500 5c2 9 13 11 11 23" stroke="currentColor" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f1}}"></path><path d="M21.500 17c2 9 13 11 11 23" stroke="currentColor" stroke-width="3.500" stroke-linecap="round" opacity="{{n.f2}}"></path></svg>
 </sc-for>
 </div>
 </div>
 <span style="position: absolute; left: clamp(16px, 3vw, 44px); top: 40px; font-family: 'Noto Music', 'Apple Symbols', 'Segoe UI Symbol', serif; font-size: 100px; line-height: 1; color: #2B1E24">𝄞</span>
 </div>
 
-<section ref="{{pianoRef}}" style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) 0">
+<section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) 0">
 <div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-bottom: 18px">
 <div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2">Bạn bấm thử một phím nhé</h2>
@@ -99,12 +99,12 @@ button{font-family:inherit;cursor:pointer}
 </div>
 <button type="button" class="press" aria-pressed="{{mute.pressed}}" onClick="{{toggleMute}}" style="border: 2px solid #2B1E24; border-radius: 999px; padding: 8px 20px; min-height: 50px; font-size: 18px; font-weight: 600; background: {{mute.bg}}; color: {{mute.fg}}; display: flex; gap: 10px; align-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"></path><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" style="opacity: {{mute.wave}}"></path><path d="M16 9.5l5 5M21 9.5l-5 5" style="opacity: {{mute.cross}}"></path></svg>{{mute.label}}</button>
 </div>
-<div style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 620px; height: clamp(170px, 21vw, 250px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
+<div style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 700px; height: clamp(160px, 17vw, 220px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
 <sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
-<button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 12px; font-size: 17px; font-weight: 500">{{k.n}}</button>
+<button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 15px; font-weight: 500">{{k.n}}</button>
 </sc-for>
 <sc-for list="{{blacks}}" as="k" hint-placeholder-count="7">
-<button type="button" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="position: absolute; top: 0; left: {{k.left}}; width: 6%; height: 60%; border: 0; border-radius: 0 0 6px 6px; background: #2B1E24; transition: background .15s ease"></button>
+<button type="button" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="position: absolute; top: 0; left: {{k.left}}; width: 3.6%; height: 60%; border: 0; border-radius: 0 0 5px 5px; background: #2B1E24; transition: background .15s ease"></button>
 </sc-for>
 </div></div>
 </section>
@@ -360,17 +360,10 @@ super(props);
 let muted = false; try { muted = localStorage.getItem('mp-mute') === '1'; } catch (e) {}
 this.state = { note: 'chưa bấm', muted, locked: true, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
 this.timers = [];
-this.KEYS = [['Đô', 60], ['Rê', 62], ['Mi', 64], ['Fa', 65], ['Son', 67], ['La', 69], ['Si', 71], ['Đô', 72], ['Rê', 74], ['Mi', 76]];
+this.NAME = ['Đô', 'Đô thăng', 'Rê', 'Rê thăng', 'Mi', 'Fa', 'Fa thăng', 'Son', 'Son thăng', 'La', 'La thăng', 'Si'];
+this.stripRef = (el) => { this.strip = el; };
+this.score();
 this.noteRef = (el) => { this.noteEl = el; };
-this.pianoRef = (el) => {
-if (!el || this.pio || this.inView) return;
-if (!('IntersectionObserver' in window)) { this.inView = true; this.loadPiano(); this.startAuto(); return; }
-this.pio = new IntersectionObserver((es) => {
-this.inView = es[es.length - 1].isIntersecting;
-if (this.inView) { this.loadPiano(); this.startAuto(); } else this.stopAuto();
-}, { threshold: 0.25 });
-this.pio.observe(el);
-};
 this.statsRef = (el) => {
 if (!el || this.io || this.counted) return;
 if (!('IntersectionObserver' in window)) { this.runCount(); return; }
@@ -384,12 +377,12 @@ this.unlock = () => { const c = this.audio(); if (c && c.state !== 'running') c.
 this.onVis = () => { if (document.hidden) this.stopAuto(); else if (this.inView) this.startAuto(); };
 ['pointerdown', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
 document.addEventListener('visibilitychange', this.onVis);
+this.inView = true; this.loadPiano(); if (!document.hidden) this.startAuto();
 this.auto = setInterval(() => { if (!this.manual) this.setState((s) => ({ step: (s.step + 1) % 5, tick: s.tick + 1 })); }, 4500);
 }
 componentWillUnmount() {
 clearInterval(this.auto);
 this.stopAuto(); clearTimeout(this.backT);
-if (this.pio) this.pio.disconnect();
 ['pointerdown', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
 document.removeEventListener('visibilitychange', this.onVis);
 clearInterval(this.dbgT);
@@ -418,7 +411,7 @@ try {
 const c = new AC();
 const out = c.createGain(); out.gain.value = this.state.muted ? 0 : 1; out.connect(c.destination);
 const comp = c.createDynamicsCompressor(); comp.threshold.value = -9; comp.ratio.value = 4; comp.connect(out);
-const bus = c.createGain(); bus.gain.value = 3.2; bus.connect(comp);
+const bus = c.createGain(); bus.gain.value = 1.9; bus.connect(comp);
 const len = Math.floor(c.sampleRate * 3.2), pre = Math.floor(c.sampleRate * 0.018);
 const ir = c.createBuffer(2, len, c.sampleRate);
 for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = pre; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
@@ -463,52 +456,67 @@ const src = c.createBufferSource(); src.buffer = s.b; src.playbackRate.value = M
 const g = c.createGain(); g.gain.setValueAtTime(vel, t); g.gain.setTargetAtTime(0, t + hold, 0.4);
 src.connect(g); g.connect(this.bus); src.start(t, s.off); if (this.dbg) this.dbg.tones++; src.stop(t + hold + 3);
 }
-light(id, name) {
-this.state.note = name;
-if (this.noteEl) this.noteEl.textContent = name;
+paint() {
 if (!this.keyCss) { this.keyCss = document.createElement('style'); document.head.appendChild(this.keyCss); }
-this.keyCss.textContent = '[data-k="' + id + '"]{background:' + (id >= 100 ? (this.props.accent || '#C2456B') : '#E9B9C6') + '!important}';
+const acc = this.props.accent || '#C2456B', L = this.lit || {};
+const key = (m) => m == null ? '' : '[data-k="' + m + '"]{background:' + (this.NAME[m % 12].length > 3 ? acc : '#E9B9C6') + '!important}';
+this.keyCss.textContent = key(L.a) + key(L.b) + (L.n == null ? '' : '[data-n="' + L.n + '"]{color:' + acc + '!important}');
+}
+light(slot, m) {
+this.lit = Object.assign({}, this.lit, { [slot]: m });
+if (slot === 'a') { const name = this.NAME[m % 12]; this.state.note = name; if (this.noteEl) this.noteEl.textContent = name; }
+this.paint();
 }
 /* A key the visitor presses: the Canon steps aside, and comes back after eight quiet seconds. */
-press(m, name, id) {
+press(m) {
 this.stopAuto(); this.pos = 0; this.held = true;
 clearTimeout(this.backT);
 this.backT = setTimeout(() => { this.held = false; if (this.inView && !document.hidden) this.startAuto(); }, 8000);
 this.loadPiano();
 const c = this.audio();
 if (c && c.state !== 'running') c.resume().then(() => this.tone(m, 0.85, 2.4)).catch(() => {}); else this.tone(m, 0.85, 2.4);
-this.light(id, name);
+this.lit = { a: m }; this.light('a', m);
 }
-/* Pachelbel's Canon, in C: long notes, then eighths, then sixteenths, over a rolling left hand. */
+/* Pachelbel's Canon, in C: long notes, then eighths, then sixteenths, over a rolling left hand. The same notes are drawn on the staff. */
 score() {
+const M = [60, 62, 64, 65, 67, 69, 71, 72, 74, 76];
 const LH = [[48, 55, 60], [43, 50, 55], [45, 52, 57], [40, 47, 52], [41, 48, 53], [48, 55, 60], [41, 48, 53], [43, 50, 55]];
 const LONG = [9, 8, 7, 6, 5, 4, 5, 6];
 const ARP = [[9, 7, 4, 7], [8, 6, 4, 6], [7, 5, 2, 5], [6, 4, 2, 4], [5, 3, 0, 3], [4, 2, 0, 2], [5, 3, 7, 5], [6, 4, 8, 6]];
-const D = 1600, ev = [];
+const D = 1600, ev = [], staff = [];
 let t = 0;
-const left = (i) => [0, 1, 2, 1].forEach((n, j) => ev.push({ t: t + j * D / 4, m: LH[i][n], v: j ? 0.26 : 0.38, h: 1.7 }));
-LONG.forEach((k, i) => { left(i); ev.push({ t, k, v: 0.6, h: 2 }); ev.push({ t: t + 12, m: this.KEYS[k - 2][1], v: 0.3, h: 2 }); t += D; });
-ARP.forEach((g, i) => { left(i); g.forEach((k, j) => ev.push({ t: t + j * D / 4, k, v: j ? 0.48 : 0.62, h: 1.3 })); t += D; });
-ARP.forEach((g, i) => { left(i); [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].forEach((k, j) => ev.push({ t: t + j * D / 8, k, v: j % 4 ? 0.4 : 0.58, h: 1 })); t += D; });
-[[48], [55], [0, 4], [0, 7], [0, 9]].forEach((n, j) => ev.push(n.length > 1 ? { t: t + j * 110, k: n[1], v: 0.55, h: 4.5 } : { t: t + j * 110, m: n[0], v: 0.42, h: 4.5 }));
+const left = (i) => [0, 1, 2, 1].forEach((n, j) => ev.push({ t: t + j * D / 4, m: LH[i][n], v: j ? 0.26 : 0.38, h: 1.7, lh: 1 }));
+const tune = (at, k, v, h, kind) => { ev.push({ t: at, m: M[k], v, h, n: staff.length }); staff.push({ t: at, k, kind }); };
+LONG.forEach((k, i) => { left(i); tune(t, k, 0.6, 2, 'h'); ev.push({ t: t + 12, m: M[k - 2], v: 0.3, h: 2 }); t += D; });
+ARP.forEach((g, i) => { left(i); g.forEach((k, j) => tune(t + j * D / 4, k, j ? 0.48 : 0.62, 1.3, 'e')); t += D; });
+ARP.forEach((g, i) => { left(i); [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].forEach((k, j) => tune(t + j * D / 8, k, j % 4 ? 0.4 : 0.58, 1, 's')); t += D; });
+ev.push({ t, m: 48, v: 0.42, h: 4.5, lh: 1 }); ev.push({ t: t + 110, m: 55, v: 0.42, h: 4.5, lh: 1 });
+tune(t + 220, 7, 0.55, 4.5, 'h');
+ev.push({ t: t + 330, m: 64, v: 0.4, h: 4.5 }); ev.push({ t: t + 440, m: 76, v: 0.45, h: 4.5 });
 this.ev = ev.sort((a, b) => a.t - b.t);
-this.total = t + 6500;
+this.total = t + 6400;
+this.PX = 0.17;
+this.staff = staff.map((n, i) => Object.assign({ i }, n)).concat(staff.filter((n) => n.t < 13000).map((n) => Object.assign({ i: staff.indexOf(n) }, n, { t: n.t + this.total })));
 }
 startAuto() {
 if (this.running || this.held) return;
-if (!this.ev) this.score();
 const from = this.pos || 0;
 this.running = true;
 this.t0 = performance.now() - from;
+if (this.strip && this.strip.animate) {
+if (!this.anim || this.animEl !== this.strip) { this.animEl = this.strip; this.anim = this.strip.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(' + (-this.total * this.PX) + 'px)' }], { duration: this.total, iterations: Infinity }); }
+this.anim.currentTime = from; this.anim.play();
+}
 let i = this.ev.findIndex((e) => e.t >= from);
 if (i < 0) i = this.ev.length;
 const step = () => {
 const now = performance.now() - this.t0;
 while (i < this.ev.length && this.ev[i].t <= now + 6) {
 const e = this.ev[i++];
-if (e.k == null) this.tone(e.m, e.v, e.h); else { this.tone(this.KEYS[e.k][1], e.v, e.h); this.light(e.k, this.KEYS[e.k][0]); }
+this.tone(e.m, e.v, e.h);
+if (e.n != null) { this.lit = Object.assign({}, this.lit, { n: e.n }); this.light('a', e.m); } else if (e.lh && e.m >= 48) this.light('b', e.m);
 }
-if (i >= this.ev.length) { this.seqT = setTimeout(() => { this.t0 = performance.now(); i = 0; step(); }, Math.max(0, this.total - now)); return; }
+if (i >= this.ev.length) { this.seqT = setTimeout(() => { this.t0 = performance.now(); if (this.anim) this.anim.currentTime = 0; i = 0; step(); }, Math.max(0, this.total - now)); return; }
 this.seqT = setTimeout(step, Math.max(0, this.ev[i].t - now));
 };
 step();
@@ -517,6 +525,7 @@ stopAuto() {
 if (!this.running) return;
 this.running = false;
 clearTimeout(this.seqT);
+if (this.anim) this.anim.pause();
 this.pos = (performance.now() - this.t0) % this.total;
 }
 toggleMute() {
@@ -531,16 +540,16 @@ const accent = this.props.accent ?? '#C2456B';
 const s = this.state;
 const INK = '#2B1E24';
 const on = (v) => v ? { bg: INK, fg: '#FFFFFF', pressed: 'true' } : { bg: '#FFFFFF', fg: INK, pressed: 'false' };
-const B = [[1, 'Đô thăng', 61], [2, 'Rê thăng', 63], [4, 'Fa thăng', 66], [5, 'Son thăng', 68], [6, 'La thăng', 70], [8, 'Đô thăng', 73], [9, 'Rê thăng', 75]];
-const whites = this.KEYS.map((k, i) => ({ id: i, n: k[0], aria: 'Phím ' + k[0], play: () => this.press(k[1], k[0], i) }));
-const blacks = B.map((k) => ({ id: 100 + k[0], left: (k[0] * 10 - 3) + '%', aria: 'Phím ' + k[1], play: () => this.press(k[2], k[1], 100 + k[0]) }));
+const whites = [], blacks = [];
+for (let m = 48; m <= 76; m++) {
+const name = this.NAME[m % 12];
+if (name.length > 3) blacks.push({ id: m, left: (whites.length * 100 / 17 - 1.8) + '%', aria: 'Phím ' + name, play: () => this.press(m) });
+else whites.push({ id: m, n: name, aria: 'Phím ' + name, play: () => this.press(m) });
+}
 const mute = s.muted
 ? { pressed: 'true', bg: INK, fg: '#FFFFFF', label: 'Bật tiếng', wave: 0, cross: 1 }
 : { pressed: 'false', bg: 'transparent', fg: INK, label: 'Tắt tiếng', wave: 1, cross: 0 };
-const tops = [51, 31, 41, 11, 1, 21, 41, 31];
-const ys = [100, 80, 90, 60, 70, 110, 90, 70];
-const kinds = ['q', 'e', 'h', 's', 'q', 'w', 'e', 's'];
-const notes = Array.from({ length: 16 }, (_, i) => { const k = kinds[i % 8]; const col = i % 4 === 2 ? accent : INK; return { left: (i * 6.25 + 1) + '%', top: (ys[i % 8] - 54) + 'px', col, fill: k === 'h' || k === 'w' ? '#E3D7D7' : col, stem: k === 'w' ? 0 : 1, f1: k === 'e' || k === 's' ? 1 : 0, f2: k === 's' ? 1 : 0, delay: ((i % 8) * 0.2) + 's' }; });
+const notes = this.staff.map((n) => ({ i: n.i, left: (n.t * this.PX - 12).toFixed(1) + 'px', top: (87 - 10 * n.k) + 'px', ledger: n.k === 0 ? 1 : 0, fill: n.kind === 'h' ? '#E3D7D7' : 'currentColor', f1: n.kind === 'h' ? 0 : 1, f2: n.kind === 's' ? 1 : 0 }));
 const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 const c = s.count;
 const stats = [
@@ -893,7 +902,7 @@ tc: ['Thánh ca', ['Bao La Tình Chúa', 'Chung Lời Tạ Ơn', 'Về Nơi Đâ
 const genres = Object.keys(G).map((k) => ({ label: G[k][0], pick: () => this.setState({ genre: k }), ...on(s.genre === k) }));
 const list = G[s.genre][1];
 return {
-accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), locked: s.locked && !s.muted, pianoRef: this.pianoRef, noteRef: this.noteRef, notes, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
+accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), locked: s.locked && !s.muted, stripRef: this.stripRef, noteRef: this.noteRef, notes, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
 swap: s.swap % 2 ? 'swapA' : 'swapB',
 steps, cur: { num: String(s.step + 1), title: ST[s.step][0], body: ST[s.step][1] }, stepSwap: s.tick % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
