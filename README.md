@@ -45,7 +45,7 @@ Nếu site không mở được khóa (chưa nối khóa, khóa còn là bản n
 Cài đặt > May Piano > Thanh toán bằng thẻ có ba chế độ:
 
 - **Tắt**.
-- **Chạy thử** (mặc định): chỉ quản trị viên đang đăng nhập thấy. Có hai nút "Thẻ trả thành công" và "Thẻ bị từ chối". Không có ô nhập số thẻ, không có tiền thật. Đơn được đánh dấu CHẠY THỬ.
+- **Chạy thử** (mặc định): quản trị viên đang đăng nhập thấy. Khách chưa đăng nhập cũng thấy nếu mở đường dẫn chạy thử ghi ở trang cài đặt (`/dang-ky/?thu=<mã>`, nhớ trong 24 giờ). Đừng gửi đường dẫn này ra ngoài. Có hai nút "Thẻ trả thành công" và "Thẻ bị từ chối". Không có ô nhập số thẻ, không có tiền thật. Đơn được đánh dấu CHẠY THỬ.
 - **Thật**: sau khi cài cổng Stripe cho WooCommerce, khách được chuyển sang trang trả tiền của WooCommerce cho đúng đơn đó, trả xong quay về `/dang-ky/`.
 
 ## Email nhận bài học

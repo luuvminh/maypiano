@@ -40,11 +40,11 @@ function maypiano_learn_url() {
 	return function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' );
 }
 
-/** Ways to pay offered to one region. Card shows in test mode only to a signed-in owner. */
+/** Ways to pay offered to one region. Card shows in test mode only to the owner or a guest on the test link. */
 function maypiano_methods( $region ) {
 	$methods = array( 'VN' === $region ? 'bank' : 'paypal' );
 	$mode    = maypiano_card_mode();
-	if ( 'live' === $mode || ( 'test' === $mode && current_user_can( 'manage_options' ) ) ) {
+	if ( 'live' === $mode || maypiano_can_test() ) {
 		$methods[] = 'card';
 	}
 	return $methods;
@@ -434,7 +434,7 @@ add_action( 'rest_api_init', function () {
 				'region'     => maypiano_region( $req->get_param( 'region' ) ),
 				'prices'     => $prices,
 				'methods'    => $methods,
-				'cardMode'   => 'test' === $mode && ! current_user_can( 'manage_options' ) ? 'off' : $mode,
+				'cardMode'   => 'test' === $mode && ! maypiano_can_test() ? 'off' : $mode,
 				'bank'       => array(
 					'bin'     => maypiano_setting( 'maypiano_bank_bin' ),
 					'account' => maypiano_setting( 'maypiano_account' ),
@@ -528,11 +528,11 @@ add_action( 'rest_api_init', function () {
 		},
 	) );
 
-	/** Card payment rehearsal. Owner only, test mode only. No card details exist anywhere in it. */
+	/** Card payment rehearsal. Test mode only, for the owner or a guest on the test link. No card details exist anywhere in it. */
 	register_rest_route( 'maypiano/v1', '/card-test', array(
 		'methods'             => 'POST',
 		'permission_callback' => function () {
-			return 'test' === maypiano_card_mode() && current_user_can( 'manage_options' );
+			return maypiano_can_test();
 		},
 		'callback'            => function ( WP_REST_Request $req ) {
 			nocache_headers();
