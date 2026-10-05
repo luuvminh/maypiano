@@ -14,7 +14,21 @@ function maypiano_notify_address() {
 
 /** Sends one HTML email in the site's look. $body is trusted HTML built by the callers below. */
 function maypiano_mail( $to, $subject, $body ) {
-	return wp_mail( $to, $subject, maypiano_mail_wrap( $body ), array( 'Content-Type: text/html; charset=UTF-8' ) );
+	return wp_mail( $to, $subject, maypiano_mail_wrap( $body ), maypiano_mail_headers() );
+}
+
+/**
+ * Sent as "Mây Piano" from the address set in WooCommerce > Settings > Emails, so the order emails
+ * and WooCommerce's own share one sender. Without this WordPress signs them "WordPress <wordpress@…>".
+ */
+function maypiano_mail_headers() {
+	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+	$from    = get_option( 'woocommerce_email_from_address', '' );
+	if ( is_email( $from ) ) {
+		$headers[] = 'From: Mây Piano <' . $from . '>';
+		$headers[] = 'Reply-To: Mây Piano <' . $from . '>';
+	}
+	return $headers;
 }
 
 function maypiano_mail_wrap( $body ) {
@@ -213,7 +227,7 @@ add_filter( 'retrieve_password_notification_email', function ( $mail, $key, $use
 	}
 	$mail['subject'] = 'Đặt lại mật khẩu Mây Piano của bạn';
 	$mail['message'] = maypiano_mail_wrap( maypiano_mail_password_body( $user, $key ) );
-	$mail['headers'] = array( 'Content-Type: text/html; charset=UTF-8' );
+	$mail['headers'] = maypiano_mail_headers();
 	return $mail;
 }, 20, 4 );
 
