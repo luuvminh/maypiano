@@ -34,6 +34,39 @@ function maypiano_card_mode() {
 	return in_array( $mode, array( 'off', 'test', 'live' ), true ) ? $mode : 'test';
 }
 
+/** Secret for the test link. Made once; anyone holding the link can rehearse a card payment as a guest. */
+function maypiano_test_key() {
+	$key = (string) get_option( 'maypiano_test_key', '' );
+	if ( '' === $key ) {
+		$key = wp_generate_password( 20, false );
+		update_option( 'maypiano_test_key', $key, false );
+	}
+	return $key;
+}
+
+function maypiano_test_url() {
+	return add_query_arg( 'thu', maypiano_test_key(), home_url( '/dang-ky/' ) );
+}
+
+/** May this visitor rehearse a card payment? The owner, or a guest who opened the test link. */
+function maypiano_can_test() {
+	if ( 'test' !== maypiano_card_mode() ) {
+		return false;
+	}
+	if ( current_user_can( 'manage_options' ) ) {
+		return true;
+	}
+	$given = isset( $_GET['thu'] ) ? $_GET['thu'] : ( isset( $_COOKIE['mp_thu'] ) ? $_COOKIE['mp_thu'] : '' );
+	return is_string( $given ) && '' !== $given && hash_equals( maypiano_test_key(), sanitize_text_field( wp_unslash( $given ) ) );
+}
+
+/** Opening the test link remembers it for a day, so the whole sign-up flow can be rehearsed without signing in. */
+add_action( 'init', function () {
+	if ( isset( $_GET['thu'] ) && ! isset( $_COOKIE['mp_thu'] ) && ! headers_sent() && maypiano_can_test() ) {
+		setcookie( 'mp_thu', maypiano_test_key(), time() + DAY_IN_SECONDS, '/', '', is_ssl(), true );
+	}
+} );
+
 function maypiano_sanitize_prices( $input ) {
 	$clean = array();
 	foreach ( maypiano_catalog() as $key => $course ) {
@@ -123,11 +156,15 @@ function maypiano_settings_page() {
 	echo '<h2>Thanh toán bằng thẻ</h2><table class="form-table" role="presentation"><tr><th scope="row">Chế độ</th><td>';
 	$modes = array(
 		'off'  => 'Tắt. Khách không thấy lựa chọn trả bằng thẻ.',
-		'test' => 'Chạy thử. Chỉ quản trị viên đang đăng nhập thấy. Không có tiền thật, không nhập số thẻ.',
+		'test' => 'Chạy thử. Quản trị viên đang đăng nhập thấy, và khách mở đường dẫn chạy thử bên dưới cũng thấy. Không có tiền thật, không nhập số thẻ.',
 		'live' => 'Thật. Khách được chuyển sang trang trả tiền của WooCommerce. Chỉ bật khi cổng Stripe đã cài xong.',
 	);
 	foreach ( $modes as $value => $label ) {
 		printf( '<p><label><input type="radio" name="maypiano_card_mode" value="%s"%s> %s</label></p>', esc_attr( $value ), checked( $mode, $value, false ), esc_html( $label ) );
+	}
+	if ( 'test' === $mode ) {
+		echo '<p><strong>Đường dẫn chạy thử cho khách chưa đăng nhập:</strong><br><code>' . esc_html( maypiano_test_url() ) . '</code></p>';
+		echo '<p class="description">Mở đường dẫn này trong cửa sổ ẩn danh để thử như một khách mới. Dùng một email chưa có tài khoản. Ai có đường dẫn này đều mở được khóa học mà không trả tiền, nên đừng gửi ra ngoài.</p>';
 	}
 	echo '</td></tr></table>';
 
