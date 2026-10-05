@@ -14,12 +14,15 @@ function maypiano_notify_address() {
 
 /** Sends one HTML email in the site's look. $body is trusted HTML built by the callers below. */
 function maypiano_mail( $to, $subject, $body ) {
-	$html = '<div style="background:#F6EFEF;padding:24px 12px;font-family:Georgia,\'Times New Roman\',serif;color:#2B1E24;font-size:17px;line-height:1.6">'
+	return wp_mail( $to, $subject, maypiano_mail_wrap( $body ), array( 'Content-Type: text/html; charset=UTF-8' ) );
+}
+
+function maypiano_mail_wrap( $body ) {
+	return '<div style="background:#F6EFEF;padding:24px 12px;font-family:Georgia,\'Times New Roman\',serif;color:#2B1E24;font-size:17px;line-height:1.6">'
 		. '<div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:2px solid #2B1E24;border-radius:14px;padding:28px">'
 		. '<div style="font-size:24px;font-weight:bold;margin-bottom:16px">Mây Piano</div>'
 		. $body
 		. '</div></div>';
-	return wp_mail( $to, $subject, $html, array( 'Content-Type: text/html; charset=UTF-8' ) );
 }
 
 function maypiano_mail_button( $url, $label ) {
@@ -163,3 +166,61 @@ function maypiano_mail_owner_access_problem( $order, $missing ) {
 		. maypiano_mail_button( $order->get_edit_order_url(), 'Mở đơn trong WooCommerce' );
 	return maypiano_mail( maypiano_notify_address(), maypiano_mail_owner_subject( $order, 'CẦN GHI DANH TAY' ), $body );
 }
+
+/** To the customer, when money goes back. */
+function maypiano_mail_refunded( $order, $amount, $full ) {
+	$code = maypiano_order_code( $order );
+	$sum  = maypiano_money( $amount, $order->get_currency() );
+	$body = '<p>Chào ' . esc_html( $order->get_billing_first_name() ) . ',</p>'
+		. '<p>Mây đã hoàn <strong>' . esc_html( $sum ) . '</strong> cho đơn <strong>' . esc_html( $code ) . '</strong>, theo đúng cách bạn đã trả.</p>'
+		. maypiano_mail_lines( $order );
+	if ( $full ) {
+		$body .= '<p>Khóa học của đơn này đã đóng. Khi nào bạn muốn học lại, Mây luôn chào đón bạn.</p>';
+	}
+	$body .= '<p>Vài ngày nữa mà bạn chưa thấy tiền về, bạn báo để Mây kiểm tra nhé.</p>' . maypiano_mail_support();
+	return maypiano_mail( $order->get_billing_email(), 'Mây đã hoàn tiền đơn ' . $code, $body );
+}
+
+add_action( 'woocommerce_order_refunded', function ( $order_id, $refund_id ) {
+	$order  = wc_get_order( $order_id );
+	$refund = wc_get_order( $refund_id );
+	if ( ! maypiano_is_ours( $order ) || ! $refund || $order->get_meta( '_mp_test' ) ) {
+		return;
+	}
+	maypiano_mail_refunded( $order, (float) $refund->get_amount(), (float) $order->get_remaining_refund_amount() <= 0 );
+}, 20, 2 );
+
+foreach ( array( 'customer_refunded_order', 'customer_partially_refunded_order' ) as $maypiano_email_id ) {
+	add_filter( 'woocommerce_email_enabled_' . $maypiano_email_id, function ( $enabled, $order = null ) {
+		return maypiano_is_ours( $order ) ? false : $enabled;
+	}, 20, 2 );
+}
+unset( $maypiano_email_id );
+
+/** "Forgot password", in Mây's voice, whichever form the learner used. */
+function maypiano_mail_password_body( $user, $key ) {
+	$url = network_site_url( 'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user->user_login ), 'login' );
+	return '<p>Chào ' . esc_html( $user->display_name ) . ',</p>'
+		. '<p>Có người vừa xin đặt lại mật khẩu cho tài khoản <strong>' . esc_html( $user->user_email ) . '</strong> ở Mây Piano. Nếu đó là bạn, bạn bấm nút dưới đây:</p>'
+		. maypiano_mail_button( $url, 'Đặt mật khẩu mới' )
+		. '<p style="font-size:15px">Nút này dùng được trong 24 giờ. Nếu không phải bạn, bạn cứ bỏ qua email này, mật khẩu cũ vẫn giữ nguyên.</p>'
+		. maypiano_mail_support();
+}
+
+add_filter( 'retrieve_password_notification_email', function ( $mail, $key, $user_login, $user ) {
+	if ( ! $user instanceof WP_User ) {
+		return $mail;
+	}
+	$mail['subject'] = 'Đặt lại mật khẩu Mây Piano của bạn';
+	$mail['message'] = maypiano_mail_wrap( maypiano_mail_password_body( $user, $key ) );
+	$mail['headers'] = array( 'Content-Type: text/html; charset=UTF-8' );
+	return $mail;
+}, 20, 4 );
+
+add_filter( 'woocommerce_email_enabled_customer_reset_password', '__return_false', 20 );
+add_action( 'woocommerce_reset_password_notification', function ( $user_login = '', $key = '' ) {
+	$user = get_user_by( 'login', $user_login );
+	if ( $user && $key ) {
+		maypiano_mail( $user->user_email, 'Đặt lại mật khẩu Mây Piano của bạn', maypiano_mail_password_body( $user, $key ) );
+	}
+}, 20, 2 );
