@@ -19,7 +19,7 @@ body.mp-app :where(a,button,input,select,textarea):focus-visible{outline:3px sol
 
 /* Header and footer: the same bar and foot as the home page */
 .mp-nav{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;justify-content:space-between;padding:22px var(--mp-side)}
-.mp-logo{font-family:var(--mp-head)!important;font-weight:700;font-size:28px;text-decoration:none}
+.mp-logo{display:flex;align-items:center;text-decoration:none}.mp-logo img{display:block;height:52px;width:auto}@media (max-width:600px){.mp-logo img{height:44px}}
 .mp-links{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;font-weight:500}
 .mp-links a{text-decoration:none;padding:10px 0}
 body.mp-app .mp-links a.mp-pill{background:var(--mp-accent);color:#fff;padding:12px 24px;border-radius:999px;font-weight:600;transition:transform .12s ease,filter .12s ease}

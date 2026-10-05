@@ -155,17 +155,17 @@ function maypiano_account_pass( $label, $autocomplete ) {
 }
 
 function maypiano_account_page( $title, $body ) {
-	echo '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>' . esc_html( $title ) . ' – Mây Piano</title>'
+	echo '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>' . esc_html( $title ) . ' – Mây Piano</title>'; maypiano_icon_links(); echo ''
 		. '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
 		. '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap"><style>' // phpcs:ignore WordPress.WP.EnqueuedResources
 		. '*{box-sizing:border-box}body{margin:0;background:#E3D7D7;color:#2B1E24;font-family:Newsreader,Georgia,serif;font-size:20px;line-height:1.55}'
-		. 'main{max-width:520px;margin:0 auto;padding:28px 20px 56px}.logo{font-family:"Playfair Display",Georgia,serif;font-weight:700;font-size:28px;color:#2B1E24;text-decoration:none;display:inline-block;margin-bottom:24px}'
+		. 'main{max-width:520px;margin:0 auto;padding:28px 20px 56px}.logo{display:inline-block;margin-bottom:24px}.logo img{display:block;height:52px;width:auto}'
 		. '.card{background:#fff;border:2px solid #2B1E24;border-radius:14px;padding:28px 24px}h1{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:36px;line-height:1.12;margin:0 0 14px}'
 		. 'p{margin:0 0 16px}a{color:#2B1E24}label{display:block;font-weight:600;margin:18px 0 6px}'
 		. 'input[type=text],input[type=email],input[type=password]{width:100%;min-height:56px;border:2px solid #2B1E24;border-radius:12px;padding:10px 14px;font:inherit;color:inherit;background:#fff}'
 		. '.pw{position:relative}.pw input{padding-right:84px}.eye{position:absolute;right:6px;top:6px;height:44px;min-width:68px;border:0;border-radius:8px;background:#F6EFEF;color:#2B1E24;font:600 17px Newsreader,Georgia,serif;cursor:pointer}'
 		. 'button[type=submit],.btn{display:block;width:100%;min-height:58px;margin-top:22px;border:0;border-radius:999px;background:#C2456B;color:#fff;font:600 20px Newsreader,Georgia,serif;padding:14px 20px;text-align:center;text-decoration:none;cursor:pointer}'
 		. ':is(a,button,input):focus-visible{outline:3px solid #2B1E24;outline-offset:3px}form{margin:0 0 20px}.hint{font-size:17px}.err{background:#F6EFEF;border:2px solid #9A2B2B;border-radius:12px;padding:12px 14px;font-weight:600}'
-		. '</style></head><body><main><a class="logo" href="' . esc_url( home_url( '/' ) ) . '">Mây Piano</a><div class="card"><h1>' . esc_html( $title ) . '</h1>' . $body . '</div></main></body></html>'; // phpcs:ignore WordPress.Security.EscapeOutput
+		. '</style></head><body><main><a class="logo" href="' . esc_url( home_url( '/' ) ) . '"><img src="' . esc_url( get_template_directory_uri() . '/assets/img/logo.png' ) . '" alt="Mây Piano" width="413" height="240"></a><div class="card"><h1>' . esc_html( $title ) . '</h1>' . $body . '</div></main></body></html>'; // phpcs:ignore WordPress.Security.EscapeOutput
 	exit;
 }
