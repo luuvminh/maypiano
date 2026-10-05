@@ -59,6 +59,29 @@ function maypiano_teacher_set( $email ) {
 			add_user_meta( $teacher, '_tutor_instructor_course_id', (int) $course );
 		}
 	}
+	// The site's owners keep their way into every course: named as co-teachers, and with a learner's place, so they can
+	// open any lesson and see exactly what a learner sees.
+	$owners = get_users( array( 'role' => 'administrator', 'fields' => 'ids' ) );
+	foreach ( $owners as $owner ) {
+		$owner = (int) $owner;
+		if ( $owner === $teacher ) {
+			continue;
+		}
+		$has = array_map( 'intval', (array) get_user_meta( $owner, '_tutor_instructor_course_id' ) );
+		foreach ( get_posts( array( 'post_type' => 'courses', 'post_status' => 'any', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $course ) {
+			if ( ! in_array( (int) $course, $has, true ) ) {
+				add_user_meta( $owner, '_tutor_instructor_course_id', (int) $course );
+			}
+			if ( function_exists( 'maypiano_enrol' ) && function_exists( 'tutor_utils' ) ) {
+				maypiano_enrol( (int) $course, $owner, 0, true );
+			}
+		}
+	}
+	$stored = get_option( 'tutor_option' );
+	if ( is_array( $stored ) && ( ! isset( $stored['course_content_access_for_ia'] ) || 'on' !== $stored['course_content_access_for_ia'] ) ) {
+		$stored['course_content_access_for_ia'] = 'on';
+		update_option( 'tutor_option', $stored );
+	}
 	return 'Người dạy của ' . $total . ' khóa là ' . MAYPIANO_TEACHER_NAME . ' (tài khoản ' . $user->user_login . '). Lần này chuyển ' . $moved . ' mục.';
 }
 
@@ -78,3 +101,13 @@ function maypiano_teacher_settings_section() {
 	echo '<input type="email" class="regular-text" id="maypiano_teacher_email" name="maypiano_teacher_email" value="' . esc_attr( $email ) . '">';
 	echo '<p class="description">Site tạo một tài khoản người dạy tên Mây với email này và giao mọi khóa học cho tài khoản đó. Không có email mời nào được gửi.</p></td></tr></table>';
 }
+
+/** After each update of the site, and without anyone opening the settings: courses stay with the teacher and owners keep their access. */
+add_action( 'init', function () {
+	$email = trim( (string) get_option( 'maypiano_teacher_email', '' ) );
+	if ( '' === $email || MAYPIANO_VERSION === get_option( 'maypiano_teacher_ran' ) || ! post_type_exists( 'courses' ) ) {
+		return;
+	}
+	update_option( 'maypiano_teacher_ran', MAYPIANO_VERSION, false );
+	maypiano_teacher_set( $email );
+}, 120 );
