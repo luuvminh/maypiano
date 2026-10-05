@@ -386,3 +386,12 @@ body.mp-app .tutor-preferences-setting-action .tutor-select-trigger{min-height:4
 	body.mp-app .tutor-preferences-setting-action .tutor-select{width:100%}
 }
 @media (prefers-reduced-transparency:reduce){body.mp-app .tutor-profile-header{background:var(--mp-bg);-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* ---------- Settings (1.7.4): only the choices that still do something ----------
+   May Piano draws its own colours and type, so the plugin's theme, learning mode, text size, contrast and colour-filter
+   choices no longer change what a learner sees. They are hidden, with their headings; autoplay and motion stay. */
+body.mp-app .tutor-preferences-section .tutor-preferences-setting-item:has([x-data*='"name":"theme"'],[x-data*='"name":"learning_mood"'],[x-data*='"name":"font_scale"'],[x-data*='"name":"vision"'],#contrast,[name="contrast"]){display:none!important}
+body.mp-app .tutor-preferences-section .tutor-card:not(:has(#auto_play_next,[x-data*='"name":"motion_effects"'])){display:none!important}
+body.mp-app .tutor-preferences-section h5:has(+ .tutor-card:not(:has(#auto_play_next,[x-data*='"name":"motion_effects"']))){display:none!important}
+/* A text size saved before the choice was hidden no longer enlarges half the page. */
+html:has(body.mp-app){font-size:100%!important}
