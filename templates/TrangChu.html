@@ -355,7 +355,7 @@ button{font-family:inherit;cursor:pointer}
 class Component extends DCLogic {
 constructor(props) {
 super(props);
-let muted = false; try { muted = localStorage.getItem('mp-mute') === '1'; } catch (e) {}
+let muted = true; try { muted = localStorage.getItem('mp-mute') !== '0'; } catch (e) {}
 this.state = { note: 'chưa bấm', muted, locked: true, level: 'moi', swap: 0, mode: 'bai', open: '', genre: 'xua', mins: 20, mtick: 0, email: '', sent: false, faq: -1, count: 0, step: 0, tick: 0 };
 this.timers = [];
 this.NAME = ['Đô', 'Đô thăng', 'Rê', 'Rê thăng', 'Mi', 'Fa', 'Fa thăng', 'Son', 'Son thăng', 'La', 'La thăng', 'Si'];
