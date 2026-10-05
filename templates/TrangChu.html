@@ -384,6 +384,7 @@ this.stopAuto(); clearTimeout(this.backT);
 if (this.pio) this.pio.disconnect();
 ['pointerdown', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
 document.removeEventListener('visibilitychange', this.onVis);
+clearInterval(this.dbgT);
 if (this.ctx) this.ctx.close();
 this.timers.forEach(clearTimeout);
 if (this.io) this.io.disconnect();
@@ -408,8 +409,8 @@ if (!AC) return null;
 try {
 const c = new AC();
 const out = c.createGain(); out.gain.value = this.state.muted ? 0 : 1; out.connect(c.destination);
-const comp = c.createDynamicsCompressor(); comp.threshold.value = -12; comp.ratio.value = 3; comp.connect(out);
-const bus = c.createGain(); bus.gain.value = 0.8; bus.connect(comp);
+const comp = c.createDynamicsCompressor(); comp.threshold.value = -9; comp.ratio.value = 4; comp.connect(out);
+const bus = c.createGain(); bus.gain.value = 3.2; bus.connect(comp);
 const len = Math.floor(c.sampleRate * 3.2), pre = Math.floor(c.sampleRate * 0.018);
 const ir = c.createBuffer(2, len, c.sampleRate);
 for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = pre; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
@@ -418,6 +419,14 @@ const warm = c.createBiquadFilter(); warm.type = 'lowpass'; warm.frequency.value
 const wet = c.createGain(); wet.gain.value = 0.42;
 bus.connect(conv); conv.connect(warm); warm.connect(wet); wet.connect(comp);
 this.ctx = c; this.out = out; this.bus = bus;
+if (/[?&]thu-am/.test(location.search)) {
+const an = c.createAnalyser(); an.fftSize = 2048; out.connect(an);
+const d = new Float32Array(2048); this.dbg = { ok: 0, err: [], tones: 0, peak: 0 };
+const box = document.createElement('pre'); box.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;margin:0;padding:8px 12px;background:#fff;border:2px solid #2B1E24;font:14px/1.4 monospace;max-width:92vw;white-space:pre-wrap';
+document.body.appendChild(box);
+this.dbgT = setInterval(() => { an.getFloatTimeDomainData(d); let pk = 0; for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); this.dbg.peak = Math.max(this.dbg.peak, pk);
+box.textContent = 'MPAUDIO state=' + c.state + ' rate=' + c.sampleRate + ' loaded=' + this.dbg.ok + '/14 tones=' + this.dbg.tones + ' now=' + pk.toFixed(3) + ' peak=' + this.dbg.peak.toFixed(3) + ' muted=' + this.state.muted + ' out=' + c.destination.channelCount + '/' + c.destination.maxChannelCount + ' err=' + this.dbg.err.join(';') + ' END'; }, 200);
+}
 const sync = () => { const locked = c.state !== 'running'; if (locked !== this.state.locked) this.setState({ locked }); };
 c.onstatechange = sync; sync();
 } catch (e) { this.ctx = null; }
@@ -431,8 +440,8 @@ if (!c) return;
 [['Ds2', 39], ['Fs2', 42], ['A2', 45], ['C3', 48], ['Ds3', 51], ['Fs3', 54], ['A3', 57], ['C4', 60], ['Ds4', 63], ['Fs4', 66], ['A4', 69], ['C5', 72], ['Ds5', 75], ['Fs5', 78]].forEach((n) => {
 fetch('%%THEME%%/assets/audio/' + n[0] + '.mp3').then((r) => { if (!r.ok) throw 0; return r.arrayBuffer(); })
 .then((a) => new Promise((ok, no) => c.decodeAudioData(a, ok, no)))
-.then((b) => { const d = b.getChannelData(0); let i = 0; while (i < d.length && Math.abs(d[i]) < 0.004) i++; this.buf[n[1]] = { b, off: Math.max(0, i / b.sampleRate - 0.003) }; })
-.catch(() => {});
+.then((b) => { if (this.dbg) this.dbg.ok++; const d = b.getChannelData(0); let i = 0; while (i < d.length && Math.abs(d[i]) < 0.004) i++; this.buf[n[1]] = { b, off: Math.max(0, i / b.sampleRate - 0.003) }; })
+.catch((e) => { if (this.dbg) this.dbg.err.push(n[0] + ':' + e); });
 });
 }
 tone(m, vel, hold) {
@@ -444,7 +453,7 @@ if (best === null) return;
 const s = this.buf[best], t = c.currentTime;
 const src = c.createBufferSource(); src.buffer = s.b; src.playbackRate.value = Math.pow(2, (m - best) / 12);
 const g = c.createGain(); g.gain.setValueAtTime(vel, t); g.gain.setTargetAtTime(0, t + hold, 0.4);
-src.connect(g); g.connect(this.bus); src.start(t, s.off); src.stop(t + hold + 3);
+src.connect(g); g.connect(this.bus); src.start(t, s.off); if (this.dbg) this.dbg.tones++; src.stop(t + hold + 3);
 }
 light(id, name) {
 this.state.note = name;
