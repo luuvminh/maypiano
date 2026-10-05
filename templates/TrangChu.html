@@ -424,7 +424,7 @@ try {
 const c = new AC();
 const out = c.createGain(); out.gain.value = 1; out.connect(c.destination);
 const comp = c.createDynamicsCompressor(); comp.threshold.value = -9; comp.ratio.value = 4; comp.connect(out);
-const bus = c.createGain(); bus.gain.value = 1.9; bus.connect(comp);
+const bus = c.createGain(); bus.gain.value = 1.35; bus.connect(comp);
 const len = Math.floor(c.sampleRate * 3.2), pre = Math.floor(c.sampleRate * 0.018);
 const ir = c.createBuffer(2, len, c.sampleRate);
 for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = pre; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
