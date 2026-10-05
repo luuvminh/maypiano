@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.4.3' );
+define( 'MAYPIANO_VERSION', '1.4.4' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -19,6 +19,7 @@ require get_theme_file_path( 'inc/chrome.php' );
 require get_theme_file_path( 'inc/i18n.php' );
 require get_theme_file_path( 'inc/fx.php' );
 require get_theme_file_path( 'inc/mailpoet.php' );
+require get_theme_file_path( 'inc/videos.php' );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );
@@ -47,10 +48,15 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 	wp_enqueue_script( 'maypiano-runtime', get_theme_file_uri( 'assets/js/runtime.js' ), $needs, MAYPIANO_VERSION, true );
 	// No nonce here on purpose: pages are cached, and a stale nonce would make every request fail.
-	wp_localize_script( 'maypiano-runtime', 'MayPianoCfg', array(
+	$cfg = array(
 		'rest' => esc_url_raw( rest_url( 'maypiano/v1/' ) ),
 		'ajax' => esc_url_raw( admin_url( 'admin-ajax.php' ) ),
-	) );
+	);
+	if ( is_front_page() ) {
+		// What the page shows first. It then asks the site again, so a cached page still ends up with the newest three.
+		$cfg['videos'] = maypiano_videos();
+	}
+	wp_localize_script( 'maypiano-runtime', 'MayPianoCfg', $cfg );
 } );
 
 /** Prints one page template with its links and images filled in. */

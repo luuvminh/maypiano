@@ -110,7 +110,7 @@ function maypiano_site_header() {
 <a class="mp-pill" href="<?php echo esc_url( maypiano_learn_url() ); ?>">Khóa học của mình</a>
 	<?php else : ?>
 <a class="mp-enter" href="<?php echo esc_url( maypiano_login_url() ); ?>">Vào học</a>
-<a class="mp-pill" href="<?php echo esc_url( maypiano_signup_url() ); ?>">Bắt đầu học</a>
+<a class="mp-pill" href="<?php echo esc_url( maypiano_signup_url() ); ?>">Đăng ký học</a>
 	<?php endif; ?>
 </div>
 </nav>
