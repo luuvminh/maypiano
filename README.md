@@ -31,7 +31,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `woocommerce.php`: khuôn cho các trang WooCommerce còn dùng.
 - `templates/`: nội dung hai trang, tạo ra từ `design/`.
 - `design/`: bản thiết kế gốc. Sửa ở đây rồi chạy `python3 tools/build.py`.
-- `assets/audio/`: tiếng đàn grand piano cho bàn phím ở trang chủ. Nguồn: Salamander Grand Piano V3 của Alexander Holm, giấy phép CC BY 3.0 (phải ghi tên tác giả, đã ghi ở chân trang chủ).
+- `assets/audio/`: tiếng đàn grand piano cho bàn phím ở trang chủ. Nguồn: Salamander Grand Piano V3 của Alexander Holm, giấy phép CC BY 3.0 (phải ghi tên tác giả; dòng ghi tên ở chân trang chủ đã gỡ theo yêu cầu của Max ngày 05/10/2026, hiện site chưa ghi tên ở đâu).
 - `assets/audio/nen/`: nhạc nền trang chủ. 14 đoạn mở đầu (90 giây mỗi đoạn) do Mây đàn, cắt từ video "Những Bản Tình Ca Mùa Thu Nhẹ Nhàng". Bài "Ánh Trăng Nói Hộ Lòng Tôi" (`09.mp3`) đang tạm bỏ vì âm thanh lỗi (`SKIP`). Mỗi lượt vào trang phát ngẫu nhiên một đoạn, âm lượng nhỏ; hết đoạn thì sang đoạn khác. Tên bài theo thứ tự file nằm ở `SONGS` trong `design/TrangChu.dc.html`.
 - `assets/js/`: `runtime.js` chạy trang, `vietqr.js` tạo và đọc mã chuyển khoản, `qrcode.js` (MIT) vẽ mã QR, `jsqr.js` (Apache-2.0) đọc ảnh mã QR ở trang cài đặt.
 
