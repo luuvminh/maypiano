@@ -25,6 +25,7 @@ button{font-family:inherit;cursor:pointer}
 @keyframes fillA{from{width:0}to{width:100%}}
 @keyframes fillB{from{width:0}to{width:100%}}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(194,69,107,.55)}100%{box-shadow:0 0 0 14px rgba(194,69,107,0)}}
 @keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
 @keyframes swing{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
 .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
@@ -80,7 +81,7 @@ button{font-family:inherit;cursor:pointer}
 </header>
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: clamp(36px, 5vw, 64px) 0 0; padding: 0 clamp(20px, 6vw, 96px)">
-<div aria-live="polite" style="display: inline-flex; align-items: center; gap: 12px; min-height: 46px; padding: 6px 20px; border: 2px solid #2B1E24; border-radius: 999px; background: #FFFFFF; font-size: 18px"><span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 3px; height: 18px"><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.9s ease-in-out 0s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.7s ease-in-out 0.2s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 1.1s ease-in-out 0.4s infinite; animation-play-state: {{np.run}}"></span></span><span>{{np.label}}<strong style="margin-left: .35em">{{np.song}}</strong></span></div>
+<button type="button" class="press" aria-pressed="{{np.pressed}}" aria-label="{{np.aria}}" onClick="{{toggleMute}}" style="display: inline-flex; align-items: center; gap: 14px; min-height: 60px; padding: 6px 24px 6px 8px; border: 2px solid #2B1E24; border-radius: 999px; background: #FFFFFF; color: #2B1E24; font-size: 18px; text-align: left"><span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: {{np.dot}}; color: #FFFFFF; display: grid; place-items: center; animation: {{np.pulse}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l12-7z" style="opacity: {{np.play}}"></path><path d="M6.5 5h4v14h-4zM13.5 5h4v14h-4z" style="opacity: {{np.pause}}"></path></svg></span><span style="display: flex; flex-direction: column; line-height: 1.3"><span>{{np.label}}<strong style="margin-left: .35em">{{np.song}}</strong></span><span style="font-size: 15px; opacity: .75">{{np.hint}}</span></span><span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 3px; height: 18px; opacity: {{np.eq}}"><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.9s ease-in-out 0s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.7s ease-in-out 0.2s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 1.1s ease-in-out 0.4s infinite; animation-play-state: {{np.run}}"></span></span></button>
 <span style="font-size: 18px">Mây đàn, trích từ <a href="https://www.youtube.com/watch?v=d95HrWkox20">Những Bản Tình Ca Mùa Thu</a></span>
 </div>
 <div aria-hidden="true" style="position: relative; margin: 14px 0 0; height: 190px">
@@ -108,11 +109,7 @@ button{font-family:inherit;cursor:pointer}
 <div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2">Bạn bấm thử một phím nhé</h2>
 <p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
-<sc-if value="{{locked}}" hint-placeholder-val="{{ false }}">
-<p style="margin: 2px 0 0; font-size: 18px; color: {{accent}}">Bạn chạm vào trang một lần để nghe nhạc nhé.</p>
-</sc-if>
 </div>
-<button type="button" class="press" aria-pressed="{{mute.pressed}}" onClick="{{toggleMute}}" style="border: 2px solid #2B1E24; border-radius: 999px; padding: 8px 20px; min-height: 50px; font-size: 18px; font-weight: 600; background: {{mute.bg}}; color: {{mute.fg}}; display: flex; gap: 10px; align-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"></path><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" style="opacity: {{mute.wave}}"></path><path d="M16 9.5l5 5M21 9.5l-5 5" style="opacity: {{mute.cross}}"></path></svg>{{mute.label}}</button>
 </div>
 <div style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 700px; height: clamp(160px, 17vw, 220px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
 <sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
@@ -415,7 +412,7 @@ const AC = window.AudioContext || window.webkitAudioContext;
 if (!AC) return null;
 try {
 const c = new AC();
-const out = c.createGain(); out.gain.value = this.state.muted ? 0 : 1; out.connect(c.destination);
+const out = c.createGain(); out.gain.value = 1; out.connect(c.destination);
 const comp = c.createDynamicsCompressor(); comp.threshold.value = -9; comp.ratio.value = 4; comp.connect(out);
 const bus = c.createGain(); bus.gain.value = 1.9; bus.connect(comp);
 const len = Math.floor(c.sampleRate * 3.2), pre = Math.floor(c.sampleRate * 0.018);
@@ -460,8 +457,14 @@ playBg() {
 if (!this.bg || this.state.muted || document.hidden) return;
 const p = this.bg.play(); if (p && p.catch) p.catch(() => {});
 }
-bgVol(v) {
-if (this.bgGain && this.ctx) this.bgGain.gain.setTargetAtTime(v, this.ctx.currentTime, 0.25); else if (this.bg) this.bg.volume = v;
+/* Moves the music's level to v over dur seconds. */
+bgVol(v, dur, start) {
+if (this.bgGain && this.ctx) { const g = this.bgGain.gain, t = this.ctx.currentTime; g.cancelScheduledValues(t); g.setValueAtTime(start == null ? g.value : start, t); g.linearRampToValueAtTime(v, t + dur); return; }
+if (!this.bg) return;
+cancelAnimationFrame(this.volRaf);
+const a = this.bg, from = start == null ? a.volume : start, t0 = performance.now();
+const run = (now) => { const k = Math.min(1, (now - t0) / (dur * 1000)); a.volume = from + (v - from) * k; if (k < 1) this.volRaf = requestAnimationFrame(run); };
+this.volRaf = requestAnimationFrame(run);
 }
 loadPiano() {
 if (this.buf) return;
@@ -475,13 +478,13 @@ fetch('/_audio/' + n[0] + '.mp3').then((r) => { if (!r.ok) throw 0; return r.arr
 .catch((e) => { if (this.dbg) this.dbg.err.push(n[0] + ':' + e); });
 });
 }
-tone(m, vel, hold) {
+tone(m, vel, hold, wait) {
 const c = this.ctx;
 if (!c || c.state !== 'running' || !this.buf) return;
 let best = null;
 Object.keys(this.buf).forEach((k) => { if (best === null || Math.abs(k - m) < Math.abs(best - m)) best = Number(k); });
 if (best === null) return;
-const s = this.buf[best], t = c.currentTime;
+const s = this.buf[best], t = c.currentTime + (wait || 0);
 const src = c.createBufferSource(); src.buffer = s.b; src.playbackRate.value = Math.pow(2, (m - best) / 12);
 const g = c.createGain(); g.gain.setValueAtTime(vel, t); g.gain.setTargetAtTime(0, t + hold, 0.4);
 src.connect(g); g.connect(this.bus); src.start(t, s.off); if (this.dbg) this.dbg.tones++; src.stop(t + hold + 3);
@@ -497,15 +500,16 @@ this.lit = Object.assign({}, this.lit, { [slot]: m });
 if (slot === 'a') { const name = this.NAME[m % 12]; this.state.note = name; if (this.noteEl) this.noteEl.textContent = name; }
 this.paint();
 }
-/* A key the visitor presses: the staff stops and the music drops back, and both return after eight quiet seconds. */
+/* A key the visitor presses: the music fades out fast, just ahead of the note, and the staff stops. Five quiet seconds later the music fades back in slowly. */
 press(m) {
 this.stopAuto(); this.pos = 0; this.held = true;
 clearTimeout(this.backT);
-this.bgVol(0.07);
-this.backT = setTimeout(() => { this.held = false; this.lit = {}; this.paint(); this.bgVol(0.22); if (this.inView && !document.hidden) this.startAuto(); }, 8000);
+const wait = this.state.live && !this.ducked ? 0.09 : 0;
+this.ducked = true; this.bgVol(0, 0.08);
+this.backT = setTimeout(() => { this.held = false; this.ducked = false; this.lit = {}; this.paint(); this.bgVol(0.22, 3.5); if (this.inView && !document.hidden) this.startAuto(); }, 5000);
 this.loadPiano();
 const c = this.audio();
-if (c && c.state !== 'running') c.resume().then(() => this.tone(m, 0.85, 2.4)).catch(() => {}); else this.tone(m, 0.85, 2.4);
+if (c && c.state !== 'running') c.resume().then(() => this.tone(m, 0.85, 2.4, wait)).catch(() => {}); else this.tone(m, 0.85, 2.4, wait);
 this.lit = { a: m }; this.light('a', m);
 }
 /* The notes drawn on the staff (the Canon figure: long notes, then eighths, then sixteenths). They scroll silently as decoration; the sound is Mây's recording. */
@@ -576,11 +580,11 @@ if (this.anim) this.anim.pause();
 this.pos = (performance.now() - this.t0) % this.total;
 }
 toggleMute() {
-const muted = !this.state.muted;
+const muted = this.state.muted ? false : this.state.live;
 try { localStorage.setItem('mp-nhac', muted ? '0' : '1'); } catch (e) {}
 const c = this.audio();
-if (c) { this.out.gain.setTargetAtTime(muted ? 0 : 1, c.currentTime, 0.03); if (!muted && c.state !== 'running') c.resume().catch(() => {}); }
-if (this.bg) { if (muted) this.bg.pause(); else { const p = this.bg.play(); if (p && p.catch) p.catch(() => {}); } }
+if (c && c.state !== 'running') c.resume().catch(() => {});
+if (this.bg) { if (muted) this.bg.pause(); else { if (this.bg.paused && !this.ducked) { this.bgVol(0.22, 1.5, 0); } const p = this.bg.play(); if (p && p.catch) p.catch(() => {}); } }
 this.setState({ muted });
 }
 renderVals() {
@@ -597,7 +601,9 @@ else whites.push({ id: m, n: name, aria: 'Phím ' + name, play: () => this.press
 const mute = s.muted
 ? { pressed: 'true', bg: INK, fg: '#FFFFFF', label: 'Bật nhạc', wave: 0, cross: 1 }
 : { pressed: 'false', bg: 'transparent', fg: INK, label: 'Tắt nhạc', wave: 1, cross: 0 };
-const np = s.muted ? { label: 'Nhạc đang tắt', song: '', run: 'paused' } : { label: s.live ? 'Đang phát:' : 'Sắp phát:', song: s.song, run: s.live ? 'running' : 'paused' };
+const np = s.live && !s.muted
+? { pressed: 'true', aria: 'Tắt nhạc nền. Đang phát: ' + s.song, label: 'Đang phát:', song: s.song, hint: 'Bấm để tắt nhạc', dot: INK, play: 0, pause: 1, pulse: 'none', run: 'running', eq: 1 }
+: { pressed: 'false', aria: 'Bật nhạc nền: ' + s.song, label: 'Nghe Mây đàn:', song: s.song, hint: 'Bấm để bật nhạc', dot: accent, play: 1, pause: 0, pulse: 'ring 1.8s ease-out infinite', run: 'paused', eq: .35 };
 const px = (v) => v.toFixed(1) + 'px';
 const barLines = this.bars.map((b) => ({ x: px(b.x), w: px(b.w) }));
 const beamLines = this.beams.map((b) => ({ x: px(b.x), y: px(b.y), w: px(b.w), a: b.a.toFixed(2) + 'deg' }));
