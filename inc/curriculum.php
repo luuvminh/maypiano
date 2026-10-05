@@ -150,6 +150,22 @@ function maypiano_curriculum_tidy( $course ) {
 		wp_trash_post( $part );
 		$trashed++;
 	}
+	// Tutor LMS counts a course's lessons by this link, trash included. Lessons in the trash must not be counted.
+	$binned = get_posts( array(
+		'post_type'      => 'lesson',
+		'post_status'    => 'trash',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+		'meta_key'       => '_tutor_course_id_for_lesson', // phpcs:ignore WordPress.DB.SlowDBQuery
+		'meta_value'     => (string) $course, // phpcs:ignore WordPress.DB.SlowDBQuery
+	) );
+	foreach ( $binned as $lesson ) {
+		delete_post_meta( $lesson, '_tutor_course_id_for_lesson' );
+	}
+	$previous = get_post_meta( $course, '_maypiano_tidy', true );
+	if ( is_array( $previous ) ) {
+		$trashed += (int) $previous['trashed'];
+	}
 	update_post_meta( $course, '_maypiano_tidy', array( 'trashed' => $trashed, 'kept' => $kept ) );
 }
 
