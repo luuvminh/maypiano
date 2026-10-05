@@ -208,3 +208,36 @@ body.mp-app a.mp-qna-bai:hover{color:var(--mp-accent);text-decoration:underline;
 	body.mp-app .mp-qna-tabs{display:flex;width:100%}
 	body.mp-app a.mp-qna-tab{flex:1 1 0;padding:6px 10px;font-size:16px}
 }
+
+/* ---------- Lesson page: the questions box under the video (opens and closes) ---------- */
+body.mp-app .mp-qna-box{margin:24px 0 0;background:#fff;border:2px solid var(--mp-ink);border-radius:12px;color:var(--mp-ink)}
+body.mp-app .mp-qna-box>summary{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;min-height:60px;padding:10px 20px;cursor:pointer;list-style:none;border-radius:10px}
+body.mp-app .mp-qna-box>summary::-webkit-details-marker{display:none}
+body.mp-app .mp-qna-box>summary:hover{background:var(--mp-blush)}
+body.mp-app .mp-qna-box>summary:focus-visible{outline:3px solid var(--mp-ink);outline-offset:3px}
+body.mp-app .mp-qna-box .mp-qna-box-title{font-family:var(--mp-head)!important;font-weight:600;font-size:22px;line-height:1.2}
+body.mp-app .mp-qna-box-count{font-size:16px;font-weight:600;line-height:1.2;color:var(--mp-plum);background:#F7D9E1;border-radius:999px;padding:5px 12px}
+body.mp-app .mp-qna-box-arrow{margin-inline-start:auto;flex:none;width:12px;height:12px;border-right:3px solid var(--mp-ink);border-bottom:3px solid var(--mp-ink);transform:translateY(-3px) rotate(45deg);transition:transform .15s ease}
+body.mp-app .mp-qna-box[open] .mp-qna-box-arrow{transform:translateY(3px) rotate(225deg)}
+body.mp-app .mp-qna-box[open]>summary{border-bottom:2px solid var(--mp-ink);border-radius:10px 10px 0 0}
+body.mp-app .mp-qna-box-body{padding:18px 20px 20px}
+body.mp-app .mp-qna-box-lead{margin:0 0 12px;font-size:18px;line-height:1.45}
+body.mp-app .mp-qna-box-body textarea{font-size:18px;min-height:88px}
+body.mp-app .mp-qna-list{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:18px}
+body.mp-app .mp-qna-item{margin:0;padding:18px 0 0;border-top:1px solid var(--mp-muted)}
+body.mp-app .mp-qna-who{margin:0 0 4px;font-size:16px;line-height:1.35;color:var(--mp-plum)}
+body.mp-app .mp-qna-who strong{font-weight:600;color:var(--mp-ink)}
+body.mp-app .mp-qna-who span::before{content:"·";margin:0 6px}
+body.mp-app .mp-qna-text{font-size:18px;line-height:1.55;overflow-wrap:anywhere}
+body.mp-app .mp-qna-text p{margin:0 0 8px}
+body.mp-app .mp-qna-text p:last-child{margin-bottom:0}
+body.mp-app .mp-qna-answer{margin:12px 0 0;padding:12px 16px;background:var(--mp-blush);border-inline-start:4px solid var(--mp-accent);border-radius:0 10px 10px 0}
+body.mp-app a.mp-qna-reply,body.mp-app .mp-qna-more a{display:inline-flex;align-items:center;min-height:44px;font-size:17px;font-weight:600;color:var(--mp-ink);text-decoration:underline;text-underline-offset:3px}
+body.mp-app a.mp-qna-reply:hover,body.mp-app .mp-qna-more a:hover{color:var(--mp-accent)}
+body.mp-app .mp-qna-more{display:flex;flex-wrap:wrap;gap:0 24px;margin:14px 0 0;padding-top:8px;border-top:1px solid var(--mp-muted)}
+@media (prefers-reduced-motion:reduce){body.mp-app .mp-qna-box-arrow{transition:none}}
+@media (max-width:576px){
+	body.mp-app .mp-qna-box>summary{padding:10px 14px}
+	body.mp-app .mp-qna-box .mp-qna-box-title{font-size:20px}
+	body.mp-app .mp-qna-box-body{padding:14px 14px 16px}
+}

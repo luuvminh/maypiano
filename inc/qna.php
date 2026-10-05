@@ -253,6 +253,111 @@ add_action( 'tutor_load_template_after', function ( $template, $variables ) {
 	echo $html; // phpcs:ignore WordPress.Security.EscapeOutput -- Tutor LMS's own card, already escaped there.
 }, 10, 2 );
 
+/*
+ * The questions box under the video.
+ *
+ * On a lesson page, right under the Previous and Next buttons: a box the learner opens and closes, with the place to ask
+ * and the newest questions of this lesson together with their answers.
+ */
+
+const MAYPIANO_QNA_BOX_SHOWN = 5;
+
+/** The newest questions of one lesson with their answers, and how many questions the lesson has. */
+function maypiano_qna_of_lesson( $course, $lesson, $limit ) {
+	global $wpdb;
+	$from = "FROM {$wpdb->comments} c INNER JOIN {$wpdb->commentmeta} m ON m.comment_id = c.comment_ID AND m.meta_key = 'mp_lesson' AND m.meta_value = %s
+		WHERE c.comment_type = 'tutor_q_and_a' AND c.comment_parent = 0 AND c.comment_post_ID = %d
+		AND NOT EXISTS (SELECT 1 FROM {$wpdb->commentmeta} a WHERE a.comment_id = c.comment_ID AND a.meta_key = 'tutor_qna_archived' AND a.meta_value = '1')";
+	$total     = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) {$from}", (string) $lesson, (int) $course ) ); // phpcs:ignore WordPress.DB
+	$questions = $total ? $wpdb->get_results( $wpdb->prepare( "SELECT c.comment_ID, c.comment_author, c.comment_date_gmt, c.comment_content, c.user_id {$from} ORDER BY c.comment_ID DESC LIMIT %d", (string) $lesson, (int) $course, (int) $limit ) ) : array(); // phpcs:ignore WordPress.DB
+	$answers   = array();
+	if ( $questions ) {
+		$ids  = implode( ',', array_map( 'intval', wp_list_pluck( $questions, 'comment_ID' ) ) );
+		$rows = $wpdb->get_results( "SELECT comment_ID, comment_parent, comment_author, comment_date_gmt, comment_content, user_id FROM {$wpdb->comments} WHERE comment_type = 'tutor_q_and_a' AND comment_parent IN ({$ids}) ORDER BY comment_ID ASC" ); // phpcs:ignore WordPress.DB
+		foreach ( (array) $rows as $row ) {
+			$answers[ (int) $row->comment_parent ][] = $row;
+		}
+	}
+	return array( $total, $questions, $answers );
+}
+
+/** "3 phút trước". */
+function maypiano_qna_ago( $gmt ) {
+	/* translators: %s: a length of time. */
+	return sprintf( __( '%s ago', 'tutor' ), human_time_diff( strtotime( $gmt . ' UTC' ) ) );
+}
+
+add_action( 'tutor_load_template_after', function ( $template ) {
+	global $tutor_course_id;
+	if ( 'learning-area.lesson.footer' !== $template || ! is_singular( 'lesson' ) || ! class_exists( '\TUTOR\Template' ) ) {
+		return;
+	}
+	$lesson = (int) get_queried_object_id();
+	$course = (int) $tutor_course_id;
+	$menu   = $course ? \TUTOR\Template::make_learning_area_sub_page_nav_items( get_permalink( $course ) ) : array();
+	if ( ! $lesson || empty( $menu['qna'] ) ) {
+		return; // Questions are off for this course, or this visitor may not ask.
+	}
+	list( $total, $questions, $answers ) = maypiano_qna_of_lesson( $course, $lesson, MAYPIANO_QNA_BOX_SHOWN );
+	$page = add_query_arg( array( 'subpage' => 'qna', 'bai' => $lesson ), get_permalink( $course ) );
+	?>
+<details class="mp-qna-box" id="mp-hoi-dap">
+	<summary>
+		<span class="mp-qna-box-title">Hỏi đáp về bài này</span>
+		<span class="mp-qna-box-count"><?php echo $total ? esc_html( $total . ' câu hỏi' ) : 'Chưa có câu hỏi'; ?></span>
+		<span class="mp-qna-box-arrow" aria-hidden="true"></span>
+	</summary>
+	<div class="mp-qna-box-body" x-data="tutorQnA()">
+		<p class="mp-qna-box-lead">Bạn có chỗ nào chưa rõ trong bài này thì viết câu hỏi ở đây nhé.</p>
+		<?php
+		tutor_load_template(
+			'learning-area.subpages.qna.form',
+			array(
+				'form_id'        => 'learning-area-qna-form',
+				'submit_handler' => '(data) => createQnAMutation?.mutate({ ...data, course_id: ' . $course . ', mp_bai: ' . $lesson . ' })',
+				'cancel_handler' => 'reset(); focused = false',
+				'is_pending'     => 'createQnAMutation?.isPending',
+				'placeholder'    => __( 'Asked questions...', 'tutor' ),
+				'submit_label'   => 'Gửi câu hỏi',
+			)
+		);
+		?>
+		<?php if ( $questions ) : ?>
+		<ul class="mp-qna-list">
+			<?php foreach ( $questions as $q ) : ?>
+			<li class="mp-qna-item">
+				<p class="mp-qna-who"><strong><?php echo esc_html( $q->comment_author ); ?></strong> <span><?php echo esc_html( maypiano_qna_ago( $q->comment_date_gmt ) ); ?></span></p>
+				<div class="mp-qna-text"><?php echo wp_kses_post( wpautop( $q->comment_content ) ); ?></div>
+				<?php foreach ( $answers[ (int) $q->comment_ID ] ?? array() as $a ) : ?>
+				<div class="mp-qna-answer">
+					<p class="mp-qna-who"><strong><?php echo esc_html( $a->comment_author ); ?></strong> <span><?php echo esc_html( maypiano_qna_ago( $a->comment_date_gmt ) ); ?></span></p>
+					<div class="mp-qna-text"><?php echo wp_kses_post( wpautop( $a->comment_content ) ); ?></div>
+				</div>
+				<?php endforeach; ?>
+				<a class="mp-qna-reply" href="<?php echo esc_url( add_query_arg( 'question_id', (int) $q->comment_ID, $page ) ); ?>">Trả lời</a>
+			</li>
+			<?php endforeach; ?>
+		</ul>
+		<?php endif; ?>
+		<p class="mp-qna-more">
+			<?php if ( $total > count( $questions ) ) : ?>
+			<a href="<?php echo esc_url( $page ); ?>">Xem cả <?php echo (int) $total; ?> câu hỏi của bài này</a>
+			<?php endif; ?>
+			<a href="<?php echo esc_url( add_query_arg( 'xem', 'tat-ca', $page ) ); ?>">Xem câu hỏi của cả khóa</a>
+		</p>
+	</div>
+</details>
+<script>
+(function () {
+	var box = document.getElementById('mp-hoi-dap'), key = 'mp-hoi-dap';
+	if (!box) { return; }
+	try { if (localStorage.getItem(key) === '1' || location.hash === '#mp-hoi-dap') { box.open = true; } } catch (e) {}
+	box.addEventListener('toggle', function () { try { localStorage.setItem(key, box.open ? '1' : '0'); } catch (e) {} });
+})();
+</script>
+	<?php
+}, 20, 1 );
+
 /** Links and the search box on these pages keep the lesson, so the learner stays on the same lesson's questions and a new question remembers its lesson. */
 add_action( 'wp_footer', function () {
 	$lesson = maypiano_qna_lesson();
@@ -304,9 +409,20 @@ add_action( 'tutor_after_asked_question', function ( $data ) {
 	if ( ! $qid ) {
 		return;
 	}
-	$from = array();
-	wp_parse_str( (string) wp_parse_url( (string) wp_get_referer(), PHP_URL_QUERY ), $from );
-	$lesson = (int) ( $from['bai'] ?? 0 );
+	// The lesson comes with the question (the box under the video), or from the address of the page it was asked on.
+	$lesson = isset( $_POST['mp_bai'] ) ? absint( wp_unslash( $_POST['mp_bai'] ) ) : 0; // phpcs:ignore WordPress.Security.NonceVerification -- Tutor LMS has checked it.
+	if ( ! $lesson ) {
+		$from = array();
+		wp_parse_str( (string) wp_parse_url( (string) wp_get_referer(), PHP_URL_QUERY ), $from );
+		$lesson = (int) ( $from['bai'] ?? 0 );
+	}
+	if ( ! $lesson ) {
+		$lesson = (int) url_to_postid( (string) wp_get_referer() );
+	}
+	$question_now = get_comment( $qid );
+	if ( $lesson && function_exists( 'tutor_utils' ) && $question_now && (int) tutor_utils()->get_course_id_by_subcontent( $lesson ) !== (int) $question_now->comment_post_ID ) {
+		$lesson = 0;
+	}
 	if ( $lesson && in_array( get_post_type( $lesson ), MAYPIANO_QNA_LESSON_TYPES, true ) ) {
 		update_comment_meta( $qid, 'mp_lesson', $lesson );
 	}
