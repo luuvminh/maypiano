@@ -400,3 +400,8 @@ body.mp-app .tutor-preferences-section .tutor-preferences-setting-subtitle{margi
 body.mp-app .tutor-preferences-section .tutor-select-trigger,body.mp-app .tutor-preferences-section .tutor-select-value-text{font-size:1.125rem!important}
 body.mp-app .tutor-preferences-setting-content :is(.tutor-preferences-setting-description,.tutor-text-small,.tutor-tiny,p){font-size:1rem;line-height:1.45;color:var(--mp-plum)}
 body.mp-app .tutor-preferences-setting-action .tutor-select-trigger{font-size:1.125rem}
+/* The phone's bottom bar is a control strip: its label keeps one size whatever text size the learner chose, so it always fits. */
+@media (max-width:576px){
+	body.mp-app .tutor-learning-area-footer form .tutor-mark-as-complete-button{font-size:17px!important;line-height:1.15;white-space:normal;text-align:center;overflow:hidden}
+	body.mp-app .tutor-learning-area-footer a.mp-undo{font-size:16px}
+}
