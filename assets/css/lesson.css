@@ -381,6 +381,7 @@ body.mp-app .tutor-preferences-setting-action{flex:0 1 auto;min-width:0;max-widt
 body.mp-app .tutor-preferences-setting-action .tutor-select{max-width:100%}
 body.mp-app .tutor-preferences-setting-action .tutor-select-trigger{min-height:48px;max-width:100%}
 @media (max-width:576px){
+	body.mp-app .tutor-preferences-setting-content{flex:1 1 auto}
 	body.mp-app .tutor-preferences-setting-action:has(.tutor-select){flex:1 1 100%}
 	body.mp-app .tutor-preferences-setting-action .tutor-select{width:100%}
 }
