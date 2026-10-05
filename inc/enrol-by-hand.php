@@ -91,7 +91,7 @@ function maypiano_enrol_by_hand_section() {
 	echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="maypiano_enrol_by_hand">';
 	wp_nonce_field( 'maypiano_enrol_by_hand' );
 	echo '<table class="form-table" role="presentation">';
-	echo '<tr><th scope="row"><label for="mp_name">Họ tên</label></th><td><input type="text" class="regular-text" id="mp_name" name="mp_name" required></td></tr>';
+	echo '<tr><th scope="row"><label for="mp_name">Họ tên</label></th><td><input type="text" class="regular-text" id="mp_name" name="mp_name"><p class="description">Người đã có tài khoản: để trống thì giữ nguyên tên, gõ tên mới thì đổi tên.</p></td></tr>';
 	echo '<tr><th scope="row"><label for="mp_email">Email</label></th><td><input type="email" class="regular-text" id="mp_email" name="mp_email" required></td></tr>';
 	echo '<tr><th scope="row">Khóa học</th><td><fieldset>';
 	foreach ( maypiano_catalog() as $key => $course ) {
