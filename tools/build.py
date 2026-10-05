@@ -18,7 +18,7 @@ TEXT = {
     'TrangChu': [
         ("'Ở Việt Nam, bạn chuyển khoản ngân hàng. [Cách thanh toán cho người ở nước ngoài]'",
          "'Ở Việt Nam, bạn chuyển khoản ngân hàng. Ở nước ngoài, bạn trả qua PayPal.'"),
-        ("['Tôi được học trong bao lâu?', '[Thời hạn truy cập khóa học]']", ''),
+        ("['Mình được học trong bao lâu?', '[Thời hạn truy cập khóa học]']", ''),
     ],
     'DangKy': [],
 }

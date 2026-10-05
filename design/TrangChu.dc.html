@@ -1117,10 +1117,10 @@ const DEM = [
 ];
 DEM.forEach((x) => { x.price = P(x.key, x.price); });
 const FAQ = [
-['Tôi chưa biết gì về nhạc, có học được không?', 'Được bạn nhé. Khóa Piano Solo Căn Bản bắt đầu từ tư thế ngồi đàn và cách xác định nốt trên phím. Bạn không cần biết đọc nốt trước.'],
-['Tôi học bằng cách nào?', 'Bạn xem video theo từng bài, mỗi bài có sheet nhạc đi kèm. Có gì chưa rõ, bạn cứ hỏi trong nhóm Facebook, Mây và mọi người sẽ giúp.'],
-['Tôi thanh toán thế nào?', 'Ở Việt Nam, bạn chuyển khoản ngân hàng. [Cách thanh toán cho người ở nước ngoài]'],
-['Tôi được học trong bao lâu?', '[Thời hạn truy cập khóa học]']
+['Mình chưa biết gì về nhạc, có học được không?', 'Được bạn nhé. Khóa Piano Solo Căn Bản bắt đầu từ tư thế ngồi đàn và cách xác định nốt trên phím. Bạn không cần biết đọc nốt trước.'],
+['Mình học bằng cách nào?', 'Bạn xem video theo từng bài, mỗi bài có sheet nhạc đi kèm. Có gì chưa rõ, bạn cứ hỏi trong nhóm Facebook, Mây và mọi người sẽ giúp.'],
+['Mình thanh toán thế nào?', 'Ở Việt Nam, bạn chuyển khoản ngân hàng. [Cách thanh toán cho người ở nước ngoài]'],
+['Mình được học trong bao lâu?', '[Thời hạn truy cập khóa học]']
 ];
 const faqs = FAQ.map((f, i) => ({ q: f[0], a: f[1], open: s.faq === i, rot: s.faq === i ? 'rotate(45deg)' : 'none', toggle: () => this.setState({ faq: s.faq === i ? -1 : i }) }));
 const D = [['Piano Solo Căn Bản', 58, 244, '4 giờ 04 phút'], ['Piano Cover 40 Bài Nhạc Việt', 40, 750, '12 giờ 30 phút'], ['Piano Solo Nâng Cao', 110, 1088, '18 giờ 08 phút'], ['Đệm Hát Piano', 39, 235, '3 giờ 55 phút'], ['Đệm Hát Thánh Ca', 37, 234, '3 giờ 54 phút']];
