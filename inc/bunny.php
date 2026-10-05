@@ -190,7 +190,7 @@ function maypiano_bunny_settings_section() {
 }
 
 /**
- * An empty text panel under a lesson's video is put away. (Back and forward 10 seconds are buttons of the Bunny player itself.)
+ * An empty text panel under a lesson's video is put away, and a finished lesson gets a link to unmark it. (Back and forward 10 seconds are buttons of the Bunny player itself.)
  */
 add_action( 'wp_footer', function () {
 	if ( ! is_singular( 'lesson' ) ) {
@@ -200,11 +200,22 @@ add_action( 'wp_footer', function () {
 <script>
 /* Tutor LMS swaps the lesson in place when the learner moves to another one, so this runs again after every change to the page. */
 (function () {
+	var UNDO = <?php echo wp_json_encode( wp_nonce_url( admin_url( 'admin-post.php?action=maypiano_lesson_undo' ), 'maypiano_lesson_undo' ) ); ?>.replace(/&amp;/g, '&');
 	var sync = function () {
 		document.querySelectorAll('.tutor-lesson-wrapper').forEach(function (w) {
 			var empty = !w.textContent.trim() && !w.querySelector('img,iframe,video,audio,a');
 			var box = w.closest('.tutor-tabs-content') || w;
 			if (empty !== box.classList.contains('mp-empty')) { box.classList.toggle('mp-empty', empty); }
+		});
+		/* A lesson marked as finished by mistake can be unmarked. */
+		document.querySelectorAll('.tutor-mark-as-complete-button.completed').forEach(function (b) {
+			var form = b.closest('form'), id = form && form.querySelector('[name="lesson_id"]');
+			if (!form || !id || form.querySelector('.mp-undo')) { return; }
+			var a = document.createElement('a');
+			a.className = 'mp-undo';
+			a.href = UNDO + '&lesson=' + encodeURIComponent(id.value);
+			a.textContent = 'Bỏ đánh dấu';
+			form.appendChild(a);
 		});
 	};
 	var due = false;
@@ -216,3 +227,17 @@ add_action( 'wp_footer', function () {
 </script>
 	<?php
 }, 99 );
+
+/**
+ * A learner unmarks a lesson they marked as finished by mistake. Tutor LMS keeps "finished" as one note per lesson on the learner's account; the note is removed.
+ */
+add_action( 'admin_post_maypiano_lesson_undo', function () {
+	check_admin_referer( 'maypiano_lesson_undo' );
+	$lesson = isset( $_GET['lesson'] ) ? absint( $_GET['lesson'] ) : 0;
+	if ( ! $lesson || 'lesson' !== get_post_type( $lesson ) ) {
+		wp_die( 'Không tìm thấy bài học.' );
+	}
+	delete_user_meta( get_current_user_id(), '_tutor_completed_lesson_id_' . $lesson );
+	wp_safe_redirect( get_permalink( $lesson ) );
+	exit;
+} );

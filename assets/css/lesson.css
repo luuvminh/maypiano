@@ -1,3 +1,4 @@
+@charset "UTF-8";
 
 /* The lesson page (Tutor LMS learning area) in the May Piano look: dusty rose ground, ink outlines, Playfair headings, Newsreader text, pill buttons.
    Tutor LMS draws this page from a set of named colours and follows the visitor's light or dark setting. The first block fixes the light set for everyone;
@@ -38,8 +39,8 @@ body.mp-app .tutor-learning-area .tutor-popover{background:#fff;border:2px solid
 
 /* The lesson */
 body.mp-app .tutor-learning-area-container{max-width:1040px}
-body.mp-app .tutor-lesson-content-tab{background:#fff;border:2px solid var(--mp-ink);border-radius:12px;overflow:hidden}
-body.mp-app .tutor-lesson-video-wrapper{margin:0;border:0}
+body.mp-app .tutor-lesson-content-tab{background:transparent;border:0;border-radius:0;overflow:visible;padding:0}
+body.mp-app .tutor-lesson-video-wrapper{margin:0!important;border:2px solid var(--mp-ink)!important;border-radius:12px;overflow:hidden;background:#000}
 body.mp-app .tutor-video-player{background:#000}
 body.mp-app .tutor-lesson-wrapper{font-size:19px;line-height:1.6;color:var(--mp-ink)}
 body.mp-app .tutor-lesson-wrapper:empty,body.mp-app .tutor-tab-panel:has(>.tutor-lesson-wrapper:empty){display:none}
@@ -112,7 +113,6 @@ body.mp-app .tutor-learning-area-footer .tutor-btn{min-height:48px!important;fon
 body.mp-app .tutor-learning-area .tutor-btn-icon{min-width:44px!important;min-height:44px!important}
 body.mp-app .tutor-dashboard-header{box-sizing:border-box;max-width:100%;min-width:0}
 body.mp-app .tutor-dashboard-header>*{min-width:0}
-body.mp-app .tutor-dashboard-layout .tutor-avatar{min-width:44px;min-height:44px}
 body.mp-app .tutor-dashboard-layout .tutor-btn{min-height:44px}
 body.mp-app .tutor-dashboard-layout .tutor-btn-link{display:inline-flex;align-items:center;padding:10px 4px}
 body.mp-app .tutor-dashboard-courses-tab{max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -145,3 +145,49 @@ body.mp-app .tutor-mark-as-complete-button.completed{background:#fff!important;b
 body.mp-app .tutor-learning-sidebar-pages{background:transparent!important;border:0!important;box-shadow:none!important;padding-inline:0}
 body.mp-app .tutor-learning-sidebar-pages .tutor-learning-pages-item{background:#fff;border:2px solid var(--mp-ink)}
 @media (max-width:700px){body.mp-app .tutor-mark-as-complete-button{padding:8px 16px!important;font-size:17px!important;min-height:48px}}
+
+/* ---------- Lesson page: the finish button can be undone ---------- */
+body.mp-app .tutor-learning-area-footer form{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:0}
+body.mp-app a.mp-undo{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;font-family:var(--mp-body);font-size:17px;font-weight:600;color:var(--mp-ink);text-decoration:underline;text-underline-offset:3px}
+body.mp-app a.mp-undo:hover{color:var(--mp-accent)}
+
+/* ---------- Lesson page on phones and upright tablets: video first, then the list of lessons right under it (no hidden drawer) ---------- */
+@media (max-width:991.98px){
+	body.mp-app .tutor-learning-header-toggle-mobile{display:none!important}
+	body.mp-app .tutor-learning-header-content{width:100%!important;gap:12px!important}
+	body.mp-app .tutor-learning-header{padding:8px 12px}
+	body.mp-app .tutor-learning-header-title{flex:1 1 auto;min-width:0}
+	body.mp-app .tutor-learning-area .tutor-learning-area-body{display:flex;flex-direction:column;padding:0}
+	body.mp-app .tutor-learning-area .tutor-learning-area-content{order:1;padding:12px 0 0!important}
+	body.mp-app .tutor-learning-area .tutor-learning-area-container{max-width:760px;padding:0 16px 16px!important}
+	body.mp-app .tutor-learning-sidebar{order:2;position:static!important;transform:none!important;inset:auto!important;width:100%!important;max-width:760px;height:auto!important;margin:8px auto 0;padding:0 16px 32px!important;background:transparent!important;overflow:visible!important;z-index:auto!important;box-sizing:border-box;align-self:stretch}
+	body.mp-app .tutor-learning-sidebar>.tutor-lg-flex{display:none!important}
+	body.mp-app .tutor-learning-sidebar .tutor-learning-sidebar-curriculum,body.mp-app .tutor-learning-sidebar .tutor-learning-nav{overflow:visible!important;flex-grow:0}
+	body.mp-app .tutor-learning-sidebar .tutor-learning-sidebar-curriculum::before{content:"Các bài trong khóa";display:block;padding:18px 20px 0;font-family:var(--mp-head);font-weight:600;font-size:24px;line-height:1.2;color:var(--mp-ink)}
+}
+@media (min-width:768px) and (max-width:991.98px){body.mp-app .tutor-learning-area .tutor-learning-area-content{padding-top:84px!important}}
+@media (max-width:576px){
+	body.mp-app .tutor-learning-area-footer{display:grid!important;grid-template-columns:1fr 1fr;gap:8px 12px;padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;background:var(--mp-bg)!important;border-top:2px solid var(--mp-ink)!important}
+	body.mp-app .tutor-learning-area-footer form{grid-column:1/-1;grid-row:1;justify-content:center}
+	body.mp-app .tutor-learning-area-footer form .tutor-mark-as-complete-button{flex:1 1 auto}
+	body.mp-app .tutor-learning-area-footer>a.tutor-btn{grid-row:2;justify-content:center;margin:0!important}
+	body.mp-app .tutor-learning-area-footer>a.tutor-btn:first-child{justify-self:start}
+	body.mp-app .tutor-learning-area-footer>a.tutor-btn:last-child{justify-self:end}
+	body.mp-app .tutor-learning-sidebar{padding-bottom:168px!important}
+	body.mp-app .tutor-learning-header-title{font-size:19px!important}
+}
+
+/* ---------- Learner pages: breathing room, no box inside a box, readable tabs ---------- */
+body.mp-app .tutor-dashboard-body{padding-top:20px}
+body.mp-app .tutor-dashboard-courses-card{background:transparent;border:0;border-radius:0;padding:0}
+body.mp-app .tutor-dashboard-courses-tab{background:#fff;border:2px solid var(--mp-ink);border-radius:12px;padding:6px;margin-bottom:16px}
+body.mp-app .tutor-dashboard-courses-list{padding:0!important}
+body.mp-app :is(.tutor-dashboard-page-card,.tutor-dashboard-page-card-header){background:#fff;border-color:var(--mp-ink)}
+body.mp-app .tutor-dashboard-page-card{border:2px solid var(--mp-ink);border-radius:12px;box-shadow:none;overflow:hidden}
+body.mp-app .tutor-dashboard-layout .tutor-nav-item{font-size:17px!important;font-weight:600;min-height:44px;color:var(--mp-ink)}
+body.mp-app .tutor-dashboard-layout .tutor-nav-item.active{color:var(--mp-accent)}
+body.mp-app .tutor-dashboard-layout .tutor-nav-item svg{width:20px;height:20px}
+body.mp-app .tutor-stat-card{min-height:0;gap:10px}
+body.mp-app .tutor-student-dashboard-stats .tutor-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+@media (min-width:1200px){body.mp-app .tutor-student-dashboard-stats .tutor-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+body.mp-app .tutor-dashboard-layout .tutor-btn-outline.tutor-btn-icon{border:2px solid var(--mp-ink);background:#fff;min-width:44px;min-height:44px;border-radius:999px}

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.6.6' );
+define( 'MAYPIANO_VERSION', '1.6.7' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -25,6 +25,7 @@ require get_theme_file_path( 'inc/bunny.php' );
 require get_theme_file_path( 'inc/course-page.php' );
 require get_theme_file_path( 'inc/teacher.php' );
 require get_theme_file_path( 'inc/enrol-by-hand.php' );
+require get_theme_file_path( 'inc/teacher-words.php' );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );
