@@ -14,6 +14,7 @@ require get_theme_file_path( 'inc/settings.php' );
 require get_theme_file_path( 'inc/emails.php' );
 require get_theme_file_path( 'inc/orders.php' );
 require get_theme_file_path( 'inc/approve.php' );
+require get_theme_file_path( 'inc/account.php' );
 require get_theme_file_path( 'inc/chrome.php' );
 require get_theme_file_path( 'inc/i18n.php' );
 require get_theme_file_path( 'inc/fx.php' );
