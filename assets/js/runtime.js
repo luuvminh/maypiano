@@ -67,6 +67,8 @@
       var lname = a.name.toLowerCase();
       if (a.value.indexOf('{{') < 0) continue;
       var v = interp(a.value, scopes);
+      /* An image whose address comes from data: the page carries it as data-dc-src, so the browser never asks for the placeholder itself. */
+      if (lname === 'data-dc-src') { el.removeAttribute(a.name); if (v != null && typeof v !== 'function') el.setAttribute('src', String(v)); continue; }
       if (EVENTS[lname] || lname === 'ref') {
         el.removeAttribute(a.name);
         if (typeof v === 'function') {

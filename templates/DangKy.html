@@ -53,7 +53,7 @@ button{font-family:inherit;cursor:pointer}
 </sc-for>
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 28px 48px; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(18px, 3vw, 36px); box-sizing: border-box; align-items: start">
-<img src="{{cur.img}}" alt="" style="display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px">
+<img data-dc-src="{{cur.img}}" alt="" style="display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px">
 <div style="display: flex; flex-direction: column; gap: 14px; min-width: 0">
 <div style="font-weight: 600; color: #8A3350">{{cur.level}}</div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.12">{{cur.name}}</h2>
@@ -154,7 +154,7 @@ button{font-family:inherit;cursor:pointer}
 <sc-if value="{{payBank}}" hint-placeholder-val="{{ true }}">
 <div style="background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 16px; padding: clamp(18px, 3vw, 36px); box-sizing: border-box; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
 <sc-if value="{{hasQr}}" hint-placeholder-val="{{ true }}">
-<div style="flex: 0 1 260px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center"><img src="{{qrSrc}}" alt="Mã QR chuyển khoản, đã có sẵn số tiền và nội dung" style="display: block; width: 100%; max-width: 260px; aspect-ratio: 1 / 1; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 12px; box-sizing: border-box"><span style="font-size: 17px">{{qrHint}}</span></div>
+<div style="flex: 0 1 260px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center"><img data-dc-src="{{qrSrc}}" alt="Mã QR chuyển khoản, đã có sẵn số tiền và nội dung" style="display: block; width: 100%; max-width: 260px; aspect-ratio: 1 / 1; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 12px; box-sizing: border-box"><span style="font-size: 17px">{{qrHint}}</span></div>
 </sc-if>
 <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column">
 <sc-for list="{{bankRows}}" as="row" hint-placeholder-count="5">

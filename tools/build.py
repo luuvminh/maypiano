@@ -30,6 +30,8 @@ def build(name, home_href, signup_href):
         body = body.replace('/_blob/' + k, '%%THEME%%/assets/img/' + v + '.jpg')
     assert '/_blob/' not in body, 'unmapped image in ' + name
     body = body.replace("'/_audio/'", "'%%THEME%%/assets/audio/'")
+    # An <img src="{{...}}"> would make the browser fetch the placeholder text before the page script fills it in.
+    body = body.replace(' src="{{', ' data-dc-src="{{')
     body = body.replace('"/_img/', '"%%THEME%%/assets/img/')
     body = body.replace('href="MuaKhoaHoc.dc.html', 'href="%%SIGNUP%%').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"').replace('href="DangNhap.dc.html"', 'href="%%LOGIN%%"')
     for a, b in TEXT[name]:

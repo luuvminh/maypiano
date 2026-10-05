@@ -316,7 +316,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px">
 <sc-for list="{{videos}}" as="v" hint-placeholder-count="3">
-<a href="{{v.url}}" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #D2BFC3"><img loading="lazy" src="{{v.img}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600; line-height: 1.4">{{v.title}}</span></a>
+<a href="{{v.url}}" class="lift" style="text-decoration: none; display: flex; flex-direction: column; gap: 12px"><span style="aspect-ratio: 16 / 9; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #D2BFC3"><img loading="lazy" data-dc-src="{{v.img}}" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true" style="position: relative"><circle cx="12" cy="12" r="11" fill="#2B1E24"></circle><path d="M10 8l6 4-6 4z" fill="#FFFFFF"></path></svg></span><span style="font-weight: 600; line-height: 1.4">{{v.title}}</span></a>
 </sc-for>
 </div>
 </section>
