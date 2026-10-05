@@ -20,6 +20,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `inc/emails.php`: email gửi khách và gửi chủ site.
 - `inc/settings.php`: trang **Cài đặt > May Piano**.
 - `inc/chrome.php`: thanh menu, chân trang và giao diện chung cho mọi trang ngoài trang chủ và trang đăng ký (trang khóa học, khu học viên, tài khoản, trả tiền bằng thẻ). Cũng chuyển trang cửa hàng, sản phẩm, giỏ hàng và thanh toán của WooCommerce về `/dang-ky/`, để chỉ có một đường mua.
+- `inc/i18n.php` và `languages/tutor-vi.json`: tiếng Việt cho Tutor LMS (plugin không có sẵn tiếng Việt). Muốn sửa một câu thì sửa trong file JSON.
 - `assets/css/app.css`: design system cho các trang đó. Màu, font và kiểu nút lấy từ `design/TrangChu.dc.html`.
 - `woocommerce.php`: khuôn cho các trang WooCommerce còn dùng.
 - `templates/`: nội dung hai trang, tạo ra từ `design/`.
