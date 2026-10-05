@@ -7,12 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.1.0' );
+define( 'MAYPIANO_VERSION', '1.2.0' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
 require get_theme_file_path( 'inc/emails.php' );
 require get_theme_file_path( 'inc/orders.php' );
+require get_theme_file_path( 'inc/chrome.php' );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );

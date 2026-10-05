@@ -1,0 +1,69 @@
+/*
+ * May Piano design system for every page other than the home page and the sign-up page.
+ * Values match design/TrangChu.dc.html: dusty rose ground, ink outlines, Playfair headings, Newsreader text, pill buttons.
+ */
+body.mp-app{
+	--mp-ink:#2B1E24;--mp-accent:#C2456B;--mp-plum:#5B2A3C;--mp-bg:#E3D7D7;--mp-blush:#F6EFEF;--mp-pink:#E9B9C6;--mp-muted:#D2BFC3;--mp-white:#FFFFFF;
+	--mp-head:'Playfair Display',serif;--mp-body:'Newsreader',serif;--mp-side:clamp(20px,6vw,96px);
+	--tutor-color-primary:#C2456B;--tutor-color-primary-rgb:194,69,107;--tutor-color-primary-hover:#A8456F;--tutor-body-color:#2B1E24;--tutor-border-color:#2B1E24;
+	margin:0;background:var(--mp-bg);color:var(--mp-ink);font-family:var(--mp-body);font-size:20px;line-height:1.6;overflow-x:hidden
+}
+body.mp-app :where(p,li,label,input,select,textarea,button,td,th,span,div,a){font-family:var(--mp-body)}
+body.mp-app :is(h1,h2,h3,h4,.wc-block-components-title,.tutor-course-details-title,.tutor-fs-3,.tutor-fs-4,.tutor-fs-5){font-family:var(--mp-head);font-weight:600;color:var(--mp-ink);line-height:1.12;letter-spacing:-.01em}
+body.mp-app h1{font-size:clamp(34px,4.6vw,64px);margin:0 0 .5em}
+body.mp-app h2{font-size:clamp(28px,3vw,40px)}
+body.mp-app h3{font-size:clamp(25px,2.5vw,34px)}
+body.mp-app a{color:var(--mp-ink)}
+body.mp-app a:hover{color:var(--mp-accent)}
+body.mp-app :where(a,button,input,select,textarea):focus-visible{outline:3px solid var(--mp-ink);outline-offset:3px}
+
+/* Header and footer: the same bar and foot as the home page */
+.mp-nav{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;justify-content:space-between;padding:22px var(--mp-side)}
+.mp-logo{font-family:var(--mp-head)!important;font-weight:700;font-size:28px;text-decoration:none}
+.mp-links{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;font-weight:500}
+.mp-links a{text-decoration:none;padding:10px 0}
+body.mp-app .mp-links a.mp-pill{background:var(--mp-accent);color:#fff;padding:12px 24px;border-radius:999px;font-weight:600;transition:transform .12s ease,filter .12s ease}
+body.mp-app .mp-links a.mp-pill:hover{color:#fff;filter:brightness(1.08)}
+.mp-links a.mp-pill:active{transform:scale(.96)}
+.mp-page{padding:clamp(24px,4vw,56px) var(--mp-side) clamp(56px,8vw,112px);min-height:50vh}
+.mp-foot{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;padding:28px var(--mp-side) 40px;border-top:2px solid var(--mp-ink);font-size:18px}
+.mp-foot-links{display:flex;flex-wrap:wrap;gap:8px 24px}
+.mp-foot-links a{padding:10px 0}
+body.mp-app .mp-plain{font-family:var(--mp-body);max-width:760px;margin:0 auto;padding:0;font-size:20px}
+body.mp-app .mp-plain.mp-wide{max-width:1120px}
+
+/* Buttons: accent pill; outline pill for the quieter choice */
+body.mp-app :is(.wp-element-button,.wp-block-button__link,.wc-block-components-button:not(.is-link),.woocommerce a.button,.woocommerce button.button,.woocommerce input.button,.woocommerce-button,.tutor-btn.tutor-btn-primary,.tutor-btn-primary,button[type=submit],input[type=submit]){background:var(--mp-accent);color:#fff;border:0;border-radius:999px;padding:14px 26px;min-height:50px;font-size:19px;font-weight:600;text-decoration:none;box-shadow:none;cursor:pointer;transition:transform .12s ease,filter .12s ease}
+body.mp-app :is(.wp-element-button,.wc-block-components-button:not(.is-link),.woocommerce a.button,.woocommerce button.button,.tutor-btn-primary,button[type=submit],input[type=submit]):hover{color:#fff;filter:brightness(1.08)}
+body.mp-app :is(.wp-element-button,.wc-block-components-button:not(.is-link),.tutor-btn-primary,button[type=submit]):active{transform:scale(.96)}
+body.mp-app :is(.tutor-btn.tutor-btn-outline-primary,.tutor-btn.tutor-btn-secondary,.tutor-btn.tutor-btn-ghost){background:#fff;color:var(--mp-ink);border:2px solid var(--mp-ink);border-radius:999px;min-height:48px;font-size:18px;font-weight:600}
+
+/* Fields */
+body.mp-app :is(.wc-block-components-text-input input,.wc-blocks-components-select__select,.woocommerce form .input-text,.woocommerce select,.tutor-form-control,input[type=text],input[type=email],input[type=tel],input[type=password],input[type=search],textarea,select){border:2px solid var(--mp-ink);border-radius:12px;background:#fff;color:var(--mp-ink);font-size:19px;box-shadow:none}
+body.mp-app :is(.woocommerce form .input-text,.tutor-form-control,input[type=text],input[type=email],input[type=tel],input[type=password],textarea){min-height:54px;padding:10px 16px;box-sizing:border-box}
+body.mp-app .wc-block-components-text-input input{min-height:58px}
+body.mp-app :is(input[type=checkbox],input[type=radio],input[type=range]){accent-color:var(--mp-accent)}
+
+/* Panels and cards: white, 2px ink outline, no shadow */
+body.mp-app :is(.wc-block-components-sidebar,.wc-block-checkout__sidebar,.woocommerce-checkout-review-order,.woocommerce-order,.woocommerce-MyAccount-content,.woocommerce form.login,.woocommerce form.register,.tutor-card,.tutor-course-card,.tutor-dashboard-content-inner,.tutor-accordion-item){background:#fff;border:2px solid var(--mp-ink);border-radius:14px;box-shadow:none}
+body.mp-app :is(.wc-block-components-sidebar,.wc-block-checkout__sidebar,.woocommerce-order,.woocommerce-MyAccount-content,.woocommerce form.login,.woocommerce form.register){padding:26px}
+body.mp-app :is(.wc-block-components-notice-banner,.woocommerce-message,.woocommerce-info,.woocommerce-error,.tutor-alert){background:var(--mp-blush);color:var(--mp-ink);border:2px solid var(--mp-ink);border-radius:12px}
+body.mp-app :is(.price,.wc-block-components-product-price,.wc-block-components-totals-footer-item .wc-block-components-totals-item__value,.tutor-course-sidebar-card-pricing){font-family:var(--mp-head);font-weight:700;color:var(--mp-ink)}
+body.mp-app :is(.price ins,.wc-block-components-product-price ins){color:var(--mp-accent);text-decoration:none}
+body.mp-app table{border-collapse:collapse}
+body.mp-app :is(.woocommerce table.shop_table,.tutor-table){border:2px solid var(--mp-ink);border-radius:14px;background:#fff}
+body.mp-app :is(.woocommerce table.shop_table th,.woocommerce table.shop_table td,.tutor-table th,.tutor-table td){border-color:var(--mp-muted)}
+
+/* Tutor LMS */
+body.mp-app .tutor-color-primary{color:var(--mp-accent)}
+body.mp-app :is(.tutor-progress-bar .tutor-progress-value,.tutor-bg-primary){background:var(--mp-accent)}
+body.mp-app .tutor-progress-bar{background:var(--mp-muted)}
+body.mp-app :is(.tutor-nav-link.is-active,.tutor-dashboard-menu-item.active a){color:var(--mp-accent);border-color:var(--mp-accent)}
+body.mp-app .tutor-wrap{max-width:1120px}
+
+/* My account menu */
+body.mp-app .woocommerce-MyAccount-navigation ul{list-style:none;margin:0 0 24px;padding:0;display:flex;flex-wrap:wrap;gap:8px 12px}
+body.mp-app .woocommerce-MyAccount-navigation a{display:inline-block;border:2px solid var(--mp-ink);background:#fff;border-radius:999px;padding:10px 22px;min-height:48px;box-sizing:border-box;font-size:18px;font-weight:600;text-decoration:none}
+body.mp-app .woocommerce-MyAccount-navigation .is-active a{background:var(--mp-ink);color:#fff}
+
+@media (prefers-reduced-motion:reduce){body.mp-app *{transition:none!important;animation:none!important}}
