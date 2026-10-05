@@ -80,4 +80,14 @@ body.mp-app .woocommerce-MyAccount-navigation ul{list-style:none;margin:0 0 24px
 body.mp-app .woocommerce-MyAccount-navigation a{display:inline-block;border:2px solid var(--mp-ink);background:#fff;border-radius:999px;padding:10px 22px;min-height:48px;box-sizing:border-box;font-size:18px;font-weight:600;text-decoration:none}
 body.mp-app .woocommerce-MyAccount-navigation .is-active a{background:var(--mp-ink);color:#fff}
 
+/* Questions and answers on plain pages: same rows as the home page's "Câu hỏi hay gặp" */
+body.mp-app .mp-plain h2{margin:1.7em 0 .6em}
+body.mp-app .mp-plain details{border-top:2px solid var(--mp-ink)}
+body.mp-app .mp-plain summary{list-style:none;cursor:pointer;display:flex;gap:16px;justify-content:space-between;align-items:center;box-sizing:border-box;min-height:56px;padding:18px 0;font-size:22px;font-weight:600;line-height:1.35}
+body.mp-app .mp-plain summary::-webkit-details-marker{display:none}
+body.mp-app .mp-plain summary::after{content:'+';flex:none;font-family:var(--mp-head);font-weight:500;font-size:32px;line-height:1;transition:transform .25s ease}
+body.mp-app .mp-plain details[open]>summary::after{transform:rotate(45deg)}
+body.mp-app .mp-plain summary:hover{color:var(--mp-accent)}
+body.mp-app .mp-plain details>p{margin:0 0 22px;max-width:34em}
+
 @media (prefers-reduced-motion:reduce){body.mp-app *{transition:none!important;animation:none!important}}
