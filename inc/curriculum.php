@@ -102,7 +102,55 @@ function maypiano_curriculum_build( $file ) {
 			$count++;
 		}
 	}
+	maypiano_curriculum_tidy( $course );
 	return $count;
+}
+
+/**
+ * A course may still hold parts made by hand before its file existed, which then show up twice.
+ * Such a part is moved to the trash (kept there 30 days) when it is only an outline: every lesson in it has no text
+ * and no video. A part with anything real in it is left alone and counted, for the settings page to mention.
+ */
+function maypiano_curriculum_tidy( $course ) {
+	$kept    = 0;
+	$trashed = 0;
+	$parts   = get_posts( array(
+		'post_type'      => 'topics',
+		'post_parent'    => $course,
+		'post_status'    => 'any',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+	) );
+	foreach ( $parts as $part ) {
+		if ( '' !== (string) get_post_meta( $part, '_maypiano_key', true ) ) {
+			continue;
+		}
+		$inside = get_posts( array(
+			'post_type'      => array( 'lesson', 'tutor_quiz', 'tutor_assignments', 'tutor_zoom_meeting', 'tutor-google-meet' ),
+			'post_parent'    => $part,
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+		) );
+		$empty  = true;
+		foreach ( $inside as $item ) {
+			$video = get_post_meta( $item->ID, '_video', true );
+			$has   = is_array( $video ) && isset( $video['source'] ) && ! in_array( (string) $video['source'], array( '', '-1' ), true );
+			if ( 'lesson' !== $item->post_type || '' !== trim( wp_strip_all_tags( $item->post_content ) ) || $has || '' !== (string) get_post_meta( $item->ID, '_maypiano_key', true ) ) {
+				$empty = false;
+				break;
+			}
+		}
+		if ( ! $empty ) {
+			$kept++;
+			continue;
+		}
+		foreach ( $inside as $item ) {
+			wp_trash_post( $item->ID );
+		}
+		wp_trash_post( $part );
+		$trashed++;
+	}
+	update_post_meta( $course, '_maypiano_tidy', array( 'trashed' => $trashed, 'kept' => $kept ) );
 }
 
 /** Reads every course file that has changed since the site last read it. */
@@ -117,7 +165,7 @@ add_action( 'init', function () {
 	$seen = (array) get_option( 'maypiano_curriculum', array() );
 	foreach ( $files as $file ) {
 		$name  = basename( $file, '.json' );
-		$stamp = filesize( $file ) . '-' . md5_file( $file );
+		$stamp = MAYPIANO_VERSION . '-' . filesize( $file ) . '-' . md5_file( $file );
 		if ( isset( $seen[ $name ]['stamp'] ) && $seen[ $name ]['stamp'] === $stamp ) {
 			continue;
 		}
@@ -140,7 +188,13 @@ add_action( 'init', function () {
 function maypiano_curriculum_report() {
 	$lines = array();
 	foreach ( (array) get_option( 'maypiano_curriculum', array() ) as $name => $row ) {
-		$lines[] = $name . ': ' . ( is_int( $row['result'] ) ? $row['result'] . ' bài' : 'LỖI. ' . $row['result'] ) . ', đọc lúc ' . wp_date( 'd/m/Y H:i', (int) $row['at'] );
+		$line   = $name . ': ' . ( is_int( $row['result'] ) ? $row['result'] . ' bài' : 'LỖI. ' . $row['result'] ) . ', đọc lúc ' . wp_date( 'd/m/Y H:i', (int) $row['at'] );
+		$course = get_posts( array( 'post_type' => 'courses', 'name' => sanitize_title( $name ), 'post_status' => 'any', 'posts_per_page' => 1, 'fields' => 'ids' ) );
+		$tidy   = $course ? get_post_meta( $course[0], '_maypiano_tidy', true ) : '';
+		if ( is_array( $tidy ) && ( $tidy['trashed'] || $tidy['kept'] ) ) {
+			$line .= '. Phần cũ bị trùng: đã đưa ' . (int) $tidy['trashed'] . ' phần trống vào thùng rác, còn ' . (int) $tidy['kept'] . ' phần có nội dung chưa đụng tới';
+		}
+		$lines[] = $line;
 	}
 	return $lines;
 }
