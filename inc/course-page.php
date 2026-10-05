@@ -18,6 +18,14 @@ add_filter( 'template_include', function ( $template ) {
 	return $template;
 }, 999 );
 
+/** The owner and the teacher can open every lesson without being enrolled, whatever the Tutor LMS setting says. */
+add_filter( 'option_tutor_option', function ( $options ) {
+	if ( is_array( $options ) ) {
+		$options['course_content_access_for_ia'] = 'on';
+	}
+	return $options;
+} );
+
 add_action( 'wp_enqueue_scripts', function () {
 	if ( is_singular( 'courses' ) ) {
 		wp_enqueue_style( 'maypiano-course', get_theme_file_uri( 'assets/css/course.css' ), array( 'maypiano-app' ), MAYPIANO_VERSION );

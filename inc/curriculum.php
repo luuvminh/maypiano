@@ -162,6 +162,19 @@ function maypiano_curriculum_tidy( $course ) {
 	foreach ( $binned as $lesson ) {
 		delete_post_meta( $lesson, '_tutor_course_id_for_lesson' );
 	}
+	// Tutor LMS also counts every lesson under every part that still names this course as its parent, trash included.
+	// A part in the trash is therefore let go of the course. It stays in the trash, with its lessons, for 30 days.
+	$binned_parts = get_posts( array(
+		'post_type'      => 'topics',
+		'post_parent'    => $course,
+		'post_status'    => 'trash',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+	) );
+	foreach ( $binned_parts as $part ) {
+		update_post_meta( $part, '_maypiano_was_in', $course );
+		wp_update_post( array( 'ID' => $part, 'post_parent' => 0 ) );
+	}
 	$previous = get_post_meta( $course, '_maypiano_tidy', true );
 	if ( is_array( $previous ) ) {
 		$trashed += (int) $previous['trashed'];
