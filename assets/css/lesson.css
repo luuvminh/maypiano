@@ -395,6 +395,8 @@ body.mp-app .tutor-preferences-section .tutor-card:not(:has(#auto_play_next,[x-d
 body.mp-app .tutor-preferences-section h5:has(+ .tutor-card [x-data*='"name":"theme"'],+ .tutor-card [x-data*='"name":"font_scale"']){display:none!important}
 /* A text size saved before the choice was hidden no longer enlarges half the page. */
 html:has(body.mp-app){font-size:100%!important}
-body.mp-app .tutor-preferences-setting-title{font-size:19px;font-weight:600;line-height:1.35}
+body.mp-app .tutor-preferences-section .tutor-preferences-setting-title{font-size:19px!important;font-weight:600;line-height:1.35!important}
+body.mp-app .tutor-preferences-section .tutor-preferences-setting-title>*{display:block;margin-top:2px;font-size:16px!important;font-weight:400;line-height:1.45!important;color:var(--mp-plum)}
+body.mp-app .tutor-preferences-section .tutor-select-trigger,body.mp-app .tutor-preferences-section .tutor-select-value-text{font-size:18px!important}
 body.mp-app .tutor-preferences-setting-content :is(.tutor-preferences-setting-description,.tutor-text-small,.tutor-tiny,p){font-size:16px;line-height:1.45;color:var(--mp-plum)}
 body.mp-app .tutor-preferences-setting-action .tutor-select-trigger{font-size:18px}
