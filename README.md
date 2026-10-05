@@ -28,6 +28,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 - `woocommerce.php`: khuôn cho các trang WooCommerce còn dùng.
 - `templates/`: nội dung hai trang, tạo ra từ `design/`.
 - `design/`: bản thiết kế gốc. Sửa ở đây rồi chạy `python3 tools/build.py`.
+- `assets/audio/`: tiếng đàn grand piano cho bàn phím ở trang chủ. Nguồn: Salamander Grand Piano V3 của Alexander Holm, giấy phép CC BY 3.0 (phải ghi tên tác giả, đã ghi ở chân trang chủ).
 - `assets/js/`: `runtime.js` chạy trang, `vietqr.js` tạo và đọc mã chuyển khoản, `qrcode.js` (MIT) vẽ mã QR, `jsqr.js` (Apache-2.0) đọc ảnh mã QR ở trang cài đặt.
 
 ## Quy trình thanh toán
