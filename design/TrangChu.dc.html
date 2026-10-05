@@ -246,7 +246,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3>
 <p style="margin: 0">{{c.desc}}</p>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between; padding-top: 12px"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
-<button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="align-self: flex-start; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"><button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button><a href="MuaKhoaHoc.dc.html?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a></div>
 <sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
 <p class="rise" role="status" style="margin: 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
 </sc-if>
@@ -1029,8 +1029,8 @@ ref: (el) => { if (el && this.jump === key) { this.jump = null; /* A block still
 };
 const solo = S.map((x, i) => course(x, 's' + i));
 const DEM = [
-{ name: 'Đệm Hát Piano', desc: 'Vừa đàn vừa hát bài mình thích. Đi sâu vào điệu ballad và cách phối nhiều kiểu đệm trong một bài.', meta: '39 bài, 3 giờ 55 phút', price: '799.000đ' },
-{ name: 'Đệm Hát Thánh Ca', desc: 'Đệm cho từng phần thánh lễ, từ Nhập lễ tới Kết lễ, và trọn bộ lễ Seraphim.', meta: '37 bài, 3 giờ 54 phút', price: '799.000đ' }
+{ key: 'dem-hat', name: 'Đệm Hát Piano', desc: 'Vừa đàn vừa hát bài mình thích. Đi sâu vào điệu ballad và cách phối nhiều kiểu đệm trong một bài.', meta: '39 bài, 3 giờ 55 phút', price: '799.000đ' },
+{ key: 'thanh-ca', name: 'Đệm Hát Thánh Ca', desc: 'Đệm cho từng phần thánh lễ, từ Nhập lễ tới Kết lễ, và trọn bộ lễ Seraphim.', meta: '37 bài, 3 giờ 54 phút', price: '799.000đ' }
 ];
 const FAQ = [
 ['Tôi chưa biết gì về nhạc, có học được không?', 'Được bạn nhé. Khóa Piano Solo Căn Bản bắt đầu từ tư thế ngồi đàn và cách xác định nốt trên phím. Bạn không cần biết đọc nốt trước.'],
