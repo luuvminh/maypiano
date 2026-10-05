@@ -105,7 +105,7 @@ function maypiano_mail_access( $order, $user_id, $opened, $missing ) {
 		}
 	}
 	if ( $missing ) {
-		$body .= '<p>' . ( $opened ? 'Riêng ' . esc_html( implode( ', ', $missing ) ) . ' Mây đang mở bằng tay' : 'Mây đang mở khóa học cho bạn bằng tay' ) . ' và sẽ gửi email ngay khi xong, trong ' . esc_html( maypiano_setting( 'maypiano_processing' ) ) . '.</p>';
+		$body .= '<p>' . ( $opened ? 'Riêng ' . esc_html( implode( ', ', $missing ) ) : 'Khóa học của bạn' ) . ' sẽ được kích hoạt trong vòng ' . esc_html( maypiano_setting( 'maypiano_processing' ) ) . '. Mây sẽ gửi email báo ngay khi bạn có thể vào học.</p>';
 	}
 	$body .= maypiano_mail_support();
 	return maypiano_mail( $order->get_billing_email(), $opened ? 'Khóa học của bạn đã mở, đơn ' . $code : 'Mây đã nhận tiền đơn ' . $code, $body );

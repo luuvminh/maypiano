@@ -450,7 +450,7 @@ const newAcc = !!o.newAccount;
 const open = o.access === 'open' || o.access === 'partial';
 const nexts = (open
 ? [newAcc ? 'Bạn mở email ' + o.email + ' và bấm nút đặt mật khẩu Mây vừa gửi.' : 'Bạn đăng nhập bằng email ' + o.email + ' và mật khẩu đang dùng.', 'Bạn vào học, bắt đầu từ bài đầu tiên.']
-: ['Mây mở khóa học cho bạn bằng tay trong ' + (cfg.processing || '24 giờ') + '.', 'Mây gửi email tới ' + o.email + ' ngay khi xong.']).map((t, i) => ({ i: String(i + 1), t }));
+: ['Khóa học của bạn sẽ được kích hoạt trong vòng ' + (cfg.processing || '24 giờ') + '.', 'Mây gửi email tới ' + o.email + ' ngay khi bạn có thể vào học.']).map((t, i) => ({ i: String(i + 1), t }));
 const labels = ['Chọn khóa', 'Giỏ hàng', 'Thông tin', 'Thanh toán', 'Hoàn tất'];
 
 return {
