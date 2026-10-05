@@ -47,6 +47,11 @@ add_action( 'admin_post_maypiano_enrol_by_hand', function () {
 				$note['text'] = 'Không tạo được tài khoản: ' . ( is_wp_error( $id ) ? $id->get_error_message() : 'lỗi không rõ' );
 			}
 		}
+		if ( $user && ! $new && '' !== $name && $name !== $user->display_name && ! user_can( $user, 'manage_options' ) ) {
+			// The owner typed a name for someone who already has an account: the account takes that name.
+			wp_update_user( array( 'ID' => $user->ID, 'display_name' => $name, 'first_name' => $name, 'nickname' => $name ) );
+			$user = get_user_by( 'id', $user->ID );
+		}
 		if ( $user ) {
 			$opened = array();
 			$failed = array();
@@ -54,7 +59,7 @@ add_action( 'admin_post_maypiano_enrol_by_hand', function () {
 				if ( maypiano_enrol( $course, (int) $user->ID, 0, true ) ) {
 					$opened[] = get_the_title( $course );
 				} else {
-					$failed[] = get_the_title( $course );
+					$failed[] = get_the_title( $course ) . ( in_array( get_post_status( $course ), array( 'publish', 'private' ), true ) ? '' : ' (khóa còn là bản nháp, đổi sang Publish hoặc Private rồi bấm lại)' );
 				}
 			}
 			if ( $opened ) {
@@ -79,7 +84,7 @@ function maypiano_enrol_by_hand_section() {
 	if ( is_array( $note ) && '' !== $note['text'] ) {
 		echo '<div class="notice inline ' . ( $note['ok'] ? 'notice-success' : 'notice-error' ) . '"><p><strong>' . esc_html( $note['text'] ) . '</strong></p>';
 		if ( '' !== $note['link'] ) {
-			echo '<p>Đường dẫn đặt mật khẩu, dùng được trong 24 giờ:<br><input type="text" readonly class="large-text code" onclick="this.select()" value="' . esc_attr( $note['link'] ) . '"></p>';
+			echo '<p>Đường dẫn đặt mật khẩu, dùng được trong 24 giờ. Chỉ cần gửi khi người này chưa có mật khẩu hoặc đã quên; mật khẩu đang dùng vẫn giữ nguyên:<br><input type="text" readonly class="large-text code" onclick="this.select()" value="' . esc_attr( $note['link'] ) . '"></p>';
 		}
 		echo '</div>';
 	}
