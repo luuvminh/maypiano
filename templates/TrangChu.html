@@ -178,7 +178,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <sc-for list="{{rec.gets}}" as="g" hint-placeholder-count="3">
 <div style="display: flex; gap: 12px; align-items: flex-start"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 4px" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"></path></svg><span>{{g.t}}</span></div>
 </sc-for>
-<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký khóa này</a><a href="#lo-trinh" style="padding: 14px 4px; font-weight: 600">Xem nội dung khóa học</a></div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký khóa này</a><a href="#lo-trinh" onClick="{{seeRec}}" style="padding: 14px 4px; font-weight: 600">Xem nội dung khóa học</a></div>
 </div>
 </div>
 </section>
@@ -194,7 +194,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </div>
 <div style="display: flex; flex-direction: column">
 <sc-for list="{{solo}}" as="c" hint-placeholder-count="3">
-<article ref="{{c.ref}}" style="padding: 28px 0; border-top: 2px solid #2B1E24; scroll-margin-top: 12px">
+<article ref="{{c.ref}}" style="padding: 28px 0; border-top: 2px solid #2B1E24; scroll-margin-top: 96px">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 40px; align-items: center">
 <div style="display: flex; gap: 18px; align-items: center"><div style="flex: none; width: 56px; height: 56px; border-radius: 50%; background: {{accent}}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 26px">{{c.step}}</div><h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3></div>
 <p style="margin: 0">{{c.desc}}</p>
@@ -224,7 +224,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <p style="margin: 0 0 36px; max-width: 36em">Mây có hai khóa riêng cho bạn muốn vừa đàn vừa hát, ở nhà hay ở ca đoàn.</p>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px">
 <sc-for list="{{dem}}" as="c" hint-placeholder-count="2">
-<article ref="{{c.ref}}" style="scroll-margin-top: 12px; border: 2px solid #2B1E24; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; align-self: start">
+<article ref="{{c.ref}}" style="scroll-margin-top: 96px; border: 2px solid #2B1E24; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; align-self: start">
 <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3>
 <p style="margin: 0">{{c.desc}}</p>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between; padding-top: 12px"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
@@ -1081,6 +1081,8 @@ const mk = (name, song) => CUR[name].map((p) => { const ls = p[1].split('\n').ma
 const KEYS = S.map((x, i) => ['s' + i, x.name]).concat([['d0', 'Đệm Hát Piano'], ['d1', 'Đệm Hát Thánh Ca']]);
 /* Where a song is taught: the first course on the path that has it, plus the names of any later ones. */
 const locate = (song) => { const has = KEYS.filter((k) => CUR[k[1]].some((p) => p[1].split('\n').some((x) => hasSong(x, song)))); return has.length ? { key: has[0][0], song, also: has.slice(1).map((k) => k[1]) } : null; };
+/* "Xem nội dung khóa học": go to the recommended course itself, with its lesson list open. */
+const seeRec = (e) => { const k = KEYS.find((x) => x[1] === recs[s.level].name); if (!k) return; if (e && e.preventDefault) e.preventDefault(); this.jump = k[0]; this.setState({ open: k[0], hit: null, only: false, tick: s.tick + 1 }); };
 const goSong = (song) => { const h = locate(song); if (!h) return; this.jump = h.key; this.setState({ hit: h, open: h.key, only: true }); };
 const course = (x, key) => {
 const open = s.open === key;
@@ -1092,7 +1094,7 @@ const where = found ? 'nằm ở ' + mine.map((p) => p.t.split(':')[0] + ', bài
 return { ...x, parts: short ? mine.map((p) => ({ ...p, lessons: p.lessons.filter((l) => l.hit) })) : all, open, found, song: found ? s.hit.song : '', where,
 btn: short ? 'Xem cả khóa học' : open ? 'Thu gọn danh sách bài' : 'Xem từng bài học',
 toggle: () => this.setState(short ? { only: false } : open ? { open: '', hit: null } : { open: key, hit: null, only: false }),
-ref: (el) => { if (el && this.jump === key) { this.jump = null; const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' }); } } };
+ref: (el) => { if (el && this.jump === key) { this.jump = null; /* A block still waiting to slide in sits 22px low; settle it first so the jump lands exactly. */ for (let n = el; n && n.tagName !== 'SECTION'; n = n.parentElement) if (n.getAnimations) n.getAnimations().forEach((x) => { try { x.finish(); } catch (_) {} }); const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' }); } } };
 };
 const solo = S.map((x, i) => course(x, 's' + i));
 const DEM = [
@@ -1123,7 +1125,7 @@ tc: ['Thánh ca', ['Bao La Tình Chúa', 'Chung Lời Tạ Ơn', 'Về Nơi Đâ
 const genres = Object.keys(G).map((k) => ({ label: G[k][0], pick: () => this.setState({ genre: k }), ...on(s.genre === k) }));
 const list = G[s.genre][1];
 return {
-accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
+accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), np, locked: !s.muted && (s.locked || !s.live), stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, stats, statsRef: this.statsRef, levels, rec: recs[s.level], seeRec,
 swap: s.swap % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
 songsA: list.slice(0, 4).map((n) => ({ name: n, go: () => goSong(n) })),
