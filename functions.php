@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.4.6' );
+define( 'MAYPIANO_VERSION', '1.4.7' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -93,4 +93,49 @@ add_action( 'init', function () {
 		'label'     => 'Email nhận bài học',
 		'menu_icon' => 'dashicons-email',
 	) ) );
+} );
+
+/** What search engines and shared links say about the two designed pages. */
+add_action( 'wp_head', function () {
+	$text = '';
+	if ( is_front_page() ) {
+		$text = 'Học piano online cùng Mây, từ nốt nhạc đầu tiên đến tự soạn hợp âm. Năm khóa học qua video, 284 bài, có sheet nhạc đi kèm.';
+	} elseif ( is_page( 'dang-ky' ) ) {
+		$text = 'Đăng ký khóa học piano online của Mây Piano. Bạn chọn khóa, trả bằng chuyển khoản hoặc PayPal, rồi nhận tài khoản học qua email.';
+	}
+	if ( '' !== $text ) {
+		echo '<meta name="description" content="' . esc_attr( $text ) . '">' . "\n";
+	}
+}, 2 );
+
+/**
+ * The home page and the sign-up page run on the theme's own script and styles.
+ * Visitors there do not download the shop, course and gallery plugins' files. Site statistics stay.
+ */
+function maypiano_slim_assets() {
+	if ( maypiano_chrome_needed() || is_admin_bar_showing() ) {
+		return;
+	}
+	foreach ( array( wp_scripts(), wp_styles() ) as $deps ) {
+		foreach ( (array) $deps->queue as $handle ) {
+			if ( 0 !== strpos( $handle, 'maypiano' ) && false === strpos( $handle, 'stats' ) ) {
+				$deps->dequeue( $handle );
+			}
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'maypiano_slim_assets', 9999 );
+add_action( 'wp_footer', 'maypiano_slim_assets', 1 );
+add_action( 'wp', function () {
+	if ( ! maypiano_chrome_needed() && ! is_admin() ) {
+		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	}
+} );
+
+/** A visitor who is not signed in needs no pass for the site's requests: answer plainly instead of with an error. */
+add_action( 'wp_ajax_nopriv_rest-nonce', function () {
+	nocache_headers();
+	status_header( 200 );
+	exit;
 } );

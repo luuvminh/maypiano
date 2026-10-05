@@ -161,7 +161,7 @@ function maypiano_account_page( $title, $body ) {
 		. '*{box-sizing:border-box}body{margin:0;background:#E3D7D7;color:#2B1E24;font-family:Newsreader,Georgia,serif;font-size:20px;line-height:1.55}'
 		. 'main{max-width:520px;margin:0 auto;padding:28px 20px 56px}.logo{display:inline-block;margin-bottom:24px}.logo img{display:block;height:52px;width:auto}'
 		. '.card{background:#fff;border:2px solid #2B1E24;border-radius:14px;padding:28px 24px}h1{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:36px;line-height:1.12;margin:0 0 14px}'
-		. 'p{margin:0 0 16px}a{color:#2B1E24}label{display:block;font-weight:600;margin:18px 0 6px}'
+		. 'p{margin:0 0 16px}a{color:#2B1E24}p>a:only-child{display:inline-block;padding:11px 0}p>a.btn:only-child{display:block;padding:14px 20px}label{display:block;font-weight:600;margin:18px 0 6px}'
 		. 'input[type=text],input[type=email],input[type=password]{width:100%;min-height:56px;border:2px solid #2B1E24;border-radius:12px;padding:10px 14px;font:inherit;color:inherit;background:#fff}'
 		. '.pw{position:relative}.pw input{padding-right:84px}.eye{position:absolute;right:6px;top:6px;height:44px;min-width:68px;border:0;border-radius:8px;background:#F6EFEF;color:#2B1E24;font:600 17px Newsreader,Georgia,serif;cursor:pointer}'
 		. 'button[type=submit],.btn{display:block;width:100%;min-height:58px;margin-top:22px;border:0;border-radius:999px;background:#C2456B;color:#fff;font:600 20px Newsreader,Georgia,serif;padding:14px 20px;text-align:center;text-decoration:none;cursor:pointer}'

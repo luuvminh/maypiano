@@ -73,6 +73,37 @@ add_action( 'template_redirect', function () {
 	}
 } );
 
+/**
+ * One way in: learners sign in on the May Piano sign-in page, and an account is made when a course is bought.
+ * The plugins' own sign-in, registration and course-list pages lead to ours, so nobody meets a second look.
+ */
+add_action( 'template_redirect', function () {
+	if ( is_admin() ) {
+		return;
+	}
+	$target = '';
+	if ( is_post_type_archive( 'courses' ) ) {
+		$target = home_url( '/#chon-khoa' );
+	} elseif ( ! is_user_logged_in() ) {
+		$tutor    = function_exists( 'tutor_utils' ) ? tutor_utils() : null;
+		$register = array_filter( array( 'student-registration', 'instructor-registration', $tutor ? (int) $tutor->get_option( 'student_register_page' ) : 0, $tutor ? (int) $tutor->get_option( 'instructor_register_page' ) : 0 ) );
+		$signin   = array_filter( array( 'dashboard', $tutor ? (int) $tutor->get_option( 'tutor_dashboard_page_id' ) : 0 ) );
+		if ( is_page( $register ) ) {
+			$target = maypiano_signup_url();
+		} elseif ( is_page( $signin ) || ( function_exists( 'is_account_page' ) && is_account_page() ) ) {
+			$target = maypiano_login_url();
+		}
+	}
+	if ( '' !== $target ) {
+		nocache_headers();
+		wp_safe_redirect( $target, 302 );
+		exit;
+	}
+}, 1 );
+
+/** Nobody signs themselves up: accounts come from orders (wc_create_new_customer does not look at this setting). */
+add_filter( 'pre_option_users_can_register', '__return_zero' );
+
 /** On a course page the buy button goes to the sign-up page with that course picked. */
 add_action( 'wp_footer', function () {
 	if ( ! is_singular( 'courses' ) ) {
