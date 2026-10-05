@@ -307,21 +307,16 @@ add_action( 'tutor_load_template_after', function ( $template ) {
 		<span class="mp-qna-box-count"><?php echo $total ? esc_html( $total . ' câu hỏi' ) : 'Chưa có câu hỏi'; ?></span>
 		<span class="mp-qna-box-arrow" aria-hidden="true"></span>
 	</summary>
-	<div class="mp-qna-box-body" x-data="tutorQnA()">
-		<p class="mp-qna-box-lead">Bạn có chỗ nào chưa rõ trong bài này thì viết câu hỏi ở đây nhé.</p>
-		<?php
-		tutor_load_template(
-			'learning-area.subpages.qna.form',
-			array(
-				'form_id'        => 'learning-area-qna-form',
-				'submit_handler' => '(data) => createQnAMutation?.mutate({ ...data, course_id: ' . $course . ', mp_bai: ' . $lesson . ' })',
-				'cancel_handler' => 'reset(); focused = false',
-				'is_pending'     => 'createQnAMutation?.isPending',
-				'placeholder'    => __( 'Asked questions...', 'tutor' ),
-				'submit_label'   => 'Gửi câu hỏi',
-			)
-		);
-		?>
+	<div class="mp-qna-box-body">
+		<?php // The theme's own form: Tutor LMS only loads its question form's script on its questions page, not on a lesson. ?>
+		<form class="mp-qna-ask" data-course="<?php echo (int) $course; ?>" data-bai="<?php echo (int) $lesson; ?>">
+			<label class="mp-qna-box-lead" for="mp-qna-ask-text">Bạn có chỗ nào chưa rõ trong bài này thì viết câu hỏi ở đây nhé.</label>
+			<textarea id="mp-qna-ask-text" name="answer" rows="3" maxlength="2000" placeholder="<?php echo esc_attr__( 'Asked questions...', 'tutor' ); ?>"></textarea>
+			<div class="mp-qna-ask-row">
+				<p class="mp-qna-ask-note" role="status" aria-live="polite"></p>
+				<button type="submit" class="mp-qna-send">Gửi câu hỏi</button>
+			</div>
+		</form>
 		<?php if ( $questions ) : ?>
 		<ul class="mp-qna-list">
 			<?php foreach ( $questions as $q ) : ?>
@@ -353,6 +348,37 @@ add_action( 'tutor_load_template_after', function ( $template ) {
 	if (!box) { return; }
 	try { if (localStorage.getItem(key) === '1' || location.hash === '#mp-hoi-dap') { box.open = true; } } catch (e) {}
 	box.addEventListener('toggle', function () { try { localStorage.setItem(key, box.open ? '1' : '0'); } catch (e) {} });
+
+	var form = box.querySelector('.mp-qna-ask');
+	if (!form) { return; }
+	var text = form.querySelector('textarea'), note = form.querySelector('.mp-qna-ask-note'), send = form.querySelector('.mp-qna-send');
+	form.addEventListener('submit', function (ev) {
+		ev.preventDefault();
+		var t = window._tutorobject || {}, words = text.value.trim();
+		if (!words) { note.textContent = 'Bạn viết câu hỏi trước rồi bấm gửi nhé.'; text.focus(); return; }
+		if (!t.ajaxurl || !t.nonce_key) { note.textContent = 'Chưa gửi được. Bạn tải lại trang rồi thử lại nhé.'; return; }
+		var body = new FormData();
+		body.append('action', 'tutor_qna_create_update');
+		body.append('course_id', form.dataset.course);
+		body.append('mp_bai', form.dataset.bai);
+		body.append('answer', words);
+		body.append(t.nonce_key, t[t.nonce_key]);
+		send.disabled = true; send.textContent = 'Đang gửi...'; note.textContent = '';
+		fetch(t.ajaxurl, { method: 'POST', credentials: 'same-origin', body: body })
+			.then(function (r) { return r.json(); })
+			.then(function (r) {
+				if (!r || !r.success) { throw new Error((r && r.data && r.data.message) || ''); }
+				try { localStorage.setItem(key, '1'); } catch (e) {}
+				location.reload();
+			})
+			.catch(function () {
+				send.disabled = false; send.textContent = 'Gửi câu hỏi';
+				note.textContent = 'Chưa gửi được câu hỏi. Bạn thử lại nhé.';
+			});
+	});
+	text.addEventListener('keydown', function (ev) {
+		if ((ev.metaKey || ev.ctrlKey) && ev.key === 'Enter') { form.requestSubmit(); }
+	});
 })();
 </script>
 	<?php

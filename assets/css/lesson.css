@@ -221,8 +221,17 @@ body.mp-app .mp-qna-box-arrow{margin-inline-start:auto;flex:none;width:12px;heig
 body.mp-app .mp-qna-box[open] .mp-qna-box-arrow{transform:translateY(3px) rotate(225deg)}
 body.mp-app .mp-qna-box[open]>summary{border-bottom:2px solid var(--mp-ink);border-radius:10px 10px 0 0}
 body.mp-app .mp-qna-box-body{padding:18px 20px 20px}
-body.mp-app .mp-qna-box-lead{margin:0 0 12px;font-size:18px;line-height:1.45}
-body.mp-app .mp-qna-box-body textarea{font-size:18px;min-height:88px}
+body.mp-app .mp-qna-box-lead{display:block;margin:0 0 12px;font-size:18px;line-height:1.45}
+body.mp-app .mp-qna-ask{margin:0}
+body.mp-app .mp-qna-ask textarea{display:block;box-sizing:border-box;width:100%;min-height:96px;padding:12px 16px;background:var(--mp-blush);border:2px solid var(--mp-ink);border-radius:12px;font-family:var(--mp-body);font-size:18px;line-height:1.5;color:var(--mp-ink);resize:vertical}
+body.mp-app .mp-qna-ask textarea::placeholder{color:var(--mp-plum);opacity:1}
+body.mp-app .mp-qna-ask textarea:focus{background:#fff;outline:3px solid var(--mp-accent);outline-offset:2px}
+body.mp-app .mp-qna-ask-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 16px;margin-top:12px}
+body.mp-app .mp-qna-ask-note{flex:1 1 200px;margin:0;font-size:17px;font-weight:600;line-height:1.4;color:var(--mp-accent)}
+body.mp-app .mp-qna-ask-note:empty{display:none}
+body.mp-app button.mp-qna-send{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:8px 24px;background:var(--mp-accent);color:#fff;border:0;border-radius:999px;font-family:var(--mp-body);font-size:18px;font-weight:600;cursor:pointer}
+body.mp-app button.mp-qna-send:hover{filter:brightness(.94)}
+body.mp-app button.mp-qna-send[disabled]{opacity:.6;cursor:default}
 body.mp-app .mp-qna-list{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:18px}
 body.mp-app .mp-qna-item{margin:0;padding:18px 0 0;border-top:1px solid var(--mp-muted)}
 body.mp-app .mp-qna-who{margin:0 0 4px;font-size:16px;line-height:1.35;color:var(--mp-plum)}
@@ -240,4 +249,5 @@ body.mp-app .mp-qna-more{display:flex;flex-wrap:wrap;gap:0 24px;margin:14px 0 0;
 	body.mp-app .mp-qna-box>summary{padding:10px 14px}
 	body.mp-app .mp-qna-box .mp-qna-box-title{font-size:20px}
 	body.mp-app .mp-qna-box-body{padding:14px 14px 16px}
+	body.mp-app button.mp-qna-send{width:100%}
 }
