@@ -8,8 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/** True when a signed-in learner opens one of the course's learner pages (questions, announcements...), which Tutor LMS draws. */
+function maypiano_course_subpage() {
+	return is_user_logged_in() && isset( $_GET['subpage'] ) && '' !== $_GET['subpage']; // phpcs:ignore WordPress.Security.NonceVerification
+}
+
 add_filter( 'template_include', function ( $template ) {
-	if ( is_singular( 'courses' ) && ! is_admin() ) {
+	if ( is_singular( 'courses' ) && ! is_admin() && ! maypiano_course_subpage() ) {
 		$ours = get_theme_file_path( 'single-courses.php' );
 		if ( is_readable( $ours ) ) {
 			return $ours;
@@ -27,7 +32,7 @@ add_filter( 'option_tutor_option', function ( $options ) {
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-	if ( is_singular( 'courses' ) ) {
+	if ( is_singular( 'courses' ) && ! maypiano_course_subpage() ) {
 		wp_enqueue_style( 'maypiano-course', get_theme_file_uri( 'assets/css/course.css' ), array( 'maypiano-app' ), MAYPIANO_VERSION );
 	}
 	// Every page Tutor LMS draws for a learner: the lesson page, quizzes and assignments, and the learner's own pages.

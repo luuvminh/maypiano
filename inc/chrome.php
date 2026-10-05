@@ -158,7 +158,7 @@ function maypiano_site_footer() {
 </div>
 <footer class="mp-foot">
 <div>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Mây Piano</div>
-<div class="mp-foot-links"><a href="https://www.facebook.com/maypianist">Fanpage</a><a href="https://www.facebook.com/groups/558515685499528/">Nhóm Facebook</a><a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g">YouTube</a><a href="https://www.tiktok.com/@maypiano">TikTok</a></div>
+<div class="mp-foot-links"><a href="https://www.facebook.com/maypianist">Fanpage</a><a href="https://www.facebook.com/groups/558515685499528/">Nhóm Facebook</a><a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g">YouTube</a><a href="https://www.tiktok.com/@maypiano">TikTok</a><a href="<?php echo esc_url( home_url( '/cau-hoi-thuong-gap/' ) ); ?>">Câu hỏi thường gặp</a></div>
 </footer>
 	<?php
 }
