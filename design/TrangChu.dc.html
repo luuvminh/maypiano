@@ -147,22 +147,6 @@ button{font-family:inherit;cursor:pointer}
 </div>
 </section>
 
-<section style="background: #F6EFEF; padding: clamp(56px, 7vw, 104px) clamp(20px, 6vw, 96px)">
-<h2 style="margin: 0 0 32px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1; max-width: 14em">Mỗi bài hát, Mây dạy bạn theo năm bước</h2>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px 56px; align-items: center">
-<div style="display: flex; flex-direction: column; gap: 10px">
-<sc-for list="{{steps}}" as="st" hint-placeholder-count="5">
-<button type="button" aria-pressed="{{st.pressed}}" onClick="{{st.pick}}" style="position: relative; overflow: hidden; text-align: left; border: 2px solid #2B1E24; border-radius: 10px; padding: 14px 20px; min-height: 56px; font-size: 20px; font-weight: 600; background: {{st.bg}}; color: {{st.fg}}; display: flex; gap: 16px; align-items: center; transition: background .25s ease, color .25s ease"><span style="font-family: 'Playfair Display', serif; font-size: 26px">{{st.num}}</span><span>{{st.title}}</span><span style="position: absolute; left: 0; bottom: 0; height: 5px; background: {{accent}}; animation: {{st.fill}} 4.5s linear both"></span></button>
-</sc-for>
-</div>
-<div style="background: #5B2A3C; color: #F6EFEF; border-radius: 12px; padding: clamp(28px, 4vw, 56px); min-height: 300px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; justify-content: center; animation: {{stepSwap}} 450ms ease both">
-<div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(90px, 11vw, 160px); line-height: .9; color: #E9B9C6">{{cur.num}}</div>
-<h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.15">{{cur.title}}</h3>
-<p style="margin: 0; font-size: 21px">{{cur.body}}</p>
-</div>
-</div>
-</section>
-
 <section id="lo-trinh" style="background: #FFFFFF; padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px)">
 <h2 style="margin: 0 0 12px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Lộ trình solo, ba chặng</h2>
 <p style="margin: 0 0 36px; max-width: 36em">Bạn đi lần lượt từ chặng một nhé. Cột càng cao là bạn đã học cùng Mây càng nhiều giờ. Bấm vào từng chặng bên dưới để xem Mây dạy những bài nào.</p>
@@ -393,10 +377,8 @@ this.onVis = () => { if (document.hidden) this.stopAuto(); else if (this.inView)
 ['pointerdown', 'keydown', 'touchend'].forEach((t) => document.addEventListener(t, this.unlock, true));
 document.addEventListener('visibilitychange', this.onVis);
 this.inView = true; this.loadPiano(); if (!document.hidden) this.startAuto();
-this.auto = setInterval(() => { if (!this.manual) this.setState((s) => ({ step: (s.step + 1) % 5, tick: s.tick + 1 })); }, 4500);
 }
 componentWillUnmount() {
-clearInterval(this.auto);
 this.stopAuto(); clearTimeout(this.backT);
 ['pointerdown', 'keydown', 'touchend'].forEach((t) => document.removeEventListener(t, this.unlock, true));
 document.removeEventListener('visibilitychange', this.onVis);
@@ -602,14 +584,6 @@ thanhca: { name: 'Đệm Hát Thánh Ca', why: 'Mây lớn lên cùng cây đàn
 };
 const L = [['moi', 'Chưa từng học đàn'], ['haitay', 'Đã biết nốt và hợp âm'], ['nangcao', 'Đã đàn được hai tay'], ['hat', 'Muốn vừa đàn vừa hát'], ['thanhca', 'Đệm cho ca đoàn']];
 const levels = L.map((o) => ({ label: o[1], pick: () => this.setState({ level: o[0], swap: s.swap + 1 }), bg: s.level === o[0] ? '#F6EFEF' : '#5B2A3C', fg: s.level === o[0] ? INK : '#F6EFEF', pressed: s.level === o[0] ? 'true' : 'false' }));
-const ST = [
-['Nghe bản mẫu', 'Bạn nghe Mây đàn trọn bài trước, để nắm tinh thần bài hát.'],
-['Chia nhỏ bài', 'Mình học từng phần một: dạo đầu, phiên khúc, rồi điệp khúc.'],
-['Tập từng tay', 'Tay phải đàn giai điệu. Tay trái đệm hợp âm. Mình tập riêng từng tay cho chắc.'],
-['Ghép hai tay', 'Mình ghép thật chậm từng đoạn, rồi tăng dần tốc độ.'],
-['Đàn cùng sheet', 'Mây đàn mẫu, sheet nhạc chạy theo từng dòng để bạn đàn cùng.']
-];
-const steps = ST.map((x, i) => ({ num: String(i + 1), title: x[0], pick: () => { this.manual = true; this.setState({ step: i, tick: s.tick + 1 }); }, bg: s.step === i ? INK : '#FFFFFF', fg: s.step === i ? '#FFFFFF' : INK, pressed: s.step === i ? 'true' : 'false', fill: s.step === i && !this.manual ? (s.tick % 2 ? 'fillA' : 'fillB') : 'none' }));
 const S = [
 { step: '1', name: 'Piano Solo Căn Bản', desc: 'Đọc nốt, bấm hợp âm tay trái và ghép hai tay qua hơn 20 bản nhạc quen thuộc.', meta: '58 bài, 4 giờ 04 phút', price: '899.000đ', parts: [['Phần 1, 8 bài', 'Nốt nhạc cho khoá Sol tay phải'], ['Phần 2, 13 bài', 'Hợp âm tay trái và ghép hai tay'], ['Phần 3, 15 bài', 'Hợp âm 4, 5, 6 nốt trên những bài khó hơn'], ['Phần 4, 22 bài', 'Áp dụng vào 20 bản nhạc khác']] },
 { step: '2', name: 'Piano Cover 40 Bài Nhạc Việt', desc: 'Đàn hai tay 40 bài từ nhạc xưa bất hủ tới hit mới, có đủ dạo đầu và nhiều kiểu đệm.', meta: '40 bài, 12 giờ 30 phút', price: '1.499.000đ', parts: [['Phần 1, 5 bài', 'Những bản nhạc xưa bất hủ'], ['Phần 2, 8 bài', 'Những bản nhạc trẻ bất hủ'], ['Phần 3, 8 bài', 'Những bản hit hiện đại'], ['Phần 4, 9 bài', 'Bài tự luyện, kèm sheet và video đàn mẫu'], ['Phần 5, 10 bài', 'Tặng kèm 10 bản nhạc hướng dẫn chi tiết']] },
@@ -956,7 +930,6 @@ const list = G[s.genre][1];
 return {
 accent, lastNote: s.note, whites, blacks, mute, toggleMute: () => this.toggleMute(), locked: s.locked && !s.muted, stripRef: this.stripRef, noteRef: this.noteRef, notes, beamLines, barLines, stats, statsRef: this.statsRef, levels, rec: recs[s.level],
 swap: s.swap % 2 ? 'swapA' : 'swapB',
-steps, cur: { num: String(s.step + 1), title: ST[s.step][0], body: ST[s.step][1] }, stepSwap: s.tick % 2 ? 'swapA' : 'swapB',
 solo, bars, modes, mins: s.mins, setMins: (e) => this.setState({ mins: Number(e.target.value), mtick: s.mtick + 1 }), weeks, picks, totalWeeks: Math.ceil(2551 / (s.mins * 7)), wkAnim: s.mtick % 2 ? 'swapA' : 'swapB', genres,
 songsA: list.slice(0, 4).map((n) => ({ name: n, go: () => goSong(n) })),
 songsB: list.slice(4).map((n) => ({ name: n, go: () => goSong(n) })),
