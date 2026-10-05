@@ -468,7 +468,7 @@
  "Name, email, phone number, profiles": "Tên, email, số điện thoại, hồ sơ",
  "Security": "Bảo mật",
  "Password, 2FA": "Mật khẩu, xác thực 2 bước",
- "Social Accounts": "Tài khoản mạng xã hội",
+ "Social Accounts": "Mạng xã hội",
  "Linked social media profiles": "Các tài khoản mạng xã hội đã liên kết",
  "Withdrawal and refund": "Rút tiền và hoàn tiền",
  "Preferences": "Tùy chọn",
@@ -1026,5 +1026,17 @@
  "Ask a Question": "Đặt câu hỏi",
  "Copy": "Sao chép",
  "Copied": "Đã sao chép",
- "Copied!": "Đã sao chép!"
+ "Copied!": "Đã sao chép!",
+ "Reduced Motion": "Giảm chuyển động",
+ "Standard Motion": "Chuyển động bình thường",
+ "Auto (System Default)": "Tự động theo máy",
+ "Light": "Sáng",
+ "Dark": "Tối",
+ "Modern": "Hiện đại",
+ "Kids": "Trẻ em",
+ "Large": "Lớn",
+ "Normal": "Bình thường",
+ "Protanopia": "Khó thấy màu đỏ",
+ "Deuteranopia": "Khó thấy màu xanh lá",
+ "Deuteranomaly": "Yếu màu xanh lá"
 }
