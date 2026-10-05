@@ -169,14 +169,14 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 </div>
 
 <section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
-<div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-bottom: 18px">
+<div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; max-width: 980px; margin: 0 auto 18px">
 <div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2">Bạn bấm thử một phím nhé</h2>
 <p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
 <p class="keyhint" style="margin: 4px 0 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
 </div>
 </div>
-<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch"><div style="position: relative; display: flex; min-width: 700px; height: clamp(160px, 17vw, 220px); border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
+<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 980px; margin: 0 auto"><div style="position: relative; display: flex; box-sizing: border-box; min-width: 700px; aspect-ratio: 49 / 11; border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
 <sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
 <button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 16px; font-weight: 500">{{k.n}}</button>
 </sc-for>
