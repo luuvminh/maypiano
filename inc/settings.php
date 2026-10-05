@@ -216,6 +216,7 @@ function maypiano_settings_page() {
 	maypiano_teacher_settings_section();
 	submit_button();
 	echo '</form>';
+	maypiano_enrol_by_hand_section();
 	maypiano_fx_settings_section();
 	echo '</div>';
 }
