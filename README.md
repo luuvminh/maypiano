@@ -43,7 +43,7 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 5. Chủ site thấy tiền về thì bấm nút **Duyệt đơn này** trong email (mở một trang nhỏ trên điện thoại, không cần đăng nhập, bấm thêm một nút để xác nhận). Đổi đơn sang **Completed** trong WooCommerce cũng được. Site tự tạo tài khoản học, mở khóa trong Tutor LMS và gửi email cho khách. Trang của khách tự chuyển sang "Khóa học của bạn đã mở".
 6. Hoàn tiền: đổi đơn sang Refunded, Tutor LMS tự đóng khóa của đơn đó.
 
-Nếu site không mở được khóa (chưa nối khóa, khóa còn là bản nháp), đơn được ghi chú và chủ site nhận email "CẦN GHI DANH TAY".
+Nếu site không mở được khóa (khóa chưa có trong Tutor LMS), đơn được ghi chú và chủ site nhận email "CHƯA MỞ ĐƯỢC KHÓA" có nút **Thử mở khóa học lại**. Site cũng tự thử lại mỗi giờ và mỗi khi một khóa Tutor LMS được lưu; mở được thì tự gửi email cho khách.
 
 ## Thanh toán bằng thẻ
 

@@ -359,7 +359,7 @@ add_action( 'woocommerce_order_status_changed', function ( $order_id, $from, $to
 		$order->add_order_note( 'Đã mở khóa học cho tài khoản #' . $user_id . ': ' . implode( ', ', $opened ) . '.' );
 	}
 	if ( $missing ) {
-		$order->add_order_note( 'CHƯA mở được khóa học, cần ghi danh bằng tay trong Tutor LMS: ' . implode( ', ', $missing ) . '.' );
+		$order->add_order_note( 'CHƯA mở được khóa học (site sẽ tự thử lại khi khóa có trên site): ' . implode( ', ', $missing ) . '.' );
 		maypiano_mail_owner_access_problem( $order, $missing );
 	}
 	maypiano_mail_access( $order, $user_id, $opened, $missing );
@@ -579,7 +579,7 @@ function maypiano_order_badge( $order ) {
 	$state = maypiano_order_state( $order );
 	if ( 'paid' === $state ) {
 		$access = $order->get_meta( '_mp_access' );
-		return $test . ( 'open' === $access ? 'Đã mở khóa học' : 'Đã trả, CẦN GHI DANH TAY' );
+		return $test . ( 'open' === $access ? 'Đã mở khóa học' : 'Đã trả, CHƯA MỞ ĐƯỢC KHÓA' );
 	}
 	if ( 'reported' === $state ) {
 		$at = (int) $order->get_meta( '_mp_reported' );

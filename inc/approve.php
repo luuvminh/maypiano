@@ -42,6 +42,13 @@ add_action( 'template_redirect', function () {
 		$done  = true;
 	}
 
+	$retried = false;
+	if ( 'POST' === $_SERVER['REQUEST_METHOD'] && isset( $_POST['mp_retry'] ) && 'paid' === maypiano_order_state( $order ) ) {
+		maypiano_retry_access( $order );
+		$order   = wc_get_order( $order->get_id() );
+		$retried = true;
+	}
+
 	$code   = maypiano_order_code( $order );
 	$amount = maypiano_money( $order->get_total(), $order->get_currency() );
 	$name   = $order->get_billing_first_name();
@@ -56,13 +63,19 @@ add_action( 'template_redirect', function () {
 	$test = $order->get_meta( '_mp_test' ) ? '<p class="note">Đây là đơn chạy thử.</p>' : '';
 
 	if ( 'paid' === $state ) {
-		$open = 'open' === $order->get_meta( '_mp_access' );
-		$body = '<p class="ok">' . ( $done ? 'Xong rồi.' : 'Đơn này đã được duyệt trước đó.' ) . '</p>'
-			. ( $open
-				? '<p>Khóa học đã mở cho <strong>' . esc_html( $name ) . '</strong>. Khách đã nhận email hướng dẫn vào học. Bạn đóng trang này được rồi.</p>'
-				: '<p class="warn">Tiền đã ghi nhận, nhưng site chưa tự mở được khóa học. Bạn báo Max để mở bằng tay nhé.</p>' )
-			. $facts;
-		maypiano_approve_page( 'Đã duyệt đơn ' . $code, $test . $body );
+		if ( 'open' === $order->get_meta( '_mp_access' ) ) {
+			$body = '<p class="ok">' . ( $done || $retried ? 'Xong rồi.' : 'Đơn này đã xong.' ) . '</p>'
+				. '<p>Khóa học đã mở cho <strong>' . esc_html( $name ) . '</strong>. Khách đã nhận email hướng dẫn vào học. Bạn đóng trang này được rồi.</p>' . $facts;
+			maypiano_approve_page( 'Đã mở khóa học, đơn ' . $code, $test . $body );
+		}
+		$missing = maypiano_missing_courses( $order );
+		$body    = '<p class="warn">Tiền đã nhận, nhưng site chưa mở được: ' . esc_html( implode( ', ', $missing ) ) . '.</p>'
+			. ( $retried
+				? '<p>Vừa thử lại, vẫn chưa được. Lý do thường gặp: khóa này chưa được đưa lên site. Bạn nhắn Max. Khi khóa có trên site, site tự mở cho khách và gửi email, bạn không cần làm gì thêm.</p>'
+				: '<p>Khi khóa này có trên site, site tự mở cho khách và gửi email. Bạn cũng có thể bấm nút để thử mở ngay.</p>' )
+			. $facts
+			. '<form method="post"><button type="submit" name="mp_retry" value="1">Thử mở khóa học lại</button></form>';
+		maypiano_approve_page( 'Chưa mở được khóa, đơn ' . $code, $test . $body );
 	}
 	if ( ! maypiano_approvable( $order ) ) {
 		$why = $order->get_meta( '_mp_needs_quote' ) ? 'Đơn này chưa có giá, cần báo giá cho khách trước.' : 'Đơn này đã hủy hoặc không còn chờ duyệt.';
@@ -87,3 +100,85 @@ function maypiano_approve_page( $title, $body ) {
 		. '</style></head><body><main><div style="font-weight:bold;margin-bottom:18px">Mây Piano</div><h1>' . esc_html( $title ) . '</h1>' . $body . '</main></body></html>'; // phpcs:ignore WordPress.Security.EscapeOutput
 	exit;
 }
+
+/** Names of the courses on a paid order that the buyer still cannot get into. */
+function maypiano_missing_courses( $order ) {
+	$user_id = (int) $order->get_customer_id();
+	$missing = array();
+	foreach ( $order->get_items() as $item ) {
+		$course_id = $user_id ? maypiano_course_for( (string) $item->get_meta( '_mp_key' ), (int) $item->get_product_id() ) : 0;
+		if ( ! $course_id || ! function_exists( 'tutor_utils' ) || ! tutor_utils()->is_enrolled( $course_id, $user_id ) ) {
+			$missing[] = $item->get_name();
+		}
+	}
+	return $missing;
+}
+
+/**
+ * Tries again to open the courses of a paid order that could not be opened at payment time.
+ * Tells the customer once everything is open.
+ *
+ * @return bool True when every course on the order is now open.
+ */
+function maypiano_retry_access( $order ) {
+	if ( 'paid' !== maypiano_order_state( $order ) || 'open' === $order->get_meta( '_mp_access' ) || ! function_exists( 'tutor_utils' ) ) {
+		return 'open' === $order->get_meta( '_mp_access' );
+	}
+	$user_id = (int) $order->get_customer_id();
+	$opened  = array();
+	$missing = array();
+	foreach ( $order->get_items() as $item ) {
+		$course_id = $user_id ? maypiano_course_for( (string) $item->get_meta( '_mp_key' ), (int) $item->get_product_id() ) : 0;
+		if ( $course_id && maypiano_enrol( $course_id, $user_id, $order->get_id(), true ) ) {
+			$opened[] = $item->get_name();
+		} else {
+			$missing[] = $item->get_name();
+		}
+	}
+	if ( $missing ) {
+		return false;
+	}
+	$order->update_meta_data( '_mp_access', 'open' );
+	$order->save();
+	$order->add_order_note( 'Mở lại thành công, khóa học đã mở cho tài khoản #' . $user_id . ': ' . implode( ', ', $opened ) . '.' );
+	maypiano_mail_access( $order, $user_id, $opened, array() );
+	return true;
+}
+
+/** Paid orders still waiting for a course. */
+function maypiano_orders_waiting_for_course() {
+	if ( ! function_exists( 'wc_get_orders' ) ) {
+		return array();
+	}
+	$found = array();
+	foreach ( array( 'manual', 'partial' ) as $access ) {
+		$found = array_merge( $found, wc_get_orders( array(
+			'limit'      => 50,
+			'status'     => 'completed',
+			'meta_key'   => '_mp_access', // phpcs:ignore WordPress.DB.SlowDBQuery
+			'meta_value' => $access, // phpcs:ignore WordPress.DB.SlowDBQuery
+		) ) );
+	}
+	return $found;
+}
+
+/** When a course is saved in Tutor LMS, and once an hour, waiting orders are tried again by themselves. */
+function maypiano_retry_waiting_orders() {
+	foreach ( maypiano_orders_waiting_for_course() as $order ) {
+		if ( maypiano_is_ours( $order ) ) {
+			maypiano_retry_access( $order );
+		}
+	}
+}
+add_action( 'save_post_courses', function ( $post_id, $post ) {
+	if ( 'auto-draft' !== $post->post_status && ! wp_is_post_revision( $post_id ) && ! wp_next_scheduled( 'maypiano_retry_once' ) ) {
+		wp_schedule_single_event( time() + 30, 'maypiano_retry_once' );
+	}
+}, 20, 2 );
+add_action( 'maypiano_retry_once', 'maypiano_retry_waiting_orders' );
+add_action( 'maypiano_retry_hourly', 'maypiano_retry_waiting_orders' );
+add_action( 'init', function () {
+	if ( ! wp_next_scheduled( 'maypiano_retry_hourly' ) ) {
+		wp_schedule_event( time() + 300, 'hourly', 'maypiano_retry_hourly' );
+	}
+} );
