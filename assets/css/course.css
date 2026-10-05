@@ -7,7 +7,6 @@ body.mp-app.single-courses .mp-page{padding:0}
 
 .mpc-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:32px 56px;align-items:center;padding-top:clamp(20px,3vw,48px)!important}
 .mpc-hero-text{display:flex;flex-direction:column;gap:18px;min-width:0}
-.mpc-eyebrow{font-weight:600;letter-spacing:.02em}
 body.mp-app .mpc-hero h1{margin:0;font-size:clamp(40px,6vw,84px);line-height:1.04;overflow-wrap:anywhere}
 .mpc-intro{max-width:32em;font-size:clamp(20px,1.6vw,23px)}
 .mpc-meta{font-size:18px}
@@ -40,7 +39,7 @@ a.mpc-more{font-weight:600;padding:14px 4px}
 .mpc-part li:first-child{border-top:0}
 .mpc-no{flex:none;width:1.9em;font-variant-numeric:tabular-nums;font-weight:600;color:var(--mp-plum)}
 .mpc-name{flex:1 1 auto;min-width:0}
-body.mp-app a.mpc-name{font-weight:600;text-underline-offset:3px}
+body.mp-app a.mpc-name{font-weight:600;text-underline-offset:3px;padding:10px 0;margin:-10px 0}
 .mpc-free{flex:none;font-size:15px;font-weight:600;background:var(--mp-pink);border-radius:999px;padding:2px 12px;white-space:nowrap}
 .mpc-len{flex:none;font-variant-numeric:tabular-nums;white-space:nowrap}
 .mpc-lock{flex:none;align-self:center;display:inline-flex;color:var(--mp-plum);opacity:.7}
@@ -64,3 +63,5 @@ body.mp-app .mpc-may h2{color:var(--mp-blush);margin-bottom:18px}
 }
 
 body.mp-app .screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+body.mp-app ::selection{background:var(--mp-pink);color:var(--mp-ink)}

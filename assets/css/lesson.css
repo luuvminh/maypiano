@@ -110,3 +110,30 @@ body.mp-app .tutor-dashboard-nav-mobile a{color:var(--mp-ink)}
 body.mp-app .tutor-dashboard-nav-mobile a.active{color:var(--mp-accent);font-weight:600}
 
 body.mp-app .tutor-dashboard-sidebar-nav a span{font-size:18px}
+
+/* ---------- Phones and tablets: nothing wider than the screen, every button big enough for a finger ---------- */
+body.mp-app :is(.tutor-learning-area,.tutor-dashboard-layout){overflow-x:clip;max-width:100vw}
+body.mp-app :is(.tutor-learning-area,.tutor-dashboard-layout) .tutor-progress-bar{overflow:hidden;max-width:100%}
+body.mp-app .tutor-learning-nav-header-title{font-size:18px!important}
+body.mp-app .tutor-learning-nav-item{font-size:17px!important;min-height:48px}
+body.mp-app .tutor-learning-nav-item .tutor-tiny-2{font-size:15px!important}
+body.mp-app .tutor-learning-area-footer .tutor-btn{min-height:48px!important;font-size:18px!important}
+body.mp-app .tutor-learning-area .tutor-btn-icon{min-width:44px!important;min-height:44px!important}
+body.mp-app .tutor-dashboard-header{box-sizing:border-box;max-width:100%;min-width:0}
+body.mp-app .tutor-dashboard-header>*{min-width:0}
+body.mp-app .tutor-dashboard-layout .tutor-avatar{min-width:44px;min-height:44px}
+body.mp-app .tutor-dashboard-layout .tutor-btn{min-height:44px}
+body.mp-app .tutor-dashboard-layout .tutor-btn-link{display:inline-flex;align-items:center;padding:10px 4px}
+body.mp-app .tutor-dashboard-courses-tab{max-width:100%;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+body.mp-app .tutor-dashboard-courses-tab::-webkit-scrollbar{display:none}
+body.mp-app .tutor-dashboard-courses-tab .tutor-nav-item{min-height:44px;flex:none;white-space:nowrap}
+body.mp-app .tutor-dashboard-nav-mobile a{min-width:48px;min-height:48px;justify-content:center}
+body.mp-app :is(.tutor-learning-area,.tutor-dashboard-layout) ::selection{background:var(--mp-pink);color:var(--mp-ink)}
+@media (max-width:700px){
+	body.mp-app .tutor-learning-area-footer{gap:10px}
+	body.mp-app .tutor-learning-area-footer .tutor-btn{padding:8px 16px!important;font-size:17px!important}
+	body.mp-app .tutor-learning-header-title{font-size:19px}
+}
+body.mp-app .tutor-dashboard-main{min-width:0;max-width:100%}
+body.mp-app .tutor-dashboard-header-user-avatar{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+html:has(.tutor-learning-area),html:has(.tutor-dashboard-layout),body.mp-app:has(.tutor-learning-area),body.mp-app:has(.tutor-dashboard-layout){overflow-x:clip}

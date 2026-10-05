@@ -11,7 +11,6 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 
 <section class="mpc-hero">
 <div class="mpc-hero-text">
-<p class="mpc-eyebrow">Khóa học cùng Mây</p>
 <h1><?php echo esc_html( $mp['title'] ); ?></h1>
 <?php if ( '' !== $mp['intro'] ) : ?>
 <p class="mpc-intro"><?php echo esc_html( $mp['intro'] ); ?></p>
