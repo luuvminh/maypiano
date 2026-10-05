@@ -62,3 +62,25 @@ add_filter( 'ngettext', function ( $translation, $single, $plural, $number, $dom
 	}
 	return $translation;
 }, 20, 5 );
+
+/** Text Tutor LMS prints without offering it for translation. */
+add_action( 'wp_footer', function () {
+	if ( ! function_exists( 'maypiano_course_subpage' ) || ! is_singular( 'courses' ) || ! maypiano_course_subpage() ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	var words = { 'Search questions, topics...': 'Tìm câu hỏi...' };
+	function fix() {
+		document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(function (el) {
+			var vi = words[el.getAttribute('placeholder')];
+			if (vi) { el.setAttribute('placeholder', vi); }
+		});
+	}
+	fix();
+	document.addEventListener('DOMContentLoaded', fix);
+})();
+</script>
+	<?php
+}, 99 );
