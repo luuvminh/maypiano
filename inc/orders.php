@@ -433,6 +433,7 @@ add_action( 'rest_api_init', function () {
 				'ready'      => function_exists( 'wc_create_order' ),
 				'region'     => maypiano_region( $req->get_param( 'region' ) ),
 				'prices'     => $prices,
+				'mine'       => maypiano_my_courses(),
 				'methods'    => $methods,
 				'cardMode'   => 'test' === $mode && ! maypiano_can_test() ? 'off' : $mode,
 				'bank'       => array(

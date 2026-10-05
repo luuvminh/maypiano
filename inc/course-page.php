@@ -127,6 +127,56 @@ function maypiano_course_view( $course_id ) {
 	);
 }
 
+/**
+ * For the home page: the courses the signed-in visitor can study, each with the address of every lesson in order.
+ * Empty for a visitor who is not signed in or has no course, so the home page stays as it is for them.
+ */
+function maypiano_my_courses() {
+	if ( ! is_user_logged_in() || ! function_exists( 'tutor_utils' ) ) {
+		return array();
+	}
+	$mine = array();
+	foreach ( array_keys( maypiano_catalog() ) as $key ) {
+		$course_id = maypiano_course_for( $key );
+		if ( ! $course_id ) {
+			continue;
+		}
+		$enrolled = (bool) tutor_utils()->is_enrolled( $course_id, get_current_user_id() );
+		if ( ! $enrolled && ! current_user_can( 'edit_post', $course_id ) ) {
+			continue;
+		}
+		$lessons = array();
+		$topics  = get_posts( array(
+			'post_type'      => 'topics',
+			'post_parent'    => $course_id,
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'menu_order',
+			'order'          => 'ASC',
+			'fields'         => 'ids',
+		) );
+		foreach ( $topics as $topic_id ) {
+			$items = get_posts( array(
+				'post_type'      => 'lesson',
+				'post_parent'    => $topic_id,
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'orderby'        => 'menu_order',
+				'order'          => 'ASC',
+			) );
+			foreach ( $items as $item ) {
+				$lessons[] = array( html_entity_decode( get_the_title( $item ), ENT_QUOTES, 'UTF-8' ), esc_url_raw( get_permalink( $item->ID ) ) );
+			}
+		}
+		$mine[ $key ] = array(
+			'enrolled' => $enrolled,
+			'go'       => $lessons ? $lessons[0][1] : esc_url_raw( get_permalink( $course_id ) ),
+			'lessons'  => $lessons,
+		);
+	}
+	return $mine;
+}
+
 /** A course kept private still reads as its own name to the learner, without WordPress's "Riêng tư:" in front. */
 add_filter( 'private_title_format', function ( $format, $post = null ) {
 	return ( $post && in_array( get_post_type( $post ), array( 'courses', 'topics', 'lesson' ), true ) && ! is_admin() ) ? '%s' : $format;
