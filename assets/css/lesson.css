@@ -328,6 +328,7 @@ body.mp-app .tutor-learning-area-qna .tutor-discussion-card .tutor-card{border-w
 @media (max-width:576px){
 	body.mp-app .tutor-learning-area .tutor-learning-area-content{padding-top:0!important}
 	body.mp-app .tutor-learning-area .tutor-learning-area-container{padding:0 16px 16px!important}
+	body.mp-app .tutor-learning-area .tutor-lesson-content{margin-inline:0!important}
 	body.mp-app .tutor-lesson-video-wrapper{margin-inline:-16px!important;border:0!important;border-radius:0}
 	body.mp-app .mp-lesson-head{margin-top:18px}
 	body.mp-app .mp-qna-box{margin-top:20px}
