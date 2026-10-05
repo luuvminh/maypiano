@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.4.2' );
+define( 'MAYPIANO_VERSION', '1.4.3' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -64,6 +64,7 @@ function maypiano_render( $name ) {
 		'%%THEME%%'  => esc_url( get_template_directory_uri() ),
 		'%%HOME%%'   => esc_url( home_url( '/' ) ),
 		'%%SIGNUP%%' => esc_url( home_url( '/dang-ky/' ) ),
+		'%%LOGIN%%'  => esc_url( maypiano_login_url() ), // Signed-in learners are sent straight on to their courses.
 	) );
 }
 

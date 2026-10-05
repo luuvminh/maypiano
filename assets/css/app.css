@@ -25,6 +25,8 @@ body.mp-app :where(a,button,input,select,textarea):focus-visible{outline:3px sol
 body.mp-app .mp-links a.mp-pill{background:var(--mp-accent);color:#fff;padding:12px 24px;border-radius:999px;font-weight:600;transition:transform .12s ease,filter .12s ease}
 body.mp-app .mp-links a.mp-pill:hover{color:#fff;filter:brightness(1.08)}
 .mp-links a.mp-pill:active{transform:scale(.96)}
+body.mp-app .mp-links a.mp-enter{border:2px solid var(--mp-ink);padding:10px 22px;border-radius:999px;font-weight:600;transition:transform .12s ease}
+.mp-links a.mp-enter:active{transform:scale(.96)}
 .mp-page{padding:clamp(24px,4vw,56px) var(--mp-side) clamp(56px,8vw,112px);min-height:50vh}
 .mp-foot{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;padding:28px var(--mp-side) 40px;border-top:2px solid var(--mp-ink);font-size:18px}
 .mp-foot-links{display:flex;flex-wrap:wrap;gap:8px 24px}
