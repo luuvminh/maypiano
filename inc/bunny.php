@@ -220,11 +220,13 @@ add_action( 'wp_footer', function () {
 			el.addEventListener('click', function () { want = b[0]; say({ method: 'getCurrentTime', listener: 'mp-skip' }); });
 			bar.appendChild(el);
 		});
-		var player = frame.closest('.tutor-video-player') || frame.parentNode;
-		player.parentNode.insertBefore(bar, player.nextSibling);
+		// The row of Previous and Next is the one place on this page Tutor LMS does not redraw, so the two buttons live there, between them.
+		var row = document.querySelector('.tutor-learning-area-footer');
+		if (row && row.children.length) { row.insertBefore(bar, row.lastElementChild); row.classList.add('mp-has-skip'); }
+		else { var player = frame.closest('.tutor-video-player') || frame.parentNode; player.parentNode.insertBefore(bar, player.nextSibling); }
 	}
 	document.querySelectorAll('.tutor-lesson-wrapper').forEach(function (w) {
-		if (!w.textContent.trim() && !w.querySelector('img,iframe,video,audio,a')) { var p = w.closest('.tutor-tab-panel') || w; p.style.display = 'none'; }
+		if (!w.textContent.trim() && !w.querySelector('img,iframe,video,audio,a')) { (w.closest('.tutor-tabs-content') || w).classList.add('mp-empty'); }
 	});
 	var items = Array.prototype.slice.call(document.querySelectorAll('a.tutor-learning-nav-item[href]'));
 	var at = items.findIndex(function (a) { return a.classList.contains('active'); });

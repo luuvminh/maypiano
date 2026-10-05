@@ -51,7 +51,12 @@ body.mp-app .tutor-learning-area-footer .tutor-btn:last-child{background:var(--m
 body.mp-app .tutor-learning-area-footer .tutor-btn.disabled,body.mp-app .tutor-learning-area-footer .tutor-btn[disabled]{opacity:.4}
 
 /* Back and forward 10 seconds, under the video */
-.mp-skip{display:flex;flex-wrap:wrap;gap:10px 12px;justify-content:center;padding:14px 16px;background:#fff}
+.mp-skip{display:flex;flex-wrap:wrap;gap:10px 12px;justify-content:center}
+body.mp-app .tutor-learning-area-footer.mp-has-skip{flex-wrap:wrap;align-items:center;justify-content:space-between}
+body.mp-app .tutor-learning-area-footer.mp-has-skip .mp-skip{flex:1 1 auto}
+body.mp-app .tutor-learning-area-footer.mp-has-skip .tutor-btn:last-child{margin-inline-start:0}
+body.mp-app .mp-empty{display:none!important}
+@media (max-width:700px){body.mp-app .tutor-learning-area-footer.mp-has-skip .mp-skip{order:-1;flex-basis:100%}body.mp-app .mp-skip button{flex:1 1 0;justify-content:center;padding:8px 12px}}
 body.mp-app .mp-skip button{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:8px 20px;border:2px solid var(--mp-ink);border-radius:999px;background:#fff;color:var(--mp-ink);font-family:var(--mp-body);font-size:18px;font-weight:600;cursor:pointer;transition:transform .12s ease,background-color .12s ease}
 body.mp-app .mp-skip button:hover{background:var(--mp-blush)}
 .mp-skip button:active{transform:scale(.96)}
