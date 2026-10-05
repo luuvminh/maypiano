@@ -202,7 +202,7 @@ add_action( 'wp_footer', function () {
 (function () {
 	var frame = document.querySelector('iframe.mp-bunny');
 	if (frame) {
-		var say = function (m) { m.context = 'player.js'; m.version = '0.0.11'; frame.contentWindow.postMessage(JSON.stringify(m), 'https://iframe.mediadelivery.net'); };
+		var say = function (m) { var f = document.querySelector('iframe.mp-bunny'); if (!f || !f.contentWindow) { return; } m.context = 'player.js'; m.version = '0.0.11'; f.contentWindow.postMessage(JSON.stringify(m), 'https://iframe.mediadelivery.net'); };
 		var want = 0;
 		window.addEventListener('message', function (e) {
 			if (e.origin !== 'https://iframe.mediadelivery.net') { return; }
@@ -220,10 +220,15 @@ add_action( 'wp_footer', function () {
 			el.addEventListener('click', function () { want = b[0]; say({ method: 'getCurrentTime', listener: 'mp-skip' }); });
 			bar.appendChild(el);
 		});
-		// The row of Previous and Next is the one place on this page Tutor LMS does not redraw, so the two buttons live there, between them.
-		var row = document.querySelector('.tutor-learning-area-footer');
-		if (row && row.children.length) { row.insertBefore(bar, row.lastElementChild); row.classList.add('mp-has-skip'); }
-		else { var player = frame.closest('.tutor-video-player') || frame.parentNode; player.parentNode.insertBefore(bar, player.nextSibling); }
+		// Tutor LMS redraws the row of buttons under the video after the page loads, which would take the two buttons with it.
+		// So they are put back every time they go missing, just before the last button of that row.
+		var place = function () {
+			if (document.body.contains(bar)) { return; }
+			var row = document.querySelector('.tutor-learning-area-footer');
+			if (row && row.children.length) { row.insertBefore(bar, row.lastElementChild); row.classList.add('mp-has-skip'); }
+		};
+		place();
+		if (window.MutationObserver) { new MutationObserver(place).observe(document.querySelector('.tutor-learning-area') || document.body, { childList: true, subtree: true }); }
 	}
 	document.querySelectorAll('.tutor-lesson-wrapper').forEach(function (w) {
 		if (!w.textContent.trim() && !w.querySelector('img,iframe,video,audio,a')) { (w.closest('.tutor-tabs-content') || w).classList.add('mp-empty'); }
