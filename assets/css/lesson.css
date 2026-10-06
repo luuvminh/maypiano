@@ -192,6 +192,60 @@ body.mp-app .tutor-student-dashboard-stats .tutor-grid{grid-template-columns:rep
 @media (min-width:1200px){body.mp-app .tutor-student-dashboard-stats .tutor-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 body.mp-app .tutor-dashboard-layout .tutor-btn-outline.tutor-btn-icon{border:2px solid var(--mp-ink);background:#fff;min-width:44px;min-height:44px;border-radius:999px}
 
+/* ---------- Learner's first page: the courses to carry on with come first, big and tappable; the four numbers sit below as one quiet strip ---------- */
+body.mp-app :is(.tutor-dashboard-header-inner,.tutor-dashboard-page){max-width:1040px}
+body.mp-app .tutor-dashboard-header-left img.emoji{display:none!important}
+body.mp-app .tutor-dashboard-page:has(>.tutor-student-dashboard-courses){display:flex;flex-direction:column;gap:clamp(28px,4vw,44px);padding-top:clamp(12px,2vw,28px);padding-bottom:48px}
+body.mp-app .tutor-student-dashboard-courses{order:1}
+body.mp-app .tutor-student-dashboard-stats{order:2}
+body.mp-app .tutor-see-all-courses{padding-inline:12px;white-space:nowrap;font-size:1rem}
+
+/* Carry on learning */
+body.mp-app .tutor-student-dashboard-courses>div:first-child{margin-bottom:14px;align-items:baseline}
+body.mp-app .tutor-student-dashboard-courses>div:first-child>.tutor-small{font-size:clamp(1.625rem,2.6vw,2.125rem);line-height:1.15;letter-spacing:-.01em}
+body.mp-app .tutor-student-dashboard-courses>.tutor-flex-column{gap:14px}
+body.mp-app .tutor-progress-card{display:flex;align-items:center;gap:12px 24px;padding:12px 24px 12px 12px;cursor:pointer;transition:background-color .18s cubic-bezier(.16,1,.3,1)}
+body.mp-app .tutor-progress-card:hover{background:var(--mp-blush)}
+body.mp-app .tutor-progress-card:focus-visible{outline:3px solid var(--mp-ink);outline-offset:3px}
+body.mp-app .tutor-progress-card-inner{flex:1 1 auto;min-width:0;align-items:center;gap:20px}
+body.mp-app .tutor-progress-card-thumbnail{flex:none;width:clamp(8.5rem,22vw,12.5rem);height:auto;aspect-ratio:16/10;border-radius:8px;overflow:hidden}
+body.mp-app .tutor-progress-card-thumbnail img{display:block;width:100%;height:100%}
+body.mp-app .tutor-progress-card-content{flex:1 1 auto;min-width:0;max-width:none;width:auto;justify-content:center;gap:12px;padding:0}
+body.mp-app .tutor-progress-card-title{font-size:clamp(1.375rem,2.2vw,1.75rem);text-wrap:balance}
+body.mp-app .tutor-progress-card-details{flex-wrap:wrap;margin:0 0 8px;font-size:1rem;line-height:1.35;color:var(--mp-plum);font-variant-numeric:tabular-nums}
+body.mp-app .tutor-progress-card-actions{position:static;inset:auto;transform:none;opacity:1;visibility:visible;flex:none}
+body.mp-app .tutor-dashboard-layout .tutor-progress-card-actions .tutor-btn{min-height:52px;padding:10px 26px;font-size:1.125rem;white-space:nowrap;transition:transform .12s ease,filter .12s ease}
+body.mp-app .tutor-dashboard-layout .tutor-progress-card-actions .tutor-btn:hover{filter:brightness(1.08)}
+body.mp-app .tutor-dashboard-layout .tutor-progress-card-actions .tutor-btn:active{transform:scale(.96)}
+body.mp-app .tutor-progress-card-actions .tutor-btn svg{display:none}
+
+/* The four numbers: one strip, one line each */
+body.mp-app .tutor-student-dashboard-stats .tutor-grid{gap:0!important;margin:0;background:#fff;border:2px solid var(--mp-ink);border-radius:12px;overflow:hidden}
+body.mp-app .tutor-student-dashboard-stats .tutor-stat-card{flex-direction:row-reverse;justify-content:flex-end;align-items:baseline;gap:12px;height:auto;min-height:0;padding:18px 20px;background:transparent;border:0;border-radius:0;box-shadow:inset 1px 0 0 var(--mp-muted),inset 0 1px 0 var(--mp-muted);text-decoration:none;transition:background-color .18s cubic-bezier(.16,1,.3,1)}
+body.mp-app .tutor-student-dashboard-stats a.tutor-stat-card:hover{background:var(--mp-blush)}
+body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-header{flex:1 1 auto;min-width:0}
+body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-icon{display:none}
+body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-title{font-family:var(--mp-body);font-size:1rem;font-weight:500;line-height:1.3;color:var(--mp-plum)}
+body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-value{font-size:1.875rem;line-height:1;font-variant-numeric:tabular-nums}
+
+/* Phones: small photo beside the name, the button full width under it; the last block clears the bar at the bottom */
+@media (max-width:640px){
+	body.mp-app .tutor-progress-card{flex-direction:column;align-items:stretch;padding:12px}
+	body.mp-app .tutor-progress-card .tutor-progress-card-inner{flex-direction:row;align-items:center;gap:14px}
+	body.mp-app .tutor-progress-card-thumbnail{width:6.5rem;aspect-ratio:1}
+	body.mp-app .tutor-progress-card-content{padding:0}
+	body.mp-app .tutor-progress-card-details{display:block}
+	body.mp-app .tutor-progress-card-actions{padding:0}
+	body.mp-app .tutor-dashboard-layout .tutor-progress-card-actions .tutor-btn{width:100%;justify-content:center}
+	body.mp-app .tutor-dashboard-header-left>div{font-size:min(1.375rem,5.6vw)}
+	body.mp-app .tutor-student-dashboard-stats .tutor-stat-card{padding:14px 16px}
+}
+body.mp-app .tutor-dashboard-nav-mobile-text{font-size:min(.875rem,3.9vw)!important;white-space:nowrap;line-height:1.2}
+@media (max-width:768.98px){
+	body.mp-app .tutor-dashboard-page{padding-bottom:calc(112px + env(safe-area-inset-bottom))!important}
+	body.mp-app .tutor-dashboard-nav-mobile{display:block}
+}
+
 /* ---------- Questions page: this lesson's questions, or all of them ---------- */
 body.mp-app .mp-qna-scope{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin:0 0 16px}
 body.mp-app .mp-qna-scope-bai{margin:0;font-size:1.1875rem;line-height:1.35;color:var(--mp-ink);min-width:0}
