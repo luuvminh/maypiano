@@ -45,6 +45,44 @@ add_filter( 'lostpassword_url', function () {
 	return maypiano_account_url( 'quen-mat-khau' );
 }, 20 );
 
+/** Where a learner signs out. The pass in the link makes it one press; without a good pass our own page asks first. */
+function maypiano_logout_url() {
+	return maypiano_account_url( 'dang-xuat', array( '_wpnonce' => wp_create_nonce( 'log-out' ) ) );
+}
+/* Every sign-out link on the site (the profile menu, the learner dashboard, the admin bar) leads to ours. */
+add_filter( 'logout_url', function () {
+	return maypiano_logout_url();
+}, 20 );
+/* WordPress's own "Do you really want to log out?" screen is never shown: an old link lands on our page instead. */
+add_action( 'login_init', function () {
+	$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+	if ( 'logout' === $action ) {
+		wp_safe_redirect( maypiano_account_url( 'dang-xuat', isset( $_REQUEST['_wpnonce'] ) ? array( '_wpnonce' => sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ) ) : array() ) );
+		exit;
+	}
+}, 1 );
+
+add_action( 'template_redirect', function () {
+	if ( ! isset( $_GET['tk'] ) || 'dang-xuat' !== sanitize_key( wp_unslash( $_GET['tk'] ) ) ) {
+		return;
+	}
+	nocache_headers();
+	if ( ! is_user_logged_in() ) {
+		wp_safe_redirect( home_url( '/' ) );
+		exit;
+	}
+	$pass = isset( $_REQUEST['_wpnonce'] ) ? sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
+	if ( '' !== $pass && wp_verify_nonce( $pass, 'log-out' ) ) {
+		wp_logout();
+		wp_safe_redirect( home_url( '/' ) );
+		exit;
+	}
+	maypiano_account_page( 'Đăng xuất', '<p>Bạn muốn đăng xuất khỏi Mây Piano?</p>'
+		. '<form method="post" action="' . esc_url( maypiano_account_url( 'dang-xuat' ) ) . '"><input type="hidden" name="_wpnonce" value="' . esc_attr( wp_create_nonce( 'log-out' ) ) . '">'
+		. '<button type="submit">Đăng xuất</button></form>'
+		. '<p><a href="' . esc_url( maypiano_learn_url() ) . '">Ở lại và vào học</a></p>' );
+}, 9 );
+
 add_action( 'template_redirect', function () {
 	$screen = isset( $_GET['tk'] ) ? sanitize_key( wp_unslash( $_GET['tk'] ) ) : '';
 	if ( ! in_array( $screen, array( 'dang-nhap', 'quen-mat-khau', 'dat-mat-khau' ), true ) ) {
@@ -197,7 +235,7 @@ function maypiano_me() {
 			array( 'label' => 'Hỏi đáp của mình', 'url' => esc_url_raw( $dash( 'question-answer' ) ) ),
 			array( 'label' => 'Hồ sơ và mật khẩu', 'url' => esc_url_raw( $dash( 'settings' ) ) ),
 		),
-		'out'     => esc_url_raw( wp_logout_url( home_url( '/' ) ) ),
+		'out'     => esc_url_raw( maypiano_logout_url() ),
 	);
 }
 
