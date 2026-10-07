@@ -79,9 +79,9 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 
 <section class="mpc-may">
 <div>
-<h2>Chào bạn, mình là Mây</h2>
-<p>Tên đầy đủ của Mây là Phan Trần Hải Mây. Mây bắt đầu từ việc đệm đàn cho nhà thờ khi còn nhỏ. Hơn 15 năm chơi và dạy đàn, Mây đã soạn hàng trăm bài dạy piano miễn phí trên YouTube.</p>
-<p>Mây thích dạy từ căn bản và cho bạn thực hành ngay trên bài hát thật. Sheet nhạc Mây soạn luôn cố gắng dễ hiểu, dễ tập cho mọi lứa tuổi.</p>
+<h2>Chào bạn, mình là Mây!</h2>
+<p>Mình tên đầy đủ là Phan Trần Hải Mây. Bén duyên với piano từ những bài đàn đệm ở nhà thờ thời thơ ấu, tính đến nay Mây đã có hơn 15 năm chơi đàn và giảng dạy. <strong>Hiện tại, Mây đang dạy piano tại Melbourne</strong> và sở hữu kênh YouTube với hàng trăm bài giảng miễn phí dành cho cộng đồng.</p>
+<p>Mây luôn ưu tiên phương pháp dạy căn bản gắn liền với thực hành trên bài hát thực tế. Mọi sheet nhạc Mây biên soạn đều được thiết kế rõ ràng, dễ hiểu, giúp học viên ở mọi lứa tuổi tập luyện hiệu quả và tràn đầy hứng khởi.</p>
 </div>
 <img src="<?php echo esc_url( get_theme_file_uri( 'assets/img/p01.jpg' ) ); ?>" alt="Chân dung Mây trong tà áo dài" width="797" height="1000" loading="lazy" decoding="async">
 </section>
