@@ -67,7 +67,8 @@ $kinds  = maypiano_sheet_kinds();
 		});
 	});
 	list.querySelectorAll('.mp-sheet-form').forEach(function (form) {
-		var token = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random().toString(36).slice(2) + '-sheet';
+		var fresh = function () { return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random().toString(36).slice(2) + '-sheet'; };
+		var token = fresh();
 		form.addEventListener('submit', function (e) {
 			e.preventDefault();
 			var btn = form.querySelector('button[type=submit]');
@@ -77,6 +78,9 @@ $kinds  = maypiano_sheet_kinds();
 			btn.disabled = true;
 			btn.textContent = 'Đang gửi đơn…';
 			post('sheet-order', { sheet: form.getAttribute('data-sheet'), name: form.elements.name.value, email: form.elements.email.value, website: form.elements.website.value, region: region, token: token }).then(function (res) {
+				token = fresh();
+				btn.disabled = false;
+				btn.textContent = label;
 				window.location.href = res.url;
 			}).catch(function (j) {
 				var code = j && j.code;

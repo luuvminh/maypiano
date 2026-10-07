@@ -256,8 +256,12 @@ add_action( 'woocommerce_order_status_changed', function ( $order_id, $from, $to
 	$order->update_meta_data( '_mp_fulfilled', time() );
 	$order->update_meta_data( '_mp_access', 'open' );
 	$order->save();
-	$order->add_order_note( 'Đã gửi link tải sheet cho khách.' );
-	maypiano_mail_sheet_ready( $order );
+	if ( maypiano_mail_sheet_ready( $order ) ) {
+		$order->add_order_note( 'Đã gửi link tải sheet cho khách.' );
+	} else {
+		$order->add_order_note( 'KHÔNG gửi được email có link tải sheet. Khách vẫn tải được ở trang đơn hàng: ' . maypiano_order_url( $order ) );
+		maypiano_mail( maypiano_notify_address(), '[May Piano] Chưa gửi được sheet, đơn ' . maypiano_order_code( $order ), '<p>Site không gửi được email có nút tải sheet cho khách <strong>' . esc_html( $order->get_billing_email() ) . '</strong>. Bạn gửi giúp khách đường dẫn này để họ tải:</p><p>' . esc_html( maypiano_order_url( $order ) ) . '</p>' );
+	}
 }, 20, 3 );
 
 /** To the customer, once payment is confirmed: the download buttons. */
@@ -279,11 +283,12 @@ add_action( 'template_redirect', function () {
 	}
 	nocache_headers();
 	header( 'X-Robots-Tag: noindex, nofollow' );
-	$slug  = sanitize_title( wp_unslash( $_GET['mp_tai'] ) );
+	$slug  = is_string( $_GET['mp_tai'] ) ? sanitize_title( wp_unslash( $_GET['mp_tai'] ) ) : '';
 	$order = function_exists( 'wc_get_order' ) && isset( $_GET['don'] ) ? wc_get_order( absint( $_GET['don'] ) ) : null;
 	$key   = isset( $_GET['key'] ) ? sanitize_text_field( wp_unslash( $_GET['key'] ) ) : '';
 	$owns  = false;
-	if ( maypiano_is_sheet_order( $order ) && '' !== $key && hash_equals( $order->get_order_key(), $key ) && 'paid' === maypiano_order_state( $order ) ) {
+	$busy  = maypiano_throttled( 'tai', 60 );
+	if ( ! $busy && maypiano_is_sheet_order( $order ) && '' !== $key && hash_equals( $order->get_order_key(), $key ) && 'paid' === maypiano_order_state( $order ) ) {
 		foreach ( $order->get_items() as $item ) {
 			if ( $slug === (string) $item->get_meta( '_mp_sheet' ) ) {
 				$owns = true;
@@ -291,7 +296,7 @@ add_action( 'template_redirect', function () {
 		}
 	}
 	$path = $owns ? maypiano_sheet_file( $slug ) : '';
-	if ( '' === $path || maypiano_throttled( 'tai', 60 ) ) {
+	if ( '' === $path ) {
 		wp_die( 'Đường dẫn tải này không dùng được. Bạn mở lại từ email của Mây, hoặc trả lời email đó để Mây giúp nhé.', 'Không tải được sheet', array( 'response' => 404 ) );
 	}
 	while ( ob_get_level() ) {

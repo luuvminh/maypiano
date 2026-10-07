@@ -310,7 +310,7 @@ return window.MayPianoApi(path, data);
 save() {
 const s = this.state;
 try {
-window.localStorage.setItem(STORE, JSON.stringify({ cart: s.cart, name: s.name, email: s.email, phone: s.phone, region: s.regionPicked ? s.region : '', order: s.order ? { id: s.order.id, key: s.order.key } : null }));
+window.localStorage.setItem(STORE, JSON.stringify({ cart: s.cart, name: s.name, email: s.email, phone: s.phone, region: s.regionPicked ? s.region : '', order: s.order && s.order.kind !== 'sheet' ? { id: s.order.id, key: s.order.key } : null }));
 } catch (e) {}
 }
 
@@ -513,7 +513,7 @@ downloads: (isSheet && o.downloads ? o.downloads : []).map((d) => ({ url: d.url,
 againLabel: isSheet ? 'Xem thêm sheet khác' : 'Đăng ký khóa khác',
 canEdit: !isSheet,
 nexts, canLearn: !isSheet && open && !!o.learnUrl,
-startOver: later(() => { this.setState({ order: null, step: 0, cart: [], err: '' }); if (isSheet) { window.location.href = '/sheet-nhac/'; return; } window.scrollTo(0, 0); })
+startOver: later(() => { this.setState({ order: null, step: 0, cart: [], err: '' }); if (isSheet) { this.save(); window.location.href = '/sheet-nhac/'; return; } window.scrollTo(0, 0); })
 };
 }
 }

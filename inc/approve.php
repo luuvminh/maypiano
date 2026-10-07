@@ -63,7 +63,7 @@ add_action( 'template_redirect', function () {
 	$test = $order->get_meta( '_mp_test' ) ? '<p class="note">Đây là đơn chạy thử.</p>' : '';
 
 	if ( 'paid' === $state ) {
-		if ( 'open' === $order->get_meta( '_mp_access' ) && maypiano_is_sheet_order( $order ) ) {
+		if ( maypiano_is_sheet_order( $order ) ) {
 			$body = '<p class="ok">' . ( $done ? 'Xong rồi.' : 'Đơn này đã xong.' ) . '</p>'
 				. '<p><strong>' . esc_html( $name ) . '</strong> đã nhận email có nút tải sheet. Bạn đóng trang này được rồi.</p>' . $facts;
 			maypiano_approve_page( 'Đã gửi sheet, đơn ' . $code, $test . $body );
