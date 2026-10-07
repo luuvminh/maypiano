@@ -80,7 +80,7 @@ add_filter( 'logout_redirect', function () {
 add_action( 'login_enqueue_scripts', function () {
 	$logo = esc_url( get_template_directory_uri() . '/assets/img/logo.png' );
 	echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">' // phpcs:ignore WordPress.WP.EnqueuedResources
-		. '<style>html:not(.mp-clean) body.login #login{visibility:hidden}body.login{background:#E3D7D7;color:#2B1E24;font-family:Newsreader,Georgia,serif;font-size:18px}'
+		. '<style>html:not(.mp-clean) body.login #login{visibility:hidden;animation:mpshow 0s 1.5s forwards}@keyframes mpshow{to{visibility:visible}}body.login{background:#E3D7D7;color:#2B1E24;font-family:Newsreader,Georgia,serif;font-size:18px}'
 		. 'body.login #login h1 a,body.login .wp-login-logo a{background-image:url(' . $logo . ');background-size:contain;background-position:center;width:207px;height:120px}' // phpcs:ignore WordPress.Security.EscapeOutput
 		. 'body.login form,body.login #loginform,body.login .jetpack-sso-form-display #loginform{background:#fff;border:2px solid #2B1E24;border-radius:14px;box-shadow:none}'
 		. 'body.login .message,body.login .notice,body.login #login_error{border:2px solid #2B1E24;border-left-width:2px;border-radius:12px;box-shadow:none;background:#fff;color:#2B1E24}'
