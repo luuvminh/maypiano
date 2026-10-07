@@ -100,6 +100,10 @@ add_action( 'login_init', function () {
 		if ( false === stripos( (string) $translation, 'wordpress' ) && false === stripos( (string) $text, 'wordpress' ) ) {
 			return $translation;
 		}
+		// Addresses are left alone: blanking one would break the link it sits in.
+		if ( preg_match( '#^\s*(https?:)?//#i', (string) $text ) ) {
+			return $translation;
+		}
 		if ( false !== stripos( $text, 'another' ) ) {
 			return 'Dùng tài khoản khác';
 		}
