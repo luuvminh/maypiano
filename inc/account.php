@@ -165,7 +165,8 @@ add_action( 'template_redirect', function () {
 		return;
 	}
 	nocache_headers();
-	$post  = 'POST' === $_SERVER['REQUEST_METHOD'];
+	// A learner coming back from the small sum (see maypiano_stop_page) has not typed an email yet: show the empty form.
+	$post  = 'POST' === $_SERVER['REQUEST_METHOD'] && ! isset( $_POST['jetpack_protect_process_math_form'] ); // phpcs:ignore WordPress.Security.NonceVerification
 	$field = function ( $name ) {
 		return isset( $_POST[ $name ] ) ? trim( (string) wp_unslash( $_POST[ $name ] ) ) : ''; // phpcs:ignore WordPress.Security
 	};
@@ -353,6 +354,29 @@ add_filter( 'wp_die_handler', function ( $handler ) {
 function maypiano_stop_page( $message, $title = '', $args = array() ) {
 	list( $message, $title, $parsed ) = _wp_die_process_input( $message, $title, $args );
 	$plain = trim( wp_strip_all_tags( (string) $message ) );
+	/*
+	 * The site's guard against password guessing sometimes asks for a small sum before it lets anybody sign in.
+	 * Its own screen is replaced by ours: same sum, same hidden check, and afterwards the learner lands on our sign-in page.
+	 */
+	if ( false !== strpos( (string) $message, 'jetpack_protect_num' )
+		&& preg_match( '/(\d+)\s*(?:&nbsp;|&amp;nbsp;|\s)*\+\s*(?:&nbsp;|&amp;nbsp;|\s)*(\d+)/', (string) $message, $sum )
+		&& preg_match( '/name="jetpack_protect_answer"\s+value="([a-f0-9]+)"/', (string) $message, $check ) ) {
+		$again = false !== stripos( $plain, 'incorrect' );
+		if ( ! headers_sent() ) {
+			status_header( 401 );
+			nocache_headers();
+			header( 'Content-Type: text/html; charset=utf-8' );
+		}
+		maypiano_account_page( 'Một phép tính nhỏ', '<p>Trước khi đăng nhập, bạn làm giúp Mây phép tính này, để trang biết bạn là người thật.</p>'
+			. maypiano_account_error( $again ? 'Kết quả chưa đúng. Bạn thử phép tính mới này nhé.' : '' )
+			. '<form method="post" action="' . esc_url( maypiano_login_url() ) . '">'
+			. '<label for="mp-sum">' . (int) $sum[1] . ' + ' . (int) $sum[2] . ' bằng mấy?</label>'
+			. '<input id="mp-sum" type="text" name="jetpack_protect_num" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required autofocus>'
+			. '<input type="hidden" name="jetpack_protect_answer" value="' . esc_attr( $check[1] ) . '">'
+			. '<input type="hidden" name="jetpack_protect_process_math_form" value="1">'
+			. '<button type="submit">Tiếp tục</button></form>'
+			. '<p class="hint">Làm xong, bạn đăng nhập lại bằng email và mật khẩu như thường.</p>' );
+	}
 	if ( preg_match( '/math problem|brute force|too many|locked out|blocked/i', $plain ) ) {
 		$head = 'Chưa đăng nhập được';
 		$say  = 'Lúc này trang chưa cho đăng nhập. Bạn chờ vài phút rồi thử lại nhé.';
