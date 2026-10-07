@@ -130,6 +130,7 @@ body.mp-app .mp-sheet-empty .mp-lost-go{margin-top:24px}
 .mp-me summary::-webkit-details-marker{display:none}
 .mp-me summary:active{transform:scale(.96)}
 .mp-me-av{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:var(--mp-accent);color:#fff;font-weight:600;font-size:1.125rem;line-height:1}
+.mp-me-av{position:relative;overflow:hidden}.mp-me-pic{position:absolute;inset:0;background-size:cover;background-position:center}
 .mp-me-name{max-width:9em;overflow:hidden;text-overflow:ellipsis}
 .mp-me-chev{flex:none;transition:transform .2s cubic-bezier(.22,1,.36,1)}
 .mp-me[open] .mp-me-chev{transform:rotate(180deg)}

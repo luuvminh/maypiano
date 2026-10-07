@@ -260,8 +260,15 @@ function maypiano_me() {
 	$dash  = function ( $page ) {
 		return function_exists( 'tutor_utils' ) ? tutor_utils()->tutor_dashboard_url( $page ) : maypiano_learn_url();
 	};
+	// The learner's own picture: the one uploaded in Hồ sơ, else their Gravatar. A learner with neither keeps the round initial.
+	$photo_id = (int) get_user_meta( $user->ID, '_tutor_profile_photo', true );
+	$photo    = $photo_id ? (string) wp_get_attachment_image_url( $photo_id, 'thumbnail' ) : '';
+	if ( '' === $photo ) {
+		$photo = (string) get_avatar_url( $user->ID, array( 'size' => 96, 'default' => '404' ) );
+	}
 	return array(
 		'name'    => $name,
+		'photo'   => esc_url_raw( $photo ),
 		'short'   => $short,
 		'initial' => mb_strtoupper( mb_substr( 'Học viên' === $name ? (string) $user->user_email : $short, 0, 1 ) ),
 		'email'   => (string) $user->user_email,
@@ -281,7 +288,7 @@ function maypiano_me_menu() {
 	if ( ! $me ) {
 		return '';
 	}
-	$html = '<details class="mp-me"><summary aria-label="' . esc_attr( 'Tài khoản của ' . $me['name'] ) . '"><span class="mp-me-av" aria-hidden="true">' . esc_html( $me['initial'] ) . '</span>'
+	$html = '<details class="mp-me"><summary aria-label="' . esc_attr( 'Tài khoản của ' . $me['name'] ) . '"><span class="mp-me-av" aria-hidden="true">' . esc_html( $me['initial'] ) . ( '' !== $me['photo'] ? '<span class="mp-me-pic" style="background-image:url(' . esc_url( $me['photo'] ) . ')"></span>' : '' ) . '</span>'
 		. '<span class="mp-me-name">' . esc_html( $me['short'] ) . '</span>'
 		. '<svg class="mp-me-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"></path></svg></summary>'
 		. '<div class="mp-me-menu"><div class="mp-me-head"><strong>' . esc_html( $me['name'] ) . '</strong><span>' . esc_html( $me['email'] ) . '</span></div>';
