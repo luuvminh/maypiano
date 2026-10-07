@@ -459,3 +459,23 @@ body.mp-app .tutor-preferences-setting-action .tutor-select-trigger{font-size:1.
 	body.mp-app .tutor-learning-area-footer form .tutor-mark-as-complete-button{font-size:17px!important;line-height:1.15;white-space:normal;text-align:center;overflow:hidden}
 	body.mp-app .tutor-learning-area-footer a.mp-undo{font-size:16px}
 }
+
+/* ---------- Text size (1.9.1): "A− A+" in the top bar of the learner's pages and of the lesson page ----------
+   A control strip, so it is sized in px: it stays the same whatever text size the learner picked. */
+body.mp-app .mp-size{position:relative;display:inline-flex;flex:none;align-items:stretch;height:44px;box-sizing:border-box;background:#fff;border:2px solid var(--mp-ink);border-radius:999px;overflow:hidden}
+body.mp-app .mp-size button{appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;justify-content:center;width:44px;min-width:44px;min-height:0;height:auto;margin:0;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;color:var(--mp-ink);font-family:var(--mp-body)!important;font-weight:600;line-height:1;cursor:pointer;transition:background-color .15s ease}
+body.mp-app .mp-size button span{font-family:var(--mp-body)!important;font-weight:600;line-height:1}
+body.mp-app .mp-size .mp-size-down{font-size:15px!important;border-inline-end:1px solid var(--mp-hair)}
+body.mp-app .mp-size .mp-size-down span{font-size:15px!important}
+body.mp-app .mp-size .mp-size-up,body.mp-app .mp-size .mp-size-up span{font-size:23px!important}
+@media (hover:hover){body.mp-app .mp-size button:not(:disabled):hover{background:var(--mp-blush)}}
+body.mp-app .mp-size button:not(:disabled):active{background:#F7D9E1}
+body.mp-app .mp-size button:disabled{color:var(--mp-muted);cursor:default}
+body.mp-app .mp-size button:focus-visible{outline:3px solid var(--mp-ink);outline-offset:-5px;border-radius:999px}
+body.mp-app .mp-size-say{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+body.mp-app .tutor-dashboard-header-right{display:flex;align-items:center;gap:10px;flex:none}
+body.mp-app .tutor-dashboard-header-right>div:first-child{display:flex;align-items:center}
+body.mp-app .tutor-learning-header-content>.mp-size{margin-inline-start:auto}
+body.mp-app .tutor-learning-header-content>.tutor-ml-auto+.mp-size{margin-inline-start:0}
+@media (max-width:991.98px){body.mp-app .tutor-learning-header-content>.tutor-ml-auto.tutor-md-hidden+.mp-size{margin-inline-start:auto}}
+@media (max-width:380px){body.mp-app .mp-size button{width:40px;min-width:40px}}
