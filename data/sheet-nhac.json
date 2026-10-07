@@ -1,3 +1,10 @@
 {
- "sheets": []
+ "sheets": [
+  {"slug": "canh-chim-lac-loai", "title": "Cánh Chim Lạc Loài", "kind": "LS", "pages": 5, "note": "Có trang dạo đầu, giang tấu và hai trang bảng hợp âm tay trái."},
+  {"slug": "dung-lam-trai-tim-anh-dau", "title": "Đừng Làm Trái Tim Anh Đau", "kind": "LS", "pages": 5, "note": "Chia sẵn từng đoạn: dạo đầu, đoạn 1, 2, 3 và điệp khúc."},
+  {"slug": "khong-con-no-nhau", "title": "Không Còn Nợ Nhau", "kind": "LS", "pages": 4, "note": "Có tên nốt dưới từng nốt nhạc và một trang bảng hợp âm."},
+  {"slug": "ky-niem-nao-voi-tan", "title": "Kỷ Niệm Nào Vội Tan", "kind": "LS", "pages": 4, "note": "Có tên nốt dưới từng nốt nhạc và bảng hợp âm cho phiên khúc, điệp khúc."},
+  {"slug": "nho-ve-em", "title": "Nhớ Về Em", "kind": "LS", "pages": 5, "note": "Đủ dạo đầu, hai phiên khúc, điệp khúc và giang tấu, có tên nốt và số ngón tay."},
+  {"slug": "toi-di-tim-toi", "title": "Tôi Đi Tìm Tôi", "kind": "LS", "pages": 3, "note": "Có lời bài hát ở trang đầu để bạn dễ dò theo."}
+ ]
 }

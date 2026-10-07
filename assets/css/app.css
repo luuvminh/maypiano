@@ -104,8 +104,19 @@ body.mp-app .mp-sheet-text{flex:1 1 320px;min-width:0}
 body.mp-app .mp-sheet-list h2{margin:0 0 .2em;font-size:clamp(1.5rem,2.4vw,1.875rem)}
 body.mp-app .mp-sheet-list p{margin:0;max-width:34em}
 body.mp-app .mp-sheet-level{font-weight:600;color:var(--mp-plum)}
-body.mp-app .mp-sheet-get{display:inline-flex;align-items:center;gap:8px;box-sizing:border-box;min-height:56px;padding:12px 28px;border:2px solid var(--mp-ink);border-radius:999px;background:#fff;font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .12s ease}
+body.mp-app .mp-sheet-get{cursor:pointer;color:var(--mp-ink);font-size:1.125rem;display:inline-flex;align-items:center;gap:8px;box-sizing:border-box;min-height:56px;padding:12px 28px;border:2px solid var(--mp-ink);border-radius:999px;background:#fff;font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .12s ease}
 body.mp-app .mp-sheet-get:active{transform:scale(.96)}
+body.mp-app .mp-sheet-buy{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+body.mp-app .mp-sheet-price{font-family:var(--mp-head);font-weight:700;font-size:1.75rem;white-space:nowrap}
+body.mp-app .mp-sheet-form{flex:1 1 100%;box-sizing:border-box;max-width:560px;display:flex;flex-direction:column;gap:14px;padding:clamp(18px,3vw,28px);background:#fff;border:2px solid var(--mp-ink);border-radius:14px}
+body.mp-app .mp-sheet-form[hidden],body.mp-app .mp-sheet-err[hidden]{display:none}
+body.mp-app .mp-sheet-form label{display:flex;flex-direction:column;gap:6px;font-weight:600}
+body.mp-app .mp-sheet-form input{width:100%;font-size:1.125rem}
+body.mp-app .mp-sheet-form button[type=submit]{align-self:flex-start;min-height:56px}
+body.mp-app .mp-sheet-trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+body.mp-app .mp-sheet-err{color:#8A1F3D;font-weight:600}
+body.mp-app .mp-sheet-how{margin-top:24px}
+@media (max-width:600px){body.mp-app .mp-sheet-buy{width:100%;justify-content:space-between}}
 body.mp-app .screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 body.mp-app .mp-sheet-empty{max-width:760px;box-sizing:border-box;padding:clamp(22px,4vw,40px);background:#fff;border:2px solid var(--mp-ink);border-radius:14px}
 body.mp-app .mp-sheet-empty h2{margin:0 0 .4em}

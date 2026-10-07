@@ -216,7 +216,9 @@ button{font-family:inherit;cursor:pointer}
 <sc-if value="{{canReport}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center">
 <button type="button" class="press" disabled="{{busyAttr}}" onClick="{{report}}" style="border: 0; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 0 30px; min-height: 56px; font-size: 20px; font-weight: 600; padding: 0 32px; min-height: 58px; font-size: 21px">{{reportLabel}}</button>
+<sc-if value="{{canEdit}}" hint-placeholder-val="{{ true }}">
 <button type="button" disabled="{{busyAttr}}" onClick="{{editOrder}}" style="border: 0; background: transparent; color: #8A3350; font-size: 18px; font-weight: 600; text-decoration: underline; min-height: 44px; padding: 0 4px">Sửa đơn</button>
+</sc-if>
 </div>
 </sc-if>
 
@@ -258,11 +260,14 @@ button{font-family:inherit;cursor:pointer}
 <div style="display: flex; justify-content: space-between; gap: 16px; align-items: baseline"><span style="font-weight: 600">Tổng cộng</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 30px; white-space: nowrap">{{orderTotalText}}</span></div>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+<sc-for list="{{downloads}}" as="d" hint-placeholder-count="0">
+<a href="{{d.url}}" class="press" style="display: inline-flex; align-items: center; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 30px; min-height: 56px; box-sizing: border-box; font-size: 20px; font-weight: 600">{{d.label}}</a>
+</sc-for>
 <sc-if value="{{canLearn}}" hint-placeholder-val="{{ true }}">
 <a href="{{order.learnUrl}}" class="press" style="display: inline-flex; align-items: center; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 0 30px; min-height: 56px; font-size: 20px; font-weight: 600">Đăng nhập và vào học</a>
 </sc-if>
 <a href="https://www.facebook.com/groups/558515685499528/" style="padding: 15px 4px; font-weight: 600">Vào nhóm Facebook của Mây</a>
-<button type="button" onClick="{{startOver}}" style="border: 0; background: transparent; color: #8A3350; font-size: 18px; font-weight: 600; text-decoration: underline; min-height: 44px; padding: 0 4px">Đăng ký khóa khác</button>
+<button type="button" onClick="{{startOver}}" style="border: 0; background: transparent; color: #8A3350; font-size: 18px; font-weight: 600; text-decoration: underline; min-height: 44px; padding: 0 4px">{{againLabel}}</button>
 </div>
 </div>
 </sc-if>
@@ -454,12 +459,13 @@ const rows = [
 { label: 'Số tiền', value: oTotalText, raw: o.total != null ? String(Math.round(o.total)) : '' },
 { label: 'Nội dung chuyển khoản', value: o.memo, raw: o.memo }
 ].map((r, i) => ({ label: r.label, value: r.value, canCopy: !!r.raw, copy: () => this.copy(r.raw, 'r' + i), copyText: copyText('r' + i), copyLabel: 'Chép ' + r.label.toLowerCase() }));
+const isSheet = o.kind === 'sheet';
 const newAcc = !!o.newAccount;
 const open = o.access === 'open' || o.access === 'partial';
-const nexts = (open
+const nexts = (isSheet ? ['Bạn bấm nút bên dưới để tải file PDF về máy.', 'Mây cũng đã gửi các nút tải này tới email ' + o.email + ', bạn giữ email để tải lại khi cần.'] : open
 ? [newAcc ? 'Bạn mở email ' + o.email + ' và bấm nút đặt mật khẩu Mây vừa gửi.' : 'Bạn đăng nhập bằng email ' + o.email + ' và mật khẩu đang dùng.', 'Bạn vào học, bắt đầu từ bài đầu tiên.']
 : ['Khóa học của bạn sẽ được kích hoạt trong vòng ' + (cfg.processing || '24 giờ') + '.', 'Mây gửi email tới ' + o.email + ' ngay khi bạn có thể vào học.']).map((t, i) => ({ i: String(i + 1), t }));
-const labels = ['Chọn khóa', 'Giỏ hàng', 'Thông tin', 'Thanh toán', 'Hoàn tất'];
+const labels = [isSheet ? 'Chọn sheet' : 'Chọn khóa', 'Giỏ hàng', 'Thông tin', 'Thanh toán', 'Hoàn tất'];
 
 return {
 accent,
@@ -510,9 +516,12 @@ cardFail: () => this.act('card-test', { outcome: 'decline' }),
 isReported: o.state === 'reported',
 processing: cfg.processing || '24 giờ',
 hasSupport: !!cfg.support, support: cfg.support || '',
-doneTitle: open ? 'Khóa học của bạn đã mở' : 'Cảm ơn bạn, Mây đã nhận tiền',
-nexts, canLearn: open && !!o.learnUrl,
-startOver: later(() => { this.setState({ order: null, step: 0, cart: [], err: '' }); window.scrollTo(0, 0); })
+doneTitle: isSheet ? 'Sheet nhạc của bạn đây' : (open ? 'Khóa học của bạn đã mở' : 'Cảm ơn bạn, Mây đã nhận tiền'),
+downloads: (isSheet && o.downloads ? o.downloads : []).map((d) => ({ url: d.url, label: 'Tải ' + String(d.name).replace(/^Sheet nhạc: /, '') })),
+againLabel: isSheet ? 'Xem thêm sheet khác' : 'Đăng ký khóa khác',
+canEdit: !isSheet,
+nexts, canLearn: !isSheet && open && !!o.learnUrl,
+startOver: later(() => { this.setState({ order: null, step: 0, cart: [], err: '' }); if (isSheet) { window.location.href = '/sheet-nhac/'; return; } window.scrollTo(0, 0); })
 };
 }
 }

@@ -57,12 +57,17 @@ add_action( 'template_redirect', function () {
 		. '<dt>Khách</dt><dd>' . esc_html( $name ) . '<br><small>' . esc_html( $order->get_billing_email() ) . '</small></dd>'
 		. '<dt>Số tiền</dt><dd class="big">' . esc_html( $amount ) . '</dd>'
 		. '<dt>Nội dung chuyển khoản</dt><dd class="big">' . esc_html( maypiano_memo( $order ) ) . '</dd>'
-		. '<dt>Khóa học</dt><dd>' . esc_html( implode( ', ', array_map( function ( $item ) {
+		. '<dt>' . ( maypiano_is_sheet_order( $order ) ? 'Sheet nhạc' : 'Khóa học' ) . '</dt><dd>' . esc_html( implode( ', ', array_map( function ( $item ) {
 			return $item->get_name();
 		}, $order->get_items() ) ) ) . '</dd></dl>';
 	$test = $order->get_meta( '_mp_test' ) ? '<p class="note">Đây là đơn chạy thử.</p>' : '';
 
 	if ( 'paid' === $state ) {
+		if ( 'open' === $order->get_meta( '_mp_access' ) && maypiano_is_sheet_order( $order ) ) {
+			$body = '<p class="ok">' . ( $done ? 'Xong rồi.' : 'Đơn này đã xong.' ) . '</p>'
+				. '<p><strong>' . esc_html( $name ) . '</strong> đã nhận email có nút tải sheet. Bạn đóng trang này được rồi.</p>' . $facts;
+			maypiano_approve_page( 'Đã gửi sheet, đơn ' . $code, $test . $body );
+		}
 		if ( 'open' === $order->get_meta( '_mp_access' ) ) {
 			$body = '<p class="ok">' . ( $done || $retried ? 'Xong rồi.' : 'Đơn này đã xong.' ) . '</p>'
 				. '<p>Khóa học đã mở cho <strong>' . esc_html( $name ) . '</strong>. Khách đã nhận email hướng dẫn vào học. Bạn đóng trang này được rồi.</p>' . $facts;
@@ -83,7 +88,7 @@ add_action( 'template_redirect', function () {
 	}
 	$body = '<p>Bạn mở app ngân hàng, thấy <strong>đủ số tiền</strong> và <strong>đúng nội dung</strong> bên dưới thì bấm nút.</p>'
 		. $facts
-		. '<form method="post"><button type="submit" name="mp_ok" value="1">Đã nhận đủ tiền, mở khóa học</button></form>'
+		. '<form method="post"><button type="submit" name="mp_ok" value="1">' . ( maypiano_is_sheet_order( $order ) ? 'Đã nhận đủ tiền, gửi sheet' : 'Đã nhận đủ tiền, mở khóa học' ) . '</button></form>'
 		. '<p class="note">Chưa thấy tiền thì bạn đóng trang này. Đơn vẫn chờ, bạn mở lại email để duyệt sau.</p>';
 	maypiano_approve_page( 'Duyệt đơn ' . $code, $test . $body );
 } );
