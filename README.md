@@ -10,6 +10,10 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 4. Bấm deploy, rồi vào **Giao diện > Theme** và kích hoạt theme **May Piano**.
 5. Vào **Cài đặt > May Piano** để điền số tài khoản, mã QR, giá USD và thời gian kích hoạt.
 
+## Quy tắc xuyên suốt
+
+- **Khách và học viên không được thấy chữ nào nhắc tới WordPress hay WordPress.com** (trang, email, nút, tiêu đề tab, thông báo lỗi). Đây là yêu cầu của chủ site về kỹ thuật, bảo mật và kinh doanh. Trang nào của phần mềm nền lọt ra thì đổi sang giao diện May Piano, tiếng Việt, và bỏ tên phần mềm. Trang quản trị bên trong (chỉ chủ site thấy) thì giữ nguyên.
+
 ## Trong repo có gì
 
 - `front-page.php`: trang chủ.

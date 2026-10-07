@@ -89,8 +89,35 @@ add_action( 'login_enqueue_scripts', function () {
 		. 'body.login .button-primary,body.login a.jetpack-sso.button,body.login .jetpack-sso.button{background:#C2456B!important;border-color:#C2456B!important;color:#fff!important;border-radius:999px!important;font-family:Newsreader,Georgia,serif;font-weight:600;font-size:18px;min-height:52px;line-height:1.3;padding:12px 22px;box-shadow:none!important;text-shadow:none}'
 		. 'body.login .button:not(.button-primary):not(.jetpack-sso){border:2px solid #2B1E24;border-radius:999px;color:#2B1E24;background:transparent}'
 		. 'body.login a,body.login #nav a,body.login #backtoblog a{color:#2B1E24}body.login a:hover,body.login #nav a:hover,body.login #backtoblog a:hover{color:#C2456B}'
-		. 'body.login :is(a,button,input,select):focus{outline:3px solid #2B1E24;outline-offset:2px;box-shadow:none}</style>';
+		. 'body.login p:empty,body.login .jetpack-sso-form-display p:not(:has(a,button,input)){display:none}body.login :is(a,button,input,select):focus{outline:3px solid #2B1E24;outline-offset:2px;box-shadow:none}</style>';
 } );
+/*
+ * Nothing a visitor can read says which software runs the site. On the sign-in screen every sentence that names it
+ * is reworded or dropped; the button just says where it leads.
+ */
+add_action( 'login_init', function () {
+	$plain = function ( $translation, $text ) {
+		if ( false === stripos( (string) $translation, 'wordpress' ) && false === stripos( (string) $text, 'wordpress' ) ) {
+			return $translation;
+		}
+		if ( false !== stripos( $text, 'another' ) ) {
+			return 'Dùng tài khoản khác';
+		}
+		if ( 0 === stripos( $text, 'Log in with' ) || 0 === stripos( $text, 'Continue with' ) ) {
+			return 'Vào trang quản trị';
+		}
+		return '';
+	};
+	add_filter( 'gettext', $plain, 99, 2 );
+	add_filter( 'gettext_with_context', $plain, 99, 2 );
+}, 0 );
+add_filter( 'login_title', function () {
+	return 'Trang quản trị – Mây Piano';
+}, 99 );
+/* The pages themselves do not announce it either. */
+remove_action( 'wp_head', 'wp_generator' );
+add_filter( 'the_generator', '__return_empty_string' );
+
 add_filter( 'login_headerurl', function () {
 	return home_url( '/' );
 } );
