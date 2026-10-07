@@ -169,3 +169,51 @@ function maypiano_account_page( $title, $body ) {
 		. '</style></head><body><main><a class="logo" href="' . esc_url( home_url( '/' ) ) . '"><img src="' . esc_url( get_template_directory_uri() . '/assets/img/logo.png' ) . '" alt="Mây Piano" width="413" height="240"></a><div class="card"><h1>' . esc_html( $title ) . '</h1>' . $body . '</div></main></body></html>'; // phpcs:ignore WordPress.Security.EscapeOutput
 	exit;
 }
+
+/**
+ * Who is signed in, for the profile menu in the top bar: name, email and the learner's own links. Null for a guest.
+ * The home page asks for this after it loads (it is cached); the other pages print it straight away.
+ */
+function maypiano_me() {
+	if ( ! is_user_logged_in() ) {
+		return null;
+	}
+	$user  = wp_get_current_user();
+	$name  = maypiano_qna_name( $user->ID );
+	$parts = preg_split( '/\s+/u', $name );
+	// Vietnamese names end with the given name: "Nguyễn Thị Lan" is called Lan.
+	$short = 'Học viên' === $name ? 'Bạn' : (string) end( $parts );
+	$dash  = function ( $page ) {
+		return function_exists( 'tutor_utils' ) ? tutor_utils()->tutor_dashboard_url( $page ) : maypiano_learn_url();
+	};
+	return array(
+		'name'    => $name,
+		'short'   => $short,
+		'initial' => mb_strtoupper( mb_substr( 'Học viên' === $name ? (string) $user->user_email : $short, 0, 1 ) ),
+		'email'   => (string) $user->user_email,
+		'learn'   => esc_url_raw( maypiano_learn_url() ),
+		'links'   => array(
+			array( 'label' => 'Khóa học của mình', 'url' => esc_url_raw( $dash( 'enrolled-courses' ) ) ),
+			array( 'label' => 'Hỏi đáp của mình', 'url' => esc_url_raw( $dash( 'question-answer' ) ) ),
+			array( 'label' => 'Hồ sơ và mật khẩu', 'url' => esc_url_raw( $dash( 'settings' ) ) ),
+		),
+		'out'     => esc_url_raw( wp_logout_url( home_url( '/' ) ) ),
+	);
+}
+
+/** The profile menu as printed on every page but the home page (which draws its own from the same facts). */
+function maypiano_me_menu() {
+	$me = maypiano_me();
+	if ( ! $me ) {
+		return '';
+	}
+	$html = '<details class="mp-me"><summary aria-label="' . esc_attr( 'Tài khoản của ' . $me['name'] ) . '"><span class="mp-me-av" aria-hidden="true">' . esc_html( $me['initial'] ) . '</span>'
+		. '<span class="mp-me-name">' . esc_html( $me['short'] ) . '</span>'
+		. '<svg class="mp-me-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"></path></svg></summary>'
+		. '<div class="mp-me-menu"><div class="mp-me-head"><strong>' . esc_html( $me['name'] ) . '</strong><span>' . esc_html( $me['email'] ) . '</span></div>';
+	foreach ( $me['links'] as $link ) {
+		$html .= '<a href="' . esc_url( $link['url'] ) . '">' . esc_html( $link['label'] ) . '</a>';
+	}
+	return $html . '<a class="mp-me-out" href="' . esc_url( $me['out'] ) . '">Đăng xuất</a></div></details>'
+		. '<script>(function(){var d=document.querySelector(".mp-me");if(!d)return;document.addEventListener("pointerdown",function(e){if(d.open&&!d.contains(e.target))d.open=false});document.addEventListener("keydown",function(e){if(e.key==="Escape"&&d.open){d.open=false;d.querySelector("summary").focus()}})})();</script>';
+}
