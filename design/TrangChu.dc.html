@@ -89,7 +89,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 .keyhint{display:none}
 @media (max-width:800px){.keyhint{display:block}}
 .kbsec{display:grid;gap:18px 40px}
-@media (min-width:1472px){.kbsec{grid-template-columns:minmax(260px,1fr) minmax(0,1280px);align-items:center}}
+@media (min-width:1472px){.kbsec{grid-template-columns:minmax(0,1280px);justify-content:center}}
 /* Community: one row per place, the whole row is the link. */
 .crow{display:grid;grid-template-columns:clamp(200px,24vw,320px) minmax(0,1fr) auto;gap:6px 32px;align-items:center;padding:22px 0;border-top:2px solid #2B1E24;text-decoration:none;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .12s ease}
 .crow:active{opacity:.6}
@@ -172,11 +172,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 
 <section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
 <div class="kbsec">
-<div>
-<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.2; text-wrap: balance">Bạn bấm thử một phím nhé</h2>
-<p style="margin: 4px 0 0">Nốt bạn vừa bấm: <strong ref="{{noteRef}}">{{lastNote}}</strong></p>
-<p class="keyhint" style="margin: 4px 0 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
-</div>
+<p class="keyhint" style="margin: 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
 <div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 0"><div style="position: relative; display: flex; box-sizing: border-box; min-width: 700px; aspect-ratio: 49 / 11; border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
 <sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
 <button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 16px; font-weight: 500">{{k.n}}</button>
