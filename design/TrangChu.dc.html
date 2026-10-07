@@ -782,7 +782,7 @@ nangcao: { key: 'solo-nang-cao', name: 'Piano Solo Nâng Cao', why: 'Bạn đã 
 hat: { key: 'dem-hat', name: 'Đệm Hát Piano', why: 'Bạn muốn vừa đàn vừa hát? Khóa này Mây soạn riêng cho bạn, không cần biết solo trước.', price: '799.000đ', meta: '39 bài, 3 giờ 55 phút', gets: [{ t: 'Nắm 14 hợp âm căn bản và các điệu phổ biến' }, { t: 'Phối nhiều kiểu đệm trong một bài' }, { t: 'Tự đệm bài mới mà không cần giáo viên' }] },
 thanhca: { key: 'thanh-ca', name: 'Đệm Hát Thánh Ca', why: 'Mây lớn lên cùng cây đàn nhà thờ, nên khóa này Mây soạn rất kỹ cho bạn đệm ca đoàn.', price: '799.000đ', meta: '37 bài, 3 giờ 54 phút', gets: [{ t: 'Tự đặt hợp âm cho bài chưa có hợp âm sẵn' }, { t: 'Đệm đúng kiểu cho từng phần thánh lễ' }, { t: 'Đệm trọn bộ lễ Seraphim' }] }
 };
-const L = [['moi', 'Chưa từng học đàn'], ['haitay', 'Đã biết nốt và hợp âm'], ['nangcao', 'Đã đàn được hai tay'], ['hat', 'Muốn vừa đàn vừa hát'], ['thanhca', 'Đệm cho ca đoàn']];
+const L = [['moi', 'Chưa từng học đàn'], ['haitay', 'Đã biết nốt và hợp âm'], ['nangcao', 'Muốn đàn nâng cao hơn'], ['hat', 'Muốn vừa đàn vừa hát'], ['thanhca', 'Đệm cho ca đoàn']];
 Object.keys(recs).forEach((k) => { recs[k].price = P(recs[k].key, recs[k].price); });
 const levels = L.map((o) => ({ label: o[1], pick: () => this.setState({ level: o[0], swap: s.swap + 1 }), bg: s.level === o[0] ? '#F6EFEF' : '#5B2A3C', fg: s.level === o[0] ? INK : '#F6EFEF', pressed: s.level === o[0] ? 'true' : 'false' }));
 const S = [
