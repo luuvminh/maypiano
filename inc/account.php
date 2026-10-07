@@ -45,6 +45,80 @@ add_filter( 'lostpassword_url', function () {
 	return maypiano_account_url( 'quen-mat-khau' );
 }, 20 );
 
+/** Where a learner signs out. The pass in the link makes it one press; without a good pass our own page asks first. */
+function maypiano_logout_url() {
+	return maypiano_account_url( 'dang-xuat', array( '_wpnonce' => wp_create_nonce( 'log-out' ) ) );
+}
+/* Every sign-out link on the site (the profile menu, the learner dashboard, the admin bar) leads to ours. */
+add_filter( 'logout_url', function () {
+	return maypiano_logout_url();
+}, 20 );
+/* WordPress's own "Do you really want to log out?" screen is never shown: an old link lands on our page instead. */
+add_action( 'login_init', function () {
+	$action = isset( $_REQUEST['action'] ) ? sanitize_key( wp_unslash( $_REQUEST['action'] ) ) : '';
+	if ( 'logout' === $action ) {
+		wp_safe_redirect( maypiano_account_url( 'dang-xuat', isset( $_REQUEST['_wpnonce'] ) ? array( '_wpnonce' => sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ) ) : array() ) );
+		exit;
+	}
+}, 1 );
+
+/* WordPress's "You are now logged out" screen is never shown either: whoever lands there goes to the home page. */
+add_action( 'login_init', function () {
+	if ( 'GET' === $_SERVER['REQUEST_METHOD'] && isset( $_GET['loggedout'] ) && ! isset( $_GET['action'] ) ) {
+		wp_safe_redirect( home_url( '/' ) );
+		exit;
+	}
+}, 1 );
+/* After signing out, always the home page — also when a plugin signs somebody out its own way. */
+add_filter( 'logout_redirect', function () {
+	return home_url( '/' );
+}, 20 );
+/*
+ * The WordPress sign-in screen stays for the site's owner (it carries the WordPress.com sign-in), dressed in the May Piano look:
+ * same background, fonts, logo and button colour. Learners sign in on our own page and never need this one.
+ */
+add_action( 'login_enqueue_scripts', function () {
+	$logo = esc_url( get_template_directory_uri() . '/assets/img/logo.png' );
+	echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">' // phpcs:ignore WordPress.WP.EnqueuedResources
+		. '<style>body.login{background:#E3D7D7;color:#2B1E24;font-family:Newsreader,Georgia,serif;font-size:18px}'
+		. 'body.login #login h1 a,body.login .wp-login-logo a{background-image:url(' . $logo . ');background-size:contain;background-position:center;width:207px;height:120px}' // phpcs:ignore WordPress.Security.EscapeOutput
+		. 'body.login form,body.login #loginform,body.login .jetpack-sso-form-display #loginform{background:#fff;border:2px solid #2B1E24;border-radius:14px;box-shadow:none}'
+		. 'body.login .message,body.login .notice,body.login #login_error{border:2px solid #2B1E24;border-left-width:2px;border-radius:12px;box-shadow:none;background:#fff;color:#2B1E24}'
+		. 'body.login label,body.login #nav,body.login #backtoblog,body.login h2,body.login p{font-family:Newsreader,Georgia,serif;color:#2B1E24}'
+		. 'body.login input[type=text],body.login input[type=password],body.login input[type=email]{border:2px solid #2B1E24;border-radius:12px;min-height:52px;font-family:inherit}'
+		. 'body.login .button-primary,body.login a.jetpack-sso.button,body.login .jetpack-sso.button{background:#C2456B!important;border-color:#C2456B!important;color:#fff!important;border-radius:999px!important;font-family:Newsreader,Georgia,serif;font-weight:600;font-size:18px;min-height:52px;line-height:1.3;padding:12px 22px;box-shadow:none!important;text-shadow:none}'
+		. 'body.login .button:not(.button-primary):not(.jetpack-sso){border:2px solid #2B1E24;border-radius:999px;color:#2B1E24;background:transparent}'
+		. 'body.login a,body.login #nav a,body.login #backtoblog a{color:#2B1E24}body.login a:hover,body.login #nav a:hover,body.login #backtoblog a:hover{color:#C2456B}'
+		. 'body.login :is(a,button,input,select):focus{outline:3px solid #2B1E24;outline-offset:2px;box-shadow:none}</style>';
+} );
+add_filter( 'login_headerurl', function () {
+	return home_url( '/' );
+} );
+add_filter( 'login_headertext', function () {
+	return 'Mây Piano';
+} );
+
+add_action( 'template_redirect', function () {
+	if ( ! isset( $_GET['tk'] ) || 'dang-xuat' !== sanitize_key( wp_unslash( $_GET['tk'] ) ) ) {
+		return;
+	}
+	nocache_headers();
+	if ( ! is_user_logged_in() ) {
+		wp_safe_redirect( home_url( '/' ) );
+		exit;
+	}
+	$pass = isset( $_REQUEST['_wpnonce'] ) ? sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ) : '';
+	if ( '' !== $pass && wp_verify_nonce( $pass, 'log-out' ) ) {
+		wp_logout();
+		wp_safe_redirect( home_url( '/' ) );
+		exit;
+	}
+	maypiano_account_page( 'Đăng xuất', '<p>Bạn muốn đăng xuất khỏi Mây Piano?</p>'
+		. '<form method="post" action="' . esc_url( maypiano_account_url( 'dang-xuat' ) ) . '"><input type="hidden" name="_wpnonce" value="' . esc_attr( wp_create_nonce( 'log-out' ) ) . '">'
+		. '<button type="submit">Đăng xuất</button></form>'
+		. '<p><a href="' . esc_url( maypiano_learn_url() ) . '">Ở lại và vào học</a></p>' );
+}, 9 );
+
 add_action( 'template_redirect', function () {
 	$screen = isset( $_GET['tk'] ) ? sanitize_key( wp_unslash( $_GET['tk'] ) ) : '';
 	if ( ! in_array( $screen, array( 'dang-nhap', 'quen-mat-khau', 'dat-mat-khau' ), true ) ) {
@@ -197,7 +271,7 @@ function maypiano_me() {
 			array( 'label' => 'Hỏi đáp của mình', 'url' => esc_url_raw( $dash( 'question-answer' ) ) ),
 			array( 'label' => 'Hồ sơ và mật khẩu', 'url' => esc_url_raw( $dash( 'settings' ) ) ),
 		),
-		'out'     => esc_url_raw( wp_logout_url( home_url( '/' ) ) ),
+		'out'     => esc_url_raw( maypiano_logout_url() ),
 	);
 }
 
