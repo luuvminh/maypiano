@@ -27,8 +27,12 @@ body.mp-app .mp-links a.mp-pill:hover{color:#fff;filter:brightness(1.08)}
 .mp-links a.mp-pill:active{transform:scale(.96)}
 body.mp-app .mp-links a.mp-enter{border:2px solid var(--mp-ink);padding:10px 22px;border-radius:999px;font-weight:600;transition:transform .12s ease}
 .mp-links a.mp-enter:active{transform:scale(.96)}
-/* Phones and tablets: one compact line, like the home page bar. The four section links live on the home page. */
-@media (max-width:820px){.mp-nav{flex-wrap:nowrap;gap:10px;padding:8px var(--mp-side)}body.mp-app .mp-logo img{height:44px}.mp-links{flex-wrap:nowrap;gap:8px}.mp-links a:not(.mp-pill):not(.mp-enter){display:none}body.mp-app .mp-links a.mp-pill,body.mp-app .mp-links a.mp-enter{padding:9px 15px;font-size:1.0625rem;white-space:nowrap}}
+/* Below this width the five links do not fit beside the buttons, same as the home page bar. The links live on the home page. */
+@media (max-width:1040px){.mp-nav{flex-wrap:nowrap}.mp-links{flex-wrap:nowrap}.mp-links a:not(.mp-pill):not(.mp-enter){display:none}}
+.mp-links a{white-space:nowrap}
+@media (max-width:1180px){.mp-nav{gap:12px 20px}.mp-links{gap:8px 18px}}
+/* Phones and tablets: one compact line, like the home page bar. */
+@media (max-width:820px){.mp-nav{gap:10px;padding:8px var(--mp-side)}body.mp-app .mp-logo img{height:44px}.mp-links{gap:8px}body.mp-app .mp-links a.mp-pill,body.mp-app .mp-links a.mp-enter{padding:9px 15px;font-size:1.0625rem;white-space:nowrap}}
 @media (max-width:420px){.mp-nav{padding-left:14px;padding-right:14px}.mp-links{gap:6px}}
 @media (max-width:380px){body.mp-app .mp-logo img{height:38px}body.mp-app .mp-links a.mp-pill,body.mp-app .mp-links a.mp-enter{padding:10px 11px;font-size:1rem}}
 body.mp-app .tutor-form-control{font-family:var(--mp-body)}
@@ -89,5 +93,23 @@ body.mp-app .mp-plain summary::after{content:'+';flex:none;font-family:var(--mp-
 body.mp-app .mp-plain details[open]>summary::after{transform:rotate(45deg)}
 body.mp-app .mp-plain summary:hover{color:var(--mp-accent)}
 body.mp-app .mp-plain details>p{margin:0 0 22px;max-width:34em}
+
+/* Sheet nhạc */
+body.mp-app .mp-links a[aria-current=page]{color:var(--mp-accent)}
+body.mp-app .mp-kicker{margin:0 0 .4em;font-size:1.125rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mp-accent)}
+body.mp-app .mp-lead{max-width:34em;margin:0 0 1.6em;font-size:1.375rem}
+body.mp-app .mp-sheet-list{list-style:none;margin:0;padding:0;border-bottom:2px solid var(--mp-ink)}
+body.mp-app .mp-sheet-list li{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:center;justify-content:space-between;padding:22px 0;border-top:2px solid var(--mp-ink)}
+body.mp-app .mp-sheet-text{flex:1 1 320px;min-width:0}
+body.mp-app .mp-sheet-list h2{margin:0 0 .2em;font-size:clamp(1.5rem,2.4vw,1.875rem)}
+body.mp-app .mp-sheet-list p{margin:0;max-width:34em}
+body.mp-app .mp-sheet-level{font-weight:600;color:var(--mp-plum)}
+body.mp-app .mp-sheet-get{display:inline-flex;align-items:center;gap:8px;box-sizing:border-box;min-height:56px;padding:12px 28px;border:2px solid var(--mp-ink);border-radius:999px;background:#fff;font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .12s ease}
+body.mp-app .mp-sheet-get:active{transform:scale(.96)}
+body.mp-app .screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+body.mp-app .mp-sheet-empty{max-width:760px;box-sizing:border-box;padding:clamp(22px,4vw,40px);background:#fff;border:2px solid var(--mp-ink);border-radius:14px}
+body.mp-app .mp-sheet-empty h2{margin:0 0 .4em}
+body.mp-app .mp-sheet-empty p{margin:0}
+body.mp-app .mp-sheet-empty .mp-lost-go{margin-top:24px}
 
 @media (prefers-reduced-motion:reduce){body.mp-app *{transition:none!important;animation:none!important}}

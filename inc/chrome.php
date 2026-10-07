@@ -136,6 +136,7 @@ function maypiano_site_header() {
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#chon-khoa">Chọn khóa</a>
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#lo-trinh">Lộ trình</a>
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#bai-hat">Bài hát</a>
+<a href="<?php echo esc_url( home_url( '/sheet-nhac/' ) ); ?>"<?php echo is_page( 'sheet-nhac' ) ? ' aria-current="page"' : ''; ?>>Sheet nhạc</a>
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#cong-dong">Cộng đồng</a>
 	<?php if ( is_user_logged_in() ) : ?>
 <a class="mp-pill" href="<?php echo esc_url( maypiano_learn_url() ); ?>">Khóa học của mình</a>
