@@ -89,7 +89,7 @@ add_action( 'login_enqueue_scripts', function () {
 		. 'body.login .button-primary,body.login a.jetpack-sso.button,body.login .jetpack-sso.button{background:#C2456B!important;border-color:#C2456B!important;color:#fff!important;border-radius:999px!important;font-family:Newsreader,Georgia,serif;font-weight:600;font-size:18px;min-height:52px;line-height:1.3;padding:12px 22px;box-shadow:none!important;text-shadow:none}'
 		. 'body.login .button:not(.button-primary):not(.jetpack-sso){border:2px solid #2B1E24;border-radius:999px;color:#2B1E24;background:transparent}'
 		. 'body.login a,body.login #nav a,body.login #backtoblog a{color:#2B1E24}body.login a:hover,body.login #nav a:hover,body.login #backtoblog a:hover{color:#C2456B}'
-		. 'body.login p:empty,body.login .jetpack-sso-form-display p:not(:has(a,button,input)){display:none}body.login :is(a,button,input,select):focus{outline:3px solid #2B1E24;outline-offset:2px;box-shadow:none}</style>';
+		. 'body.login p:empty,body.login .jetpack-sso-form-display p:not(:has(a,button,input)){display:none}body.login .jetpack-sso-or:before,body.login .jetpack-sso-or:after{display:none!important;content:none!important}body.login .jetpack-sso-or{margin-top:22px;border:0!important;background:none!important}body.login #jetpack-sso-wrap,body.login #jetpack-sso-wrap__action,body.login #jetpack-sso-wrap__user,body.login .jetpack-sso-form-display #loginform>*{border-top:0!important;border-bottom:0!important;box-shadow:none!important}body.login hr{display:none}body.login :is(a,button,input,select):focus{outline:3px solid #2B1E24;outline-offset:2px;box-shadow:none}</style>';
 } );
 /*
  * Nothing a visitor can read says which software runs the site. On the sign-in screen every sentence that names it
