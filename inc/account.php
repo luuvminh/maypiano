@@ -101,6 +101,8 @@ add_action( 'login_footer', function () {
 <script>
 (function () {
 	var re = /wordpress/i;
+	/* The owner's button leads straight to the site's management page. */
+	var admin = <?php echo wp_json_encode( 'https://wordpress.com/home/' . wp_parse_url( home_url(), PHP_URL_HOST ) ); ?>;
 	function fix(root) {
 		var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), n, list = [];
 		while ((n = w.nextNode())) { if (re.test(n.nodeValue)) list.push(n); }
@@ -108,7 +110,7 @@ add_action( 'login_footer', function () {
 			var el = t.parentNode;
 			if (!el || /^(SCRIPT|STYLE)$/.test(el.tagName)) return;
 			var link = el.closest('a,button');
-			if (link) { t.nodeValue = /another|khác/i.test(t.nodeValue) ? 'Dùng tài khoản khác' : 'Vào trang quản trị'; return; }
+			if (link) { if (/another|khác/i.test(t.nodeValue)) { t.nodeValue = 'Dùng tài khoản khác'; } else { t.nodeValue = 'Vào trang quản trị'; if (link.tagName === 'A') link.href = admin; } return; }
 			var box = el.closest('p,label,div.message,div.notice') || el;
 			if (box.querySelector('a,button,input,select,form')) t.nodeValue = ''; else box.style.display = 'none';
 		});
