@@ -153,3 +153,7 @@ body.mp-app .tutor-learning-header .mp-me{align-self:center;flex:none;margin-inl
 body.mp-app .tutor-learning-header .mp-me summary{min-height:44px;box-sizing:border-box;background:#fff}
 body.mp-app .tutor-learning-header .mp-me .mp-me-menu a{text-decoration:none;font-weight:500}
 body.mp-app .tutor-learning-header .mp-me .mp-me-menu{text-align:left;line-height:1.5}
+/* The bar clips whatever hangs below it; the menu has to hang below it. */
+body.mp-app .tutor-learning-header-inner{overflow:visible!important}
+body.mp-app .tutor-learning-header .mp-me .mp-me-menu{z-index:100000}
+
