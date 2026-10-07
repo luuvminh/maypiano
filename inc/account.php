@@ -80,7 +80,7 @@ add_filter( 'logout_redirect', function () {
 add_action( 'login_enqueue_scripts', function () {
 	$logo = esc_url( get_template_directory_uri() . '/assets/img/logo.png' );
 	echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">' // phpcs:ignore WordPress.WP.EnqueuedResources
-		. '<style>body.login{background:#E3D7D7;color:#2B1E24;font-family:Newsreader,Georgia,serif;font-size:18px}'
+		. '<style>html:not(.mp-clean) body.login #login{visibility:hidden;animation:mpshow 0s 1.5s forwards}@keyframes mpshow{to{visibility:visible}}body.login{background:#E3D7D7;color:#2B1E24;font-family:Newsreader,Georgia,serif;font-size:18px}'
 		. 'body.login #login h1 a,body.login .wp-login-logo a{background-image:url(' . $logo . ');background-size:contain;background-position:center;width:207px;height:120px}' // phpcs:ignore WordPress.Security.EscapeOutput
 		. 'body.login form,body.login #loginform,body.login .jetpack-sso-form-display #loginform{background:#fff;border:2px solid #2B1E24;border-radius:14px;box-shadow:none}'
 		. 'body.login .message,body.login .notice,body.login #login_error{border:2px solid #2B1E24;border-left-width:2px;border-radius:12px;box-shadow:none;background:#fff;color:#2B1E24}'
@@ -89,28 +89,39 @@ add_action( 'login_enqueue_scripts', function () {
 		. 'body.login .button-primary,body.login a.jetpack-sso.button,body.login .jetpack-sso.button{background:#C2456B!important;border-color:#C2456B!important;color:#fff!important;border-radius:999px!important;font-family:Newsreader,Georgia,serif;font-weight:600;font-size:18px;min-height:52px;line-height:1.3;padding:12px 22px;box-shadow:none!important;text-shadow:none}'
 		. 'body.login .button:not(.button-primary):not(.jetpack-sso){border:2px solid #2B1E24;border-radius:999px;color:#2B1E24;background:transparent}'
 		. 'body.login a,body.login #nav a,body.login #backtoblog a{color:#2B1E24}body.login a:hover,body.login #nav a:hover,body.login #backtoblog a:hover{color:#C2456B}'
-		. 'body.login p:empty,body.login .jetpack-sso-form-display p:not(:has(a,button,input)){display:none}body.login :is(a,button,input,select):focus{outline:3px solid #2B1E24;outline-offset:2px;box-shadow:none}</style>';
+		. 'body.login p:empty{display:none}body.login .jetpack-sso-or:before,body.login .jetpack-sso-or:after{display:none!important;content:none!important}body.login .jetpack-sso-or{margin-top:22px;border:0!important;background:none!important}body.login #jetpack-sso-wrap,body.login #jetpack-sso-wrap__action,body.login #jetpack-sso-wrap__user,body.login .jetpack-sso-form-display #loginform>*{border-top:0!important;border-bottom:0!important;box-shadow:none!important}body.login hr{display:none}body.login :is(a,button,input,select):focus{outline:3px solid #2B1E24;outline-offset:2px;box-shadow:none}</style>';
 } );
 /*
  * Nothing a visitor can read says which software runs the site. On the sign-in screen every sentence that names it
  * is reworded or dropped; the button just says where it leads.
  */
-add_action( 'login_init', function () {
-	$plain = function ( $translation, $text ) {
-		if ( false === stripos( (string) $translation, 'wordpress' ) && false === stripos( (string) $text, 'wordpress' ) ) {
-			return $translation;
-		}
-		if ( false !== stripos( $text, 'another' ) ) {
-			return 'Dùng tài khoản khác';
-		}
-		if ( 0 === stripos( $text, 'Log in with' ) || 0 === stripos( $text, 'Continue with' ) ) {
-			return 'Vào trang quản trị';
-		}
-		return '';
-	};
-	add_filter( 'gettext', $plain, 99, 2 );
-	add_filter( 'gettext_with_context', $plain, 99, 2 );
-}, 0 );
+add_action( 'login_footer', function () {
+	// Done in the browser, on what is shown only: the words change, the links and the sign-in itself are untouched.
+	?>
+<script>
+(function () {
+	var re = /wordpress/i;
+	function fix(root) {
+		var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), n, list = [];
+		while ((n = w.nextNode())) { if (re.test(n.nodeValue)) list.push(n); }
+		list.forEach(function (t) {
+			var el = t.parentNode;
+			if (!el || /^(SCRIPT|STYLE)$/.test(el.tagName)) return;
+			var link = el.closest('a,button');
+			if (link) { t.nodeValue = /another|khác/i.test(t.nodeValue) ? 'Dùng tài khoản khác' : 'Vào trang quản trị'; return; }
+			var box = el.closest('p,label,div.message,div.notice') || el;
+			if (box.querySelector('a,button,input,select,form')) t.nodeValue = ''; else box.style.display = 'none';
+		});
+		Array.prototype.forEach.call(root.querySelectorAll('[title],[aria-label],[alt]'), function (el) {
+			['title', 'aria-label', 'alt'].forEach(function (a) { if (re.test(el.getAttribute(a) || '')) el.setAttribute(a, 'Mây Piano'); });
+		});
+	}
+	fix(document.body);
+	document.documentElement.classList.add('mp-clean');
+})();
+</script>
+	<?php
+}, 99 );
 add_filter( 'login_title', function () {
 	return 'Trang quản trị – Mây Piano';
 }, 99 );
