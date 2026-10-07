@@ -540,3 +540,89 @@ add_action( 'save_post_' . MAYPIANO_QNA_TYPE, function ( $entry, $post ) {
 	update_comment_meta( $qid, 'tutor_qna_read_' . (int) $question->user_id, 0 );
 	clean_comment_cache( array( $qid, $posted ) );
 }, 10, 2 );
+
+/**
+ * A course without a picture of its own in the site's library uses the photo named in its file in data/,
+ * so the learner's pages never show the grey stand-in picture.
+ */
+add_filter( 'tutor_course_thumbnail_placeholder', function ( $url, $post_id = 0 ) {
+	$post_id = (int) $post_id;
+	if ( $post_id && 'courses' !== get_post_type( $post_id ) && function_exists( 'tutor_utils' ) ) {
+		$post_id = (int) tutor_utils()->get_course_id_by_lesson( $post_id );
+	}
+	$slug  = $post_id ? (string) get_post_field( 'post_name', $post_id ) : '';
+	$file  = '' !== $slug ? get_theme_file_path( 'data/' . sanitize_file_name( $slug ) . '.json' ) : '';
+	$data  = '' !== $file && is_readable( $file ) ? json_decode( (string) file_get_contents( $file ), true ) : array(); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	$photo = is_array( $data ) && isset( $data['photo'] ) ? sanitize_file_name( $data['photo'] ) : 'g04.jpg';
+	return get_theme_file_uri( 'assets/img/' . $photo );
+}, 10, 2 );
+
+/**
+ * "Hỏi đáp của mình" in the learner's pages. Tutor LMS shows the course's name as a card that opens on hover and leads nowhere.
+ * Here it becomes a plain link straight to the lesson the question was asked from (its Hỏi đáp box open), named after the lesson.
+ */
+add_action( 'wp_footer', function () {
+	if ( ! is_user_logged_in() || ! function_exists( 'tutor_utils' ) || ! is_page( (int) tutor_utils()->get_option( 'tutor_dashboard_page_id' ) ) ) {
+		return;
+	}
+	$mine = get_comments( array(
+		'user_id' => get_current_user_id(),
+		'type'    => 'tutor_q_and_a',
+		'parent'  => 0,
+		'status'  => 'any',
+		'number'  => 300,
+	) );
+	$one  = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0; // phpcs:ignore WordPress.Security.NonceVerification
+	if ( $one ) {
+		$q = get_comment( $one );
+		// Somebody else's question is linked only for a person who may see it: its asker, or whoever teaches the course.
+		if ( $q && 'tutor_q_and_a' === $q->comment_type && ( (int) $q->user_id === get_current_user_id() || current_user_can( 'edit_post', (int) $q->comment_post_ID ) ) ) {
+			$mine[] = $q;
+		}
+	}
+	$map = array();
+	foreach ( $mine as $q ) {
+		$lesson = (int) get_comment_meta( (int) $q->comment_ID, 'mp_lesson', true );
+		$known  = $lesson && 'publish' === get_post_status( $lesson );
+		$map[ (int) $q->comment_ID ] = array(
+			'url'  => esc_url_raw( maypiano_qna_link( $q ) ),
+			'text' => $known ? 'Bài: ' . get_the_title( $lesson ) : 'Khóa: ' . get_the_title( (int) $q->comment_post_ID ),
+			// Every question of the course, on the course's own Hỏi đáp page.
+			'all'  => esc_url_raw( add_query_arg( array( 'subpage' => 'qna', 'xem' => 'tat-ca' ), get_permalink( (int) $q->comment_post_ID ) ) ),
+		);
+	}
+	?>
+<script>
+(function () {
+	var map = <?php echo wp_json_encode( $map ); ?>, one = <?php echo (int) $one; ?>;
+	function idOf(trigger) {
+		for (var el = trigger.parentNode; el && el !== document.body; el = el.parentNode) {
+			var t = el.querySelector('[id^="tutor-qna-text-"]');
+			if (t) return parseInt(t.id.replace('tutor-qna-text-', ''), 10);
+			if (el.classList && el.classList.contains('tutor-discussion-single-body')) return one;
+		}
+		return 0;
+	}
+	function fix() {
+		/* "Đi đến tất cả Hỏi đáp" opens the course's Hỏi đáp page, in the same tab. */
+		if (map[one]) document.querySelectorAll('.tutor-dashboard-discussions a[href*="page_tab=qna"]').forEach(function (a) { a.href = map[one].all; a.removeAttribute('target'); });
+		document.querySelectorAll('.tutor-dashboard-discussions .tutor-preview-trigger').forEach(function (trigger) {
+			var hit = map[idOf(trigger)];
+			if (!hit) return;
+			var a = document.createElement('a');
+			a.className = 'mp-qna-bai';
+			a.href = hit.url;
+			a.textContent = hit.text;
+			var holder = trigger.parentNode, said = holder.previousElementSibling;
+			holder.replaceChild(a, trigger);
+			if (said && /asked in|đã hỏi trong/i.test(said.textContent)) said.remove();
+		});
+	}
+	fix();
+	document.addEventListener('DOMContentLoaded', fix);
+	new MutationObserver(fix).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+	<?php
+}, 98 );
+
