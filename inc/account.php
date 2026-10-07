@@ -288,10 +288,12 @@ function maypiano_me_menu() {
 	if ( ! $me ) {
 		return '';
 	}
-	$html = '<details class="mp-me"><summary aria-label="' . esc_attr( 'Tài khoản của ' . $me['name'] ) . '"><span class="mp-me-av" aria-hidden="true">' . esc_html( $me['initial'] ) . ( '' !== $me['photo'] ? '<span class="mp-me-pic" style="background-image:url(' . esc_url( $me['photo'] ) . ')"></span>' : '' ) . '</span>'
-		. '<span class="mp-me-name">' . esc_html( $me['short'] ) . '</span>'
+	$av   = function ( $extra ) use ( $me ) {
+		return '<span class="mp-me-av' . $extra . '" aria-hidden="true">' . esc_html( $me['initial'] ) . ( '' !== $me['photo'] ? '<span class="mp-me-pic" style="background-image:url(' . esc_url( $me['photo'] ) . ')"></span>' : '' ) . '</span>';
+	};
+	$html = '<details class="mp-me"><summary aria-label="' . esc_attr( 'Tài khoản của ' . $me['name'] ) . '">' . $av( '' )
 		. '<svg class="mp-me-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5"></path></svg></summary>'
-		. '<div class="mp-me-menu"><div class="mp-me-head"><strong>' . esc_html( $me['name'] ) . '</strong><span>' . esc_html( $me['email'] ) . '</span></div>';
+		. '<div class="mp-me-menu"><div class="mp-me-head">' . $av( ' mp-me-big' ) . '<div class="mp-me-who"><strong>' . esc_html( $me['name'] ) . '</strong><span>' . esc_html( $me['email'] ) . '</span></div></div>';
 	foreach ( $me['links'] as $link ) {
 		$html .= '<a href="' . esc_url( $link['url'] ) . '">' . esc_html( $link['label'] ) . '</a>';
 	}
