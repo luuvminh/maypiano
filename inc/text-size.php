@@ -86,6 +86,8 @@ add_action( 'tutor_load_template_after', function ( $template ) {
 	}
 	$html    = (string) ob_get_clean();
 	$control = maypiano_text_size_control();
+	// The learner's profile menu sits after it, as on every other page.
+	$control .= function_exists( 'maypiano_me_menu' ) ? maypiano_me_menu() : '';
 	if ( '' !== $control ) {
 		$with = preg_replace( '/<\/div>(\s*)<div class="tutor-learning-header-toggle-mobile">/', $control . '</div>$1<div class="tutor-learning-header-toggle-mobile">', $html, 1, $done );
 		if ( $done ) {
