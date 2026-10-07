@@ -1,0 +1,219 @@
+{
+ "course": "piano-dem-hat-thanh-ca",
+ "video_prefix": "Thánh Ca",
+ "intro": "Bạn đang đệm đàn cho ca đoàn, hay muốn bắt đầu? Mây lớn lên cùng cây đàn nhà thờ, nên khóa này Mây soạn rất kỹ cho bạn. Mình đi từ hợp âm căn bản, cách tự đặt hợp âm và tạo intro, rồi đệm từng phần thánh lễ, từ Nhập lễ tới Kết lễ.",
+ "gets": [
+  "Tự đặt hợp âm cho bài chưa có hợp âm sẵn",
+  "Đệm đúng kiểu cho từng phần thánh lễ",
+  "Đệm trọn bộ lễ Seraphim"
+ ],
+ "photo": "g03.jpg",
+ "photo_alt": "Mây mặc áo dài trắng, cầm bó hoa, ngồi bên đàn piano",
+ "topics": [
+  {
+   "title": "Phần 1: Tổng quan và lý thuyết căn bản",
+   "lessons": [
+    {
+     "no": 1,
+     "title": "Giới thiệu về đệm Thánh Ca",
+     "length": "1:11"
+    },
+    {
+     "no": 2,
+     "title": "Hợp âm căn bản, tay phải",
+     "length": "6:19"
+    },
+    {
+     "no": 3,
+     "title": "Hợp âm mở rộng, tay trái",
+     "length": "5:38"
+    },
+    {
+     "no": 4,
+     "title": "Hợp âm 7",
+     "length": "3:35"
+    },
+    {
+     "no": 5,
+     "title": "Thế đảo của hợp âm",
+     "length": "4:43"
+    },
+    {
+     "no": 6,
+     "title": "Nhịp 2/4: Bao La Tình Chúa",
+     "length": "4:10"
+    },
+    {
+     "no": 7,
+     "title": "Áp dụng: Chúa Cất Tiếng Gọi Con",
+     "length": "2:34"
+    },
+    {
+     "no": 8,
+     "title": "Cách đệm số 2: Rải hai tay",
+     "length": "5:38"
+    },
+    {
+     "no": 9,
+     "title": "Đệm rải: Con Tin Chúa Ơi",
+     "length": "4:54"
+    },
+    {
+     "no": 10,
+     "title": "Nhịp 4/4: Dấu Ấn Tình Yêu",
+     "length": "3:03"
+    }
+   ]
+  },
+  {
+   "title": "Phần 2: Xác định hợp âm và tìm intro",
+   "lessons": [
+    {
+     "no": 11,
+     "title": "Tìm hợp âm chủ theo vòng tròn hoà thanh",
+     "length": "6:04"
+    },
+    {
+     "no": 12,
+     "title": "Tìm hợp âm phụ, đặt hợp âm vào bản nhạc",
+     "length": "8:03"
+    },
+    {
+     "no": 13,
+     "title": "Viết hợp âm bài Về Nơi Đây",
+     "length": "10:52"
+    },
+    {
+     "no": 14,
+     "title": "Tạo intro từ câu đầu bài",
+     "length": "5:25"
+    },
+    {
+     "no": 15,
+     "title": "Tạo intro đầu bài, phần 2",
+     "length": "5:17"
+    },
+    {
+     "no": 16,
+     "title": "Tạo intro từ câu cuối bài",
+     "length": "4:08"
+    },
+    {
+     "no": 17,
+     "title": "Tự tạo intro với vòng hoà âm",
+     "length": "6:07"
+    },
+    {
+     "no": 18,
+     "title": "Intro có sẵn",
+     "length": "4:01"
+    }
+   ]
+  },
+  {
+   "title": "Phần 3: Đệm từng phần thánh lễ",
+   "lessons": [
+    {
+     "no": 19,
+     "title": "Nhập lễ: Chung Lời Tạ Ơn, nhịp 2/4",
+     "length": "7:29"
+    },
+    {
+     "no": 20,
+     "title": "Tiết tấu nhanh: Về Nơi Đây",
+     "length": "9:34"
+    },
+    {
+     "no": 21,
+     "title": "Nhịp 6/8: Phúc Cho Những Ai, Đáp ca",
+     "length": "7:35"
+    },
+    {
+     "no": 22,
+     "title": "Các mẫu Halleluia",
+     "length": "3:02"
+    },
+    {
+     "no": 23,
+     "title": "Hai giọng chủ: Lễ Dâng Trông Đợi",
+     "length": "7:29"
+    },
+    {
+     "no": 24,
+     "title": "Nhịp 3/4: Tựa Làn Trầm Hương",
+     "length": "7:37"
+    },
+    {
+     "no": 25,
+     "title": "Hợp âm khó: Về Với Ngài, Hiệp lễ",
+     "length": "10:13"
+    },
+    {
+     "no": 26,
+     "title": "Ba kiểu đệm: Trên Đỉnh Đồi Xa",
+     "length": "12:00"
+    },
+    {
+     "no": 27,
+     "title": "Kết lễ: Kinh Tạ Lễ",
+     "length": "5:13"
+    },
+    {
+     "no": 28,
+     "title": "Kết lễ nhanh: Đâu Có Tình Yêu Thương",
+     "length": "7:33"
+    },
+    {
+     "no": 29,
+     "title": "Ba kiểu đệm: Khúc Cảm Tạ",
+     "length": "9:02"
+    },
+    {
+     "no": 30,
+     "title": "Hợp âm màu: Bỏ Ngài Con Biết Theo Ai",
+     "length": "13:10"
+    },
+    {
+     "no": 31,
+     "title": "Phó Thác",
+     "length": "8:07"
+    }
+   ]
+  },
+  {
+   "title": "Phần 4: Bộ lễ Seraphim",
+   "lessons": [
+    {
+     "no": 32,
+     "title": "Kinh Thương Xót",
+     "length": "4:24"
+    },
+    {
+     "no": 33,
+     "title": "Kinh Vinh Danh",
+     "length": "10:07"
+    },
+    {
+     "no": 34,
+     "title": "Kinh Tin Kính",
+     "length": "11:18"
+    },
+    {
+     "no": 35,
+     "title": "Thánh Thánh Thánh",
+     "length": "3:18"
+    },
+    {
+     "no": 36,
+     "title": "Lạy Chiên Thiên Chúa",
+     "length": "3:28"
+    },
+    {
+     "no": 37,
+     "title": "Tổng kết, kinh nghiệm đệm đàn nhà thờ",
+     "length": "2:08"
+    }
+   ]
+  }
+ ]
+}
