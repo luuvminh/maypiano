@@ -340,3 +340,40 @@ function maypiano_me_menu() {
 	return $html . '<a class="mp-me-out" href="' . esc_url( $me['out'] ) . '">Đăng xuất</a></div></details>'
 		. '<script>(function(){var d=document.querySelector(".mp-me");if(!d)return;document.addEventListener("pointerdown",function(e){if(d.open&&!d.contains(e.target))d.open=false});document.addEventListener("keydown",function(e){if(e.key==="Escape"&&d.open){d.open=false;d.querySelector("summary").focus()}})})();</script>';
 }
+
+/**
+ * The plain grey message screen the software underneath shows when it stops a request (a failed check at sign-in,
+ * an expired link, a refused request). Visitors get the same notice in the May Piano look, in Vietnamese, and without
+ * the name of any software. The admin screens keep theirs, and the owner still sees the original wording underneath.
+ */
+add_filter( 'wp_die_handler', function ( $handler ) {
+	return is_admin() ? $handler : 'maypiano_stop_page';
+}, 99 );
+
+function maypiano_stop_page( $message, $title = '', $args = array() ) {
+	list( $message, $title, $parsed ) = _wp_die_process_input( $message, $title, $args );
+	$plain = trim( wp_strip_all_tags( (string) $message ) );
+	if ( preg_match( '/math problem|brute force|too many|locked out|blocked/i', $plain ) ) {
+		$head = 'Chưa đăng nhập được';
+		$say  = 'Lúc này trang chưa cho đăng nhập. Bạn chờ vài phút rồi thử lại nhé.';
+	} elseif ( preg_match( '/expired|nonce|are you sure|link you followed/i', $plain ) ) {
+		$head = 'Đường dẫn đã hết hạn';
+		$say  = 'Đường dẫn này không còn dùng được. Bạn quay lại trang trước, tải lại trang rồi thử lần nữa nhé.';
+	} else {
+		$head = 'Chưa làm được';
+		$say  = 'Trang chưa làm được việc bạn vừa yêu cầu. Bạn thử lại sau ít phút nhé.';
+	}
+	$body = '<p>' . esc_html( $say ) . '</p>'
+		. '<p><a class="btn" href="' . esc_url( is_user_logged_in() ? maypiano_learn_url() : maypiano_login_url() ) . '">' . ( is_user_logged_in() ? 'Vào học' : 'Về trang đăng nhập' ) . '</a></p>'
+		. '<p><a href="' . esc_url( home_url( '/' ) ) . '">Về trang chủ</a></p>';
+	if ( current_user_can( 'manage_options' ) && '' !== $plain ) {
+		$body .= '<p class="hint">Chỉ chủ site thấy dòng này: ' . esc_html( $plain ) . '</p>';
+	}
+	if ( ! headers_sent() ) {
+		status_header( (int) $parsed['response'] );
+		nocache_headers();
+		header( 'Content-Type: text/html; charset=utf-8' );
+	}
+	maypiano_account_page( $head, $body );
+}
+
