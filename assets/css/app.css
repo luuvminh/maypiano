@@ -124,3 +124,22 @@ body.mp-app .mp-sheet-empty p{margin:0}
 body.mp-app .mp-sheet-empty .mp-lost-go{margin-top:24px}
 
 @media (prefers-reduced-motion:reduce){body.mp-app *{transition:none!important;animation:none!important}}
+/* Profile menu of a signed-in learner, at the right end of the top bar. */
+.mp-me{position:relative;align-self:stretch;display:flex}
+.mp-me summary{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 12px 0 6px;border:2px solid var(--mp-ink);border-radius:999px;font-weight:600;white-space:nowrap;cursor:pointer;list-style:none;user-select:none;transition:transform .12s ease}
+.mp-me summary::-webkit-details-marker{display:none}
+.mp-me summary:active{transform:scale(.96)}
+.mp-me-av{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:var(--mp-accent);color:#fff;font-weight:600;font-size:1.125rem;line-height:1}
+.mp-me-name{max-width:9em;overflow:hidden;text-overflow:ellipsis}
+.mp-me-chev{flex:none;transition:transform .2s cubic-bezier(.22,1,.36,1)}
+.mp-me[open] .mp-me-chev{transform:rotate(180deg)}
+.mp-me-menu{position:absolute;right:0;top:calc(100% + 10px);z-index:60;width:max-content;min-width:264px;max-width:calc(100vw - 28px);padding:8px;background:#fff;border:2px solid var(--mp-ink);border-radius:16px;box-shadow:0 22px 44px -20px rgba(43,30,36,.6);font-weight:500}
+.mp-me-head{display:flex;flex-direction:column;padding:8px 12px 10px;margin-bottom:6px;border-bottom:1px solid rgba(43,30,36,.16)}
+.mp-me-head strong{font-weight:600}
+.mp-me-head span{font-size:.9375rem;color:#5B2A3C;overflow:hidden;text-overflow:ellipsis}
+body.mp-app .mp-links .mp-me-menu a{display:flex;align-items:center;min-height:48px;padding:8px 12px;border-radius:10px;font-size:1.125rem;color:var(--mp-ink)}
+@media (hover:hover){body.mp-app .mp-links .mp-me-menu a:hover{background:#F6EFEF;color:var(--mp-ink)}}
+body.mp-app .mp-links .mp-me-menu a.mp-me-out{margin-top:6px;border-top:1px solid rgba(43,30,36,.16);border-radius:0 0 10px 10px;color:#5B2A3C}
+@media (max-width:820px){.mp-me summary{min-height:0;padding:0 9px 0 4px;gap:6px}.mp-me-av{width:32px;height:32px;font-size:1rem}}
+@media (max-width:600px){.mp-me-name,.mp-me-chev{display:none}.mp-me summary{padding:0;border:0}}
+@media (max-width:440px){.mp-links:has(.mp-me){gap:5px}body.mp-app .mp-links:has(.mp-me) a.mp-pill,body.mp-app .mp-links:has(.mp-me) a.mp-enter{padding:9px 10px;font-size:1rem}body.mp-app .mp-nav:has(.mp-me) .mp-logo img{height:36px}}

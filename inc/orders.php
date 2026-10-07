@@ -439,6 +439,7 @@ add_action( 'rest_api_init', function () {
 				'region'     => maypiano_region( $req->get_param( 'region' ) ),
 				'prices'     => $prices,
 				'mine'       => maypiano_my_courses(),
+				'me'         => maypiano_me(),
 				'methods'    => $methods,
 				'cardMode'   => 'test' === $mode && ! maypiano_can_test() ? 'off' : $mode,
 				'bank'       => array(

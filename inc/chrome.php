@@ -138,12 +138,9 @@ function maypiano_site_header() {
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#bai-hat">Bài hát</a>
 <a href="<?php echo esc_url( home_url( '/sheet-nhac/' ) ); ?>"<?php echo is_page( 'sheet-nhac' ) ? ' aria-current="page"' : ''; ?>>Sheet nhạc</a>
 <a href="<?php echo $home; // phpcs:ignore WordPress.Security.EscapeOutput ?>#cong-dong">Cộng đồng</a>
-	<?php if ( is_user_logged_in() ) : ?>
-<a class="mp-pill" href="<?php echo esc_url( maypiano_learn_url() ); ?>">Khóa học của mình</a>
-	<?php else : ?>
-<a class="mp-enter" href="<?php echo esc_url( maypiano_login_url() ); ?>">Vào học</a>
+<a class="mp-enter" href="<?php echo esc_url( is_user_logged_in() ? maypiano_learn_url() : maypiano_login_url() ); ?>">Vào học</a>
 <a class="mp-pill" href="<?php echo esc_url( maypiano_signup_url() ); ?>">Đăng ký học</a>
-	<?php endif; ?>
+	<?php echo maypiano_me_menu(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 </div>
 </nav>
 </header>
