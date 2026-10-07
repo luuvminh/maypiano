@@ -702,25 +702,22 @@ this.lit = { a: m }; this.light('a', m);
 }
 /* The notes drawn on the staff (the Canon figure: long notes, then eighths, then sixteenths). They scroll silently as decoration; the sound is Mây's recording. */
 score() {
-const M = [60, 62, 64, 65, 67, 69, 71, 72, 74, 76];
-const LH = [[48, 55, 60], [43, 50, 55], [45, 52, 57], [40, 47, 52], [41, 48, 53], [48, 55, 60], [41, 48, 53], [43, 50, 55]];
 const LONG = [9, 8, 7, 6, 5, 4, 5, 6];
 const ARP = [[9, 7, 4, 7], [8, 6, 4, 6], [7, 5, 2, 5], [6, 4, 2, 4], [5, 3, 0, 3], [4, 2, 0, 2], [5, 3, 7, 5], [6, 4, 8, 6]];
-const D = 1600, GAP = 110, ev = [], staff = [], groups = [], barAt = [];
-let t = 0;
-/* Every two chords a new bar starts. The bar line gets a little room of its own, so it never crowds the notes on either side. */
-const bar = (i) => { if (i % 2 === 0 && t > 0) { t += GAP; barAt.push(t); } };
-const left = (i) => [0, 1, 2, 1].forEach((n, j) => ev.push({ t: t + j * D / 4, m: LH[i][n], v: j ? 0.26 : 0.38, h: 1.7, lh: 1 }));
-const tune = (at, k, v, h, kind) => { ev.push({ t: at, m: M[k], v, h, n: staff.length }); staff.push({ t: at, k, kind }); return staff.length - 1; };
-LONG.forEach((k, i) => { bar(i); left(i); tune(t, k, 0.6, 2, 'h'); ev.push({ t: t + 12, m: M[k - 2], v: 0.3, h: 2 }); t += D; });
-ARP.forEach((g, i) => { bar(i); left(i); groups.push(g.map((k, j) => tune(t + j * D / 4, k, j ? 0.48 : 0.62, 1.3, 'e'))); t += D; });
-ARP.forEach((g, i) => { bar(i); left(i); const ids = [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].map((k, j) => tune(t + j * D / 8, k, j % 4 ? 0.4 : 0.58, 1, 's')); groups.push(ids.slice(0, 4), ids.slice(4)); t += D; });
-bar(0);
-const end = t;
-ev.push({ t, m: 48, v: 0.42, h: 4.5, lh: 1 }); ev.push({ t: t + 110, m: 55, v: 0.42, h: 4.5, lh: 1 });
-tune(t + 220, 7, 0.55, 4.5, 'h');
-ev.push({ t: t + 330, m: 64, v: 0.4, h: 4.5 }); ev.push({ t: t + 440, m: 76, v: 0.45, h: 4.5 });
-this.total = t + 6400;
+/* Room per note, as in printed music: longer notes get more space, but not in proportion to their length. The strip scrolls 1px every 5ms, so 750ms is 150px for a half note, 76px for an eighth, 52px for a sixteenth. LEAD is the room between a bar line and the first note of its bar. */
+const STEP = { h: 750, e: 380, s: 260 }, LEAD = { h: 240, e: 180, s: 150 };
+const ev = [], staff = [], groups = [], barAt = [];
+let t = 0, last = 0;
+/* Every two chords a new bar starts. The last note of a bar keeps 60% of its room before the bar line, so the notes sit evenly between the two lines. */
+const bar = (i, kind) => { if (i % 2 === 0 && t > 0) { t += LEAD[kind] - 0.4 * last; barAt.push(t - LEAD[kind]); } last = STEP[kind]; };
+const tune = (at, k, kind) => { ev.push({ t: at, n: staff.length }); staff.push({ t: at, k, kind }); return staff.length - 1; };
+LONG.forEach((k, i) => { bar(i, 'h'); tune(t, k, 'h'); t += STEP.h; });
+ARP.forEach((g, i) => { bar(i, 'e'); groups.push(g.map((k, j) => tune(t + j * STEP.e, k, 'e'))); t += 4 * STEP.e; });
+ARP.forEach((g, i) => { bar(i, 's'); const ids = [g[0], g[1], g[2], g[1], g[0], g[1], g[2], g[1]].map((k, j) => tune(t + j * STEP.s, k, 's')); groups.push(ids.slice(0, 4), ids.slice(4)); t += 8 * STEP.s; });
+bar(0, 'h');
+tune(t, 7, 'h');
+const end = t + STEP.h;
+this.total = end + 400;
 /* Engraving: 4/4 with a half note per chord. Stems turn down from the middle line, eighths and sixteenths are beamed in fours. A beamed stem is at least 2.7 staff spaces (54px), so beams stay close to the staff and inside the strip. */
 const PX = this.PX = 0.2, Y = (k) => 141 - 10 * k, beams = [], bars = [];
 staff.forEach((n) => { n.x = n.t * PX; n.y = Y(n.k); n.up = n.k < 6; n.tip = n.up ? n.y - 70 : n.y + 70; });
@@ -735,8 +732,8 @@ g.forEach((n, j) => { n.up = up; n.tip = b0 + at[j]; });
 const beam = (off) => beams.push({ x: g[0].x + (up ? 8.6 : -11), y: (up ? b0 + off : b0 - 9 - off), w: w + 2.4, a: Math.atan2(sl, w) * 180 / Math.PI });
 beam(0); if (g[0].kind === 's') beam(14);
 });
-barAt.forEach((b) => bars.push({ x: b * PX - 28, w: 2 }));
-bars.push({ x: (end + D) * PX, w: 2 }, { x: (end + D) * PX + 7, w: 6 });
+barAt.forEach((b) => bars.push({ x: b * PX - 1, w: 2 }));
+bars.push({ x: end * PX, w: 2 }, { x: end * PX + 7, w: 6 });
 const loop = this.total * PX, again = (list, lim) => list.concat(list.filter((o) => o.x < lim).map((o) => Object.assign({}, o, { x: o.x + loop })));
 this.staff = again(staff.map((n, i) => Object.assign({ i }, n)), 2600); this.beams = again(beams, 2600); this.bars = again(bars, 2600);
 this.ev = ev.sort((a, b) => a.t - b.t);
