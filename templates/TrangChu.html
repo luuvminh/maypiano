@@ -208,7 +208,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 <sc-for list="{{rec.gets}}" as="g" hint-placeholder-count="3">
 <div style="display: flex; gap: 12px; align-items: flex-start"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 4px" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"></path></svg><span>{{g.t}}</span></div>
 </sc-for>
-<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><a href="%%SIGNUP%%?khoa={{rec.key}}" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký học</a><a href="#lo-trinh" onClick="{{seeRec}}" class="press" style="text-decoration: none; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; padding: 12px 26px; border-radius: 999px; font-weight: 600">Xem nội dung khóa học</a></div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px"><sc-if value="{{rec.buy}}"><a href="%%SIGNUP%%?khoa={{rec.key}}" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Đăng ký học</a></sc-if><sc-if value="{{rec.go}}"><a href="{{rec.go}}" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 14px 28px; border-radius: 999px; font-weight: 600">Vào học</a></sc-if><a href="#lo-trinh" onClick="{{seeRec}}" class="press" style="text-decoration: none; border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; padding: 12px 26px; border-radius: 999px; font-weight: 600">Xem nội dung khóa học</a></div>
 </div>
 </div>
 </section>
@@ -781,7 +781,8 @@ hat: { key: 'dem-hat', name: 'Đệm Hát Piano', why: 'Bạn muốn vừa đàn
 thanhca: { key: 'thanh-ca', name: 'Đệm Hát Thánh Ca', why: 'Mây lớn lên cùng cây đàn nhà thờ, nên khóa này Mây soạn rất kỹ cho bạn đệm ca đoàn.', price: '799.000đ', meta: '37 bài, 3 giờ 54 phút', gets: [{ t: 'Tự đặt hợp âm cho bài chưa có hợp âm sẵn' }, { t: 'Đệm đúng kiểu cho từng phần thánh lễ' }, { t: 'Đệm trọn bộ lễ Seraphim' }] }
 };
 const L = [['moi', 'Chưa từng học đàn'], ['haitay', 'Đã biết nốt và hợp âm'], ['nangcao', 'Muốn đàn nâng cao hơn'], ['hat', 'Muốn vừa đàn vừa hát'], ['thanhca', 'Đệm cho ca đoàn']];
-Object.keys(recs).forEach((k) => { recs[k].price = P(recs[k].key, recs[k].price); });
+/* A learner who already has the suggested course gets Vào học, never a buy button. */
+Object.keys(recs).forEach((k) => { const r = recs[k]; const my = (s.mine && s.mine[r.key]) || null; r.price = my && my.enrolled ? 'Đã đăng ký' : P(r.key, r.price); r.buy = !my; r.go = my ? my.go : ''; });
 const levels = L.map((o) => ({ label: o[1], pick: () => this.setState({ level: o[0], swap: s.swap + 1 }), bg: s.level === o[0] ? '#F6EFEF' : '#5B2A3C', fg: s.level === o[0] ? INK : '#F6EFEF', pressed: s.level === o[0] ? 'true' : 'false' }));
 const S = [
 { step: '1', key: 'solo-can-ban', name: 'Piano Solo Căn Bản', desc: 'Đọc nốt, bấm hợp âm tay trái và ghép hai tay qua hơn 20 bản nhạc quen thuộc.', meta: '58 bài, 4 giờ 04 phút', price: '899.000đ', parts: [['Phần 1, 8 bài', 'Nốt nhạc cho khoá Sol tay phải'], ['Phần 2, 13 bài', 'Hợp âm tay trái và ghép hai tay'], ['Phần 3, 15 bài', 'Hợp âm 4, 5, 6 nốt trên những bài khó hơn'], ['Phần 4, 22 bài', 'Áp dụng vào 20 bản nhạc khác']] },
