@@ -101,7 +101,9 @@ function maypiano_order_view( $order ) {
 		);
 	}
 	$state = maypiano_order_state( $order );
+	$sheet = maypiano_is_sheet_order( $order );
 	$view  = array(
+		'kind'       => $sheet ? 'sheet' : 'course',
 		'id'         => $order->get_id(),
 		'key'        => $order->get_order_key(),
 		'code'       => maypiano_order_code( $order ),
@@ -120,7 +122,10 @@ function maypiano_order_view( $order ) {
 		'paypalTo'   => is_email( maypiano_setting( 'maypiano_paypal' ) ) ? maypiano_setting( 'maypiano_paypal' ) : '',
 		'payUrl'     => 'card' === $method && 'live' === maypiano_card_mode() && $order->needs_payment() ? $order->get_checkout_payment_url() : '',
 	);
-	if ( 'paid' === $state ) {
+	if ( 'paid' === $state && $sheet ) {
+		$view['access']    = 'open';
+		$view['downloads'] = maypiano_sheet_downloads( $order );
+	} elseif ( 'paid' === $state ) {
 		$view['learnUrl']   = maypiano_login_url();
 		$view['newAccount'] = (bool) $order->get_meta( '_mp_new_account' );
 		$view['access']     = (string) $order->get_meta( '_mp_access' );
@@ -294,7 +299,7 @@ add_filter( 'woocommerce_email_enabled_failed_order', function ( $enabled, $orde
  */
 add_action( 'woocommerce_order_status_changed', function ( $order_id, $from, $to, $order = null ) {
 	$order = $order ? $order : wc_get_order( $order_id );
-	if ( 'completed' !== $to || ! maypiano_is_ours( $order ) || $order->get_meta( '_mp_fulfilled' ) ) {
+	if ( 'completed' !== $to || ! maypiano_is_ours( $order ) || maypiano_is_sheet_order( $order ) || $order->get_meta( '_mp_fulfilled' ) ) {
 		return;
 	}
 	$user_id = (int) $order->get_customer_id();
@@ -337,7 +342,7 @@ add_action( 'woocommerce_order_status_changed', function ( $order_id, $from, $to
  */
 add_action( 'woocommerce_order_status_changed', function ( $order_id, $from, $to ) {
 	$order = wc_get_order( $order_id );
-	if ( 'completed' !== $to || ! maypiano_is_ours( $order ) || $order->get_meta( '_mp_fulfilled' ) ) {
+	if ( 'completed' !== $to || ! maypiano_is_ours( $order ) || maypiano_is_sheet_order( $order ) || $order->get_meta( '_mp_fulfilled' ) ) {
 		return;
 	}
 	$user_id = (int) $order->get_customer_id();
@@ -580,7 +585,7 @@ function maypiano_order_badge( $order ) {
 	$state = maypiano_order_state( $order );
 	if ( 'paid' === $state ) {
 		$access = $order->get_meta( '_mp_access' );
-		return $test . ( 'open' === $access ? 'Đã mở khóa học' : 'Đã trả, CHƯA MỞ ĐƯỢC KHÓA' );
+		return $test . ( 'open' === $access ? ( maypiano_is_sheet_order( $order ) ? 'Đã gửi sheet' : 'Đã mở khóa học' ) : 'Đã trả, CHƯA MỞ ĐƯỢC KHÓA' );
 	}
 	if ( 'reported' === $state ) {
 		$at = (int) $order->get_meta( '_mp_reported' );

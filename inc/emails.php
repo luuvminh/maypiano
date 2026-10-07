@@ -97,7 +97,7 @@ function maypiano_mail_order_received( $order ) {
 		$body .= '<p>Bạn xem lại đơn bất cứ lúc nào ở đây: <a href="' . esc_url( maypiano_order_url( $order ) ) . '" style="color:#8A3350">trang đơn hàng</a>.</p>';
 	}
 	if ( ! $quote ) {
-		$body .= '<p>Nhận được tiền, Mây mở khóa học và gửi email cho bạn trong ' . esc_html( maypiano_setting( 'maypiano_processing' ) ) . '.</p>';
+		$body .= '<p>Nhận được tiền, Mây ' . ( maypiano_is_sheet_order( $order ) ? 'gửi file sheet qua email cho bạn trong ' : 'mở khóa học và gửi email cho bạn trong ' ) . esc_html( maypiano_setting( 'maypiano_processing' ) ) . '.</p>';
 	}
 	$body .= maypiano_mail_support();
 	return maypiano_mail( $order->get_billing_email(), 'Mây đã nhận đơn ' . $code . ' của bạn', $body );
@@ -160,7 +160,7 @@ function maypiano_mail_owner_new_order( $order ) {
 	if ( $order->get_meta( '_mp_needs_quote' ) ) {
 		$body .= '<p><strong>Chưa có giá cho vùng của khách.</strong> Điền giá vào đơn, rồi gửi khách số tiền và cách trả.</p>';
 	} else {
-		$body .= '<p>Khi tiền về tài khoản, bạn bấm nút dưới đây để duyệt. Site sẽ tự tạo tài khoản học, mở khóa học và gửi email cho khách.</p>'
+		$body .= '<p>Khi tiền về tài khoản, bạn bấm nút dưới đây để duyệt. ' . ( maypiano_is_sheet_order( $order ) ? 'Site sẽ tự gửi email có nút tải sheet cho khách.' : 'Site sẽ tự tạo tài khoản học, mở khóa học và gửi email cho khách.' ) . '</p>'
 			. maypiano_mail_button( maypiano_approve_url( $order ), 'Duyệt đơn này' );
 	}
 	$body .= '<p style="font-size:15px"><a href="' . esc_url( $order->get_edit_order_url() ) . '" style="color:#8A3350">Mở đơn trong WooCommerce</a></p>';
@@ -191,7 +191,7 @@ function maypiano_mail_refunded( $order, $amount, $full ) {
 	$body = '<p>Chào ' . esc_html( $order->get_billing_first_name() ) . ',</p>'
 		. '<p>Mây đã hoàn <strong>' . esc_html( $sum ) . '</strong> cho đơn <strong>' . esc_html( $code ) . '</strong>, theo đúng cách bạn đã trả.</p>'
 		. maypiano_mail_lines( $order );
-	if ( $full ) {
+	if ( $full && ! maypiano_is_sheet_order( $order ) ) {
 		$body .= '<p>Khóa học của đơn này đã đóng. Khi nào bạn muốn học lại, Mây luôn chào đón bạn.</p>';
 	}
 	$body .= '<p>Vài ngày nữa mà bạn chưa thấy tiền về, bạn báo để Mây kiểm tra nhé.</p>' . maypiano_mail_support();
