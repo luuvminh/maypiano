@@ -18,11 +18,16 @@ function maypiano_is_ours( $order ) {
 
 /** What the customer writes in the transfer so the payment can be matched to the order. */
 function maypiano_memo( $order ) {
-	return 'MP' . $order->get_id();
+	return maypiano_order_prefix( $order ) . $order->get_id();
 }
 
 function maypiano_order_code( $order ) {
-	return 'MP-' . $order->get_id();
+	return maypiano_order_prefix( $order ) . '-' . $order->get_id();
+}
+
+/** MP for course orders, MS for sheet orders, so the owner tells them apart on the bank statement. */
+function maypiano_order_prefix( $order ) {
+	return maypiano_is_sheet_order( $order ) ? 'MS' : 'MP';
 }
 
 function maypiano_order_url( $order ) {
