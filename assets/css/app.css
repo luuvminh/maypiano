@@ -145,3 +145,6 @@ body.mp-app .mp-links .mp-me-menu a.mp-me-out{margin-top:6px;border-top:1px soli
 @media (max-width:820px){.mp-me summary{min-height:0;padding:0 9px 0 4px;gap:6px}.mp-me-av{width:32px;height:32px;font-size:1rem}}
 @media (max-width:600px){.mp-me-chev{display:none}.mp-me summary{padding:0;border:0}}
 @media (max-width:440px){.mp-links:has(.mp-me){gap:5px}body.mp-app .mp-links:has(.mp-me) a.mp-pill,body.mp-app .mp-links:has(.mp-me) a.mp-enter{padding:9px 10px;font-size:1rem}body.mp-app .mp-nav:has(.mp-me) .mp-logo img{height:36px}}
+/* Hỏi đáp của mình: the lesson's name under the asker, a plain link. */
+body.mp-app .tutor-dashboard-discussions a.mp-qna-bai{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--mp-plum,#5B2A3C);text-decoration:underline;text-underline-offset:3px}
+body.mp-app .tutor-dashboard-discussions a.mp-qna-bai:hover{color:var(--mp-accent)}
