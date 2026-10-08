@@ -42,6 +42,8 @@ body.mp-app a.mpc-more:active{transform:scale(.97)}
 .mpc-name{flex:1 1 auto;min-width:0}
 body.mp-app a.mpc-name{font-weight:600;text-underline-offset:3px;padding:10px 0;margin:-10px 0}
 .mpc-free{flex:none;font-size:0.9375rem;font-weight:600;background:var(--mp-pink);border-radius:999px;padding:2px 12px;white-space:nowrap}
+body.mp-app a.mpc-solo{flex:none;font-size:0.9375rem;font-weight:600;background:#F7D9E1;color:var(--mp-ink);border:1px solid var(--mp-accent);border-radius:999px;padding:2px 12px;white-space:nowrap;text-decoration:none}
+body.mp-app a.mpc-solo:hover{background:var(--mp-accent);color:#fff}
 .mpc-len{flex:none;font-variant-numeric:tabular-nums;white-space:nowrap}
 .mpc-lock{flex:none;align-self:center;display:inline-flex;color:var(--mp-plum);opacity:.7}
 

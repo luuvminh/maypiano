@@ -440,6 +440,8 @@ add_action( 'rest_api_init', function () {
 				'prices'     => $prices,
 				'mine'       => maypiano_my_courses(),
 				'songs'      => function_exists( 'maypiano_song_links' ) ? maypiano_song_links() : array(),
+				'songList'   => function_exists( 'maypiano_song_list' ) ? maypiano_song_list() : array(),
+				'songCourses' => function_exists( 'maypiano_song_course_links' ) ? maypiano_song_course_links() : array(),
 				'me'         => maypiano_me(),
 				'methods'    => $methods,
 				'cardMode'   => 'test' === $mode && ! maypiano_can_test() ? 'off' : $mode,

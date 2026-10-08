@@ -141,6 +141,55 @@ function maypiano_song_url( $slug ) {
 	return home_url( '/bai-hat-le/#bai-' . $slug );
 }
 
+/** Where the songs of one full course start on the sales page. */
+function maypiano_song_group_url( $from ) {
+	return home_url( '/bai-hat-le/#khoa-' . $from );
+}
+
+/** Catalog key of the full course with this address, or ''. */
+function maypiano_song_course_key( $from ) {
+	foreach ( maypiano_catalog() as $key => $course ) {
+		if ( $course['course'] === $from ) {
+			return $key;
+		}
+	}
+	return '';
+}
+
+/** For the home page and the sign-up page: each course with songs on sale, by catalog key, with where they are. */
+function maypiano_song_course_links() {
+	$out = array();
+	foreach ( maypiano_songs_on_sale() as $song ) {
+		$key = maypiano_song_course_key( $song['from'] );
+		if ( '' !== $key ) {
+			$out[ $key ] = maypiano_song_group_url( $song['from'] );
+		}
+	}
+	return $out;
+}
+
+/** For the home page lesson lists: the songs on sale, in order, each with its course's catalog key. */
+function maypiano_song_list() {
+	$out = array();
+	foreach ( maypiano_songs_on_sale() as $song ) {
+		$out[] = array(
+			't' => $song['title'],
+			'k' => maypiano_song_course_key( $song['from'] ),
+			'u' => maypiano_song_url( $song['slug'] ),
+		);
+	}
+	return $out;
+}
+
+/** For a course page: the first lesson of each song on sale, by the lesson's hidden key, with where to buy the song. */
+function maypiano_song_lesson_links() {
+	$out = array();
+	foreach ( maypiano_songs_on_sale() as $song ) {
+		$out[ $song['from'] . '/bai-' . (int) $song['lessons'][0] ] = maypiano_song_url( $song['slug'] );
+	}
+	return $out;
+}
+
 /** For the home page: the songs on sale, by title in lower case, with where to buy each. */
 function maypiano_song_links() {
 	$out = array();

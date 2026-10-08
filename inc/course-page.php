@@ -62,6 +62,7 @@ function maypiano_course_view( $course_id ) {
 	$enrolled = is_user_logged_in() && function_exists( 'tutor_utils' ) && (bool) tutor_utils()->is_enrolled( $course_id, get_current_user_id() );
 	$inside   = $enrolled || current_user_can( 'edit_post', $course_id );
 
+	$sold    = ! $inside && function_exists( 'maypiano_song_lesson_links' ) ? maypiano_song_lesson_links() : array();
 	$parts   = array();
 	$lessons = 0;
 	$seconds = 0;
@@ -101,6 +102,8 @@ function maypiano_course_view( $course_id ) {
 				'length' => $secs ? sprintf( '%d:%02d', intdiv( $secs, 60 ), $secs % 60 ) : '',
 				'url'    => $url,
 				'free'   => $free && ! $inside,
+				// The first lesson of a song Mây also sells on its own links to buying just that song.
+				'song'   => $sold[ (string) get_post_meta( $item->ID, '_maypiano_key', true ) ] ?? '',
 			);
 			$total += $secs;
 		}
@@ -127,6 +130,7 @@ function maypiano_course_view( $course_id ) {
 		'key'      => $key,
 		'price'    => null === $price ? '' : maypiano_money( $price, 'VND' ),
 		'enrolled' => $inside,
+		'songs'    => ! $inside && function_exists( 'maypiano_song_course_links' ) && '' !== $key ? ( maypiano_song_course_links()[ $key ] ?? '' ) : '',
 		'first'    => $first,
 		'buy'      => maypiano_signup_url( $key ),
 	);
