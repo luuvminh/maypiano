@@ -1,0 +1,314 @@
+{
+ "course": "piano-solo-can-ban",
+ "video_prefix": "Solo Căn Bản",
+ "intro": "Bạn chưa đọc được bản nhạc, hay mới chơi được vài bài? Khóa này Mây dẫn bạn đi từ những nốt nhạc đầu tiên trên phím đàn, tới hợp âm tay trái và ghép hai tay. Cuối khóa, bạn tự chơi được hơn 20 bản nhạc quen thuộc, bài nào cũng có video Mây đàn mẫu.",
+ "gets": [
+  "Đọc được nốt nhạc khóa Sol và trường độ",
+  "Đệm tay trái từ hợp âm 3 nốt tới 6 nốt",
+  "Tự chơi hơn 20 bản nhạc yêu thích bằng hai tay"
+ ],
+ "photo": "g12.jpg",
+ "photo_alt": "Mây ngồi bên đàn piano",
+ "topics": [
+  {
+   "title": "Phần 1: Nốt nhạc khóa Sol cho tay phải",
+   "lessons": [
+    {
+     "no": 1,
+     "title": "Giới thiệu, tư thế ngồi đàn",
+     "length": "2:23"
+    },
+    {
+     "no": 2,
+     "title": "Xác định nốt nhạc trên phím đàn",
+     "length": "3:47"
+    },
+    {
+     "no": 3,
+     "title": "Nhận biết nốt trên bản nhạc, nốt khoảng 1",
+     "length": "7:54"
+    },
+    {
+     "no": 4,
+     "title": "Trường độ",
+     "length": "4:17"
+    },
+    {
+     "no": 5,
+     "title": "Nhận biết nốt trên bản nhạc, nốt khoảng 2",
+     "length": "7:46"
+    },
+    {
+     "no": 6,
+     "title": "Kết hợp nốt khoảng 1 và khoảng 2",
+     "length": "8:40"
+    },
+    {
+     "no": 7,
+     "title": "Dấu hoá",
+     "length": "4:17"
+    },
+    {
+     "no": 8,
+     "title": "Thực hành bản nhạc có dấu hoá: Für Elise",
+     "length": "3:40"
+    }
+   ]
+  },
+  {
+   "title": "Phần 2: Hợp âm tay trái và ghép hai tay",
+   "lessons": [
+    {
+     "no": 9,
+     "title": "Hợp âm tay trái",
+     "length": "4:54"
+    },
+    {
+     "no": 10,
+     "title": "Hợp âm, phần 2: kết hợp hai tay",
+     "length": "5:18"
+    },
+    {
+     "no": 11,
+     "title": "Đàn hai tay: You Are My Sunshine",
+     "length": "4:53"
+    },
+    {
+     "no": 12,
+     "title": "Hướng dẫn đạp pedal",
+     "length": "2:24"
+    },
+    {
+     "no": 13,
+     "title": "Ghép hai tay: Für Elise",
+     "length": "5:44"
+    },
+    {
+     "no": 14,
+     "title": "Ghép hai tay: A Time for Us",
+     "length": "4:14"
+    },
+    {
+     "no": 15,
+     "title": "Song from a Secret Garden, phần 1",
+     "length": "5:09"
+    },
+    {
+     "no": 16,
+     "title": "Song from a Secret Garden, phần 2",
+     "length": "4:04"
+    },
+    {
+     "no": 17,
+     "title": "Ánh Trăng Nói Hộ Lòng Tôi, phần 1",
+     "length": "9:06"
+    },
+    {
+     "no": 18,
+     "title": "Ánh Trăng Nói Hộ Lòng Tôi, phần 2",
+     "length": "5:05"
+    },
+    {
+     "no": 19,
+     "title": "Que Sera Sera",
+     "length": "6:53"
+    },
+    {
+     "no": 20,
+     "title": "Bèo Dạt Mây Trôi, nốt khoảng thấp",
+     "length": "8:10"
+    },
+    {
+     "no": 21,
+     "title": "Happy Birthday, sheet nhạc một dấu Fa thăng",
+     "length": "4:10"
+    }
+   ]
+  },
+  {
+   "title": "Phần 3: Phát triển hợp âm tay trái cho những bài khó hơn",
+   "lessons": [
+    {
+     "no": 22,
+     "title": "Phát triển hợp âm 4 nốt",
+     "length": "3:13"
+    },
+    {
+     "no": 23,
+     "title": "Hợp âm 4 nốt: Mưa Hồng",
+     "length": "10:48"
+    },
+    {
+     "no": 24,
+     "title": "Hợp âm 4 nốt: Fly Me to the Moon",
+     "length": "7:12"
+    },
+    {
+     "no": 25,
+     "title": "Hợp âm B, Bm, Bb",
+     "length": "3:14"
+    },
+    {
+     "no": 26,
+     "title": "We Wish You a Merry Christmas",
+     "length": "5:52"
+    },
+    {
+     "no": 27,
+     "title": "Phát triển hợp âm 5 nốt",
+     "length": "3:08"
+    },
+    {
+     "no": 28,
+     "title": "Hợp âm 5 nốt: Ánh Trăng Nói Hộ Lòng Tôi",
+     "length": "4:08"
+    },
+    {
+     "no": 29,
+     "title": "Hợp âm 5 nốt: A Time for Us",
+     "length": "2:50"
+    },
+    {
+     "no": 31,
+     "title": "Kiss the Rain, phần 2",
+     "length": "5:32"
+    },
+    {
+     "no": 32,
+     "title": "Phát triển hợp âm 6 nốt",
+     "length": "6:57"
+    },
+    {
+     "no": 33,
+     "title": "My Heart Will Go On, áp dụng 3 mẫu đệm",
+     "length": "9:49"
+    },
+    {
+     "no": 35,
+     "title": "River Flows in You, phần 2",
+     "length": "6:44"
+    },
+    {
+     "no": 36,
+     "title": "Một vài lưu ý khi chơi đàn",
+     "length": "5:12"
+    }
+   ]
+  },
+  {
+   "title": "Phần 4: Áp dụng vào 20 bản nhạc",
+   "lessons": [
+    {
+     "no": 37,
+     "title": "Niệm Khúc Cuối",
+     "length": "3:10"
+    },
+    {
+     "no": 38,
+     "title": "Over and Over",
+     "length": "1:35"
+    },
+    {
+     "no": 39,
+     "title": "Boulevard",
+     "length": "1:18"
+    },
+    {
+     "no": 40,
+     "title": "Cơn Mưa Băng Giá",
+     "length": "2:04"
+    },
+    {
+     "no": 41,
+     "title": "Đồng Thoại",
+     "length": "2:07"
+    },
+    {
+     "no": 42,
+     "title": "Forever",
+     "length": "1:51"
+    },
+    {
+     "no": 43,
+     "title": "Đường Xưa",
+     "length": "1:13"
+    },
+    {
+     "no": 44,
+     "title": "Let It Be",
+     "length": "1:02"
+    },
+    {
+     "no": 45,
+     "title": "Mưa Trên Biển Vắng",
+     "length": "1:42"
+    },
+    {
+     "no": 46,
+     "title": "Love Is Blue",
+     "length": "2:19"
+    },
+    {
+     "no": 47,
+     "title": "Nhật Ký Của Mẹ",
+     "length": "1:37"
+    },
+    {
+     "no": 48,
+     "title": "Love Story",
+     "length": "2:45"
+    },
+    {
+     "no": 49,
+     "title": "Thần Thoại",
+     "length": "2:32"
+    },
+    {
+     "no": 50,
+     "title": "Yesterday",
+     "length": "2:08"
+    },
+    {
+     "no": 51,
+     "title": "Sợ Yêu",
+     "length": "2:10"
+    },
+    {
+     "no": 52,
+     "title": "Tình Nhạt Phai",
+     "length": "1:32"
+    },
+    {
+     "no": 53,
+     "title": "Oh Holy Night",
+     "length": "2:13"
+    },
+    {
+     "no": 54,
+     "title": "Bài Thánh Ca Buồn",
+     "length": "2:19"
+    },
+    {
+     "no": 55,
+     "title": "Tôi Thấy Hoa Vàng Trên Cỏ Xanh",
+     "length": "1:53"
+    },
+    {
+     "no": 56,
+     "title": "Nấu Ăn Cho Em",
+     "length": "2:28"
+    },
+    {
+     "no": 57,
+     "title": "Diễm Xưa",
+     "length": "2:07"
+    },
+    {
+     "no": 58,
+     "title": "Tổng kết khoá học",
+     "length": "0:38"
+    }
+   ]
+  }
+ ]
+}
