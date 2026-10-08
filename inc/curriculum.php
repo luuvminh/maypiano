@@ -64,11 +64,14 @@ function maypiano_curriculum_runtime( $length ) {
 	);
 }
 
-/** Reads one course file. Returns how many lessons the course now has from it, or a WP_Error. */
+/** Reads one course file. Returns how many lessons the course now has from it, null for a file that is not a course list, or a WP_Error. */
 function maypiano_curriculum_build( $file ) {
 	$data = json_decode( (string) file_get_contents( $file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions
-	if ( empty( $data['course'] ) || empty( $data['topics'] ) ) {
+	if ( ! is_array( $data ) ) {
 		return new WP_Error( 'maypiano_curriculum', 'File không đọc được.' );
+	}
+	if ( empty( $data['course'] ) || empty( $data['topics'] ) ) {
+		return null; // Not a course list (the sheet music list lives in data/ too).
 	}
 	$slug    = sanitize_title( $data['course'] );
 	$courses = get_posts( array(
@@ -206,7 +209,7 @@ add_action( 'init', function () {
 		$seen[ $name ] = array(
 			'stamp'  => $stamp,
 			'at'     => time(),
-			'result' => is_wp_error( $result ) ? $result->get_error_message() : (int) $result,
+			'result' => is_wp_error( $result ) ? $result->get_error_message() : ( null === $result ? 'skip' : (int) $result ),
 		);
 		update_option( 'maypiano_curriculum', $seen, false );
 		delete_transient( 'maypiano_curriculum_busy' );
@@ -217,6 +220,9 @@ add_action( 'init', function () {
 function maypiano_curriculum_report() {
 	$lines = array();
 	foreach ( (array) get_option( 'maypiano_curriculum', array() ) as $name => $row ) {
+		if ( 'skip' === $row['result'] ) {
+			continue;
+		}
 		$line   = $name . ': ' . ( is_int( $row['result'] ) ? $row['result'] . ' bài' : 'LỖI. ' . $row['result'] ) . ', đọc lúc ' . wp_date( 'd/m/Y H:i', (int) $row['at'] );
 		$course = get_posts( array( 'post_type' => 'courses', 'name' => sanitize_title( $name ), 'post_status' => 'any', 'posts_per_page' => 1, 'fields' => 'ids' ) );
 		$tidy   = $course ? get_post_meta( $course[0], '_maypiano_tidy', true ) : '';
