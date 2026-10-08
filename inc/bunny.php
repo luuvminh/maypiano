@@ -147,6 +147,10 @@ function maypiano_bunny_video_record( $value, $lesson_id, $key, $single ) {
 		return $value;
 	}
 	$guid = (string) get_post_meta( $lesson_id, '_maypiano_bunny', true );
+	if ( '' === $guid && function_exists( 'maypiano_song_video_of' ) ) {
+		// A lesson of a song sold on its own shows the video of the full-course lesson it comes from.
+		$guid = maypiano_song_video_of( $lesson_id );
+	}
 	if ( '' === $guid || ! maypiano_bunny_may_watch( $lesson_id ) ) {
 		return $value;
 	}

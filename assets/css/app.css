@@ -122,6 +122,11 @@ body.mp-app .mp-sheet-empty{max-width:760px;box-sizing:border-box;padding:clamp(
 body.mp-app .mp-sheet-empty h2{margin:0 0 .4em}
 body.mp-app .mp-sheet-empty p{margin:0}
 body.mp-app .mp-sheet-empty .mp-lost-go{margin-top:24px}
+/* Bài hát lẻ: same list as the sheets, grouped by the course each song comes from */
+body.mp-app .mp-song-group{margin:44px 0 14px;font-size:clamp(1.375rem,2vw,1.625rem);color:var(--mp-plum)}
+body.mp-app .mp-songs .mp-sheet-list-wrap>.mp-song-group:first-child{margin-top:8px}
+body.mp-app .mp-songs .mp-sheet-list li{scroll-margin-top:24px}
+body.mp-app .mp-songs .mp-sheet-list li.mp-song-picked{background:#F7D9E1;box-shadow:-16px 0 0 #F7D9E1,16px 0 0 #F7D9E1}
 
 @media (prefers-reduced-motion:reduce){body.mp-app *{transition:none!important;animation:none!important}}
 /* Profile menu of a signed-in learner, at the right end of the top bar. */
