@@ -33,7 +33,7 @@ def build(name, home_href, signup_href):
     # An <img src="{{...}}"> would make the browser fetch the placeholder text before the page script fills it in.
     body = body.replace(' src="{{', ' data-dc-src="{{')
     body = body.replace('"/_img/', '"%%THEME%%/assets/img/')
-    body = body.replace('href="MuaKhoaHoc.dc.html', 'href="%%SIGNUP%%').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"').replace('href="DangNhap.dc.html"', 'href="%%LOGIN%%"').replace('href="CauHoi.dc.html"', 'href="%%HOME%%cau-hoi-thuong-gap/"').replace('href="SheetNhac.dc.html"', 'href="%%HOME%%sheet-nhac/"')
+    body = body.replace('href="MuaKhoaHoc.dc.html', 'href="%%SIGNUP%%').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"').replace('href="DangNhap.dc.html"', 'href="%%LOGIN%%"').replace('href="CauHoi.dc.html"', 'href="%%HOME%%cau-hoi-thuong-gap/"').replace('href="SheetNhac.dc.html"', 'href="%%HOME%%sheet-nhac/"').replace('href="BaiHatLe.dc.html"', 'href="%%HOME%%bai-hat-le/"')
     for a, b in TEXT[name]:
         assert a in body, (name, a[:40])
         body = body.replace(a, b)

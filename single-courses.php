@@ -25,6 +25,9 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 <span class="mpc-price" data-mp-price="<?php echo esc_attr( $mp['key'] ); ?>"><?php echo esc_html( $mp['price'] ); ?></span>
 	<?php endif; ?>
 <a class="mpc-btn" href="<?php echo esc_url( $mp['buy'] ); ?>">Đăng ký khóa này</a>
+	<?php if ( '' !== $mp['songs'] ) : ?>
+<a class="mpc-more" href="<?php echo esc_url( $mp['songs'] ); ?>">Mua lẻ từng bài</a>
+	<?php endif; ?>
 <?php endif; ?>
 <a class="mpc-more" href="#noi-dung">Xem nội dung khóa học</a>
 </div>
@@ -62,6 +65,9 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 			<?php else : ?>
 <span class="mpc-name"><?php echo esc_html( $mp_row['title'] ); ?></span>
 			<?php endif; ?>
+			<?php if ( '' !== $mp_row['song'] ) : ?>
+<a class="mpc-solo" href="<?php echo esc_url( $mp_row['song'] ); ?>">Mua riêng<span class="screen-reader-text"> bài <?php echo esc_html( $mp_row['title'] ); ?></span></a>
+			<?php endif; ?>
 			<?php if ( $mp_row['free'] ) : ?>
 <span class="mpc-free">Xem thử</span>
 			<?php endif; ?>
@@ -95,6 +101,9 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 <span class="mpc-price" data-mp-price="<?php echo esc_attr( $mp['key'] ); ?>"><?php echo esc_html( $mp['price'] ); ?></span>
 	<?php endif; ?>
 <a class="mpc-btn" href="<?php echo esc_url( $mp['buy'] ); ?>">Đăng ký khóa này</a>
+	<?php if ( '' !== $mp['songs'] ) : ?>
+<a class="mpc-more" href="<?php echo esc_url( $mp['songs'] ); ?>">Mua lẻ từng bài</a>
+	<?php endif; ?>
 </div>
 </section>
 <?php endif; ?>

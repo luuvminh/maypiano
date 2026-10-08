@@ -7,7 +7,7 @@ get_header();
 $mp_songs  = maypiano_songs_on_sale();
 $mp_groups = array();
 foreach ( $mp_songs as $mp_song ) {
-	$mp_groups[ $mp_song['label'] ][] = $mp_song;
+	$mp_groups[ $mp_song['from'] ][] = $mp_song;
 }
 ?>
 <main class="mp-plain mp-wide mp-sheets mp-songs">
@@ -16,8 +16,8 @@ foreach ( $mp_songs as $mp_song ) {
 <p class="mp-lead">Bạn chỉ muốn đàn một bài? Mây tách riêng những bài dạy trọn vẹn từ đầu tới cuối trong khóa học. Bạn mua bài nào, Mây mở bài đó trong tài khoản học của bạn.</p>
 <?php if ( $mp_songs ) : ?>
 <div class="mp-sheet-list-wrap" data-api="<?php echo esc_url( rest_url( 'maypiano/v1/' ) ); ?>">
-	<?php foreach ( $mp_groups as $mp_label => $mp_list ) : ?>
-<h2 class="mp-song-group">Trong khóa <?php echo esc_html( $mp_label ); ?></h2>
+	<?php foreach ( $mp_groups as $mp_from => $mp_list ) : ?>
+<h2 class="mp-song-group" id="khoa-<?php echo esc_attr( $mp_from ); ?>">Trong khóa <?php echo esc_html( $mp_list[0]['label'] ); ?></h2>
 <ul class="mp-sheet-list">
 		<?php
 		foreach ( $mp_list as $mp_song ) :

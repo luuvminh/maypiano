@@ -68,6 +68,7 @@ button{font-family:inherit;cursor:pointer}
 <button type="button" class="press" onClick="{{addCur}}" style="border: 0; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 0 30px; min-height: 56px; font-size: 20px; font-weight: 600">{{addLabel}}</button>
 <button type="button" class="press" onClick="{{goCart}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 0 26px; min-height: 56px; font-size: 20px; font-weight: 600">{{cartLabel}}</button>
 </div>
+<sc-if value="{{soloUrl}}"><p style="margin: 0">Chỉ muốn học vài bài trong khóa này? <a href="{{soloUrl}}" style="font-weight: 600; white-space: nowrap">Mua lẻ từng bài</a></p></sc-if>
 </div>
 </div>
 </div>
@@ -467,6 +468,7 @@ isPick: !s.loading && s.step === 0, isCart: !s.loading && s.step === 1, isInfo: 
 regions: [['VN', 'Việt Nam'], ['AU', 'Úc'], ['INTL', 'Mỹ và nước khác']].map(([id, label]) => ({ label, pick: later(() => this.setState({ region: id, regionPicked: true, err: '' })), ...on(region === id) })),
 tabs: COURSES.map((c, i) => ({ label: c.short, pick: () => this.setState({ sel: i }), ...on(s.sel === i) })),
 cur: { ...c0, priceText: price(c0) == null ? 'Mây báo giá qua email' : money(price(c0), cur) },
+soloUrl: cfg.songCourses && !Array.isArray(cfg.songCourses) ? cfg.songCourses[c0.key] || '' : '',
 addLabel: inCart ? 'Đã có trong giỏ, tới giỏ hàng' : 'Thêm vào giỏ hàng',
 addCur: later(() => { this.setState({ cart: inCart ? s.cart : s.cart.concat([c0.key]), step: 1 }); window.scrollTo(0, 0); }),
 cartLabel: 'Xem giỏ hàng (' + picked.length + ')',
