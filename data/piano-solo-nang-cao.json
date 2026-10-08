@@ -1,0 +1,334 @@
+{
+ "course": "piano-solo-nang-cao",
+ "video_prefix": "Solo Nâng Cao",
+ "intro": "Bạn đã đọc được bản nhạc và chơi được hai tay những bài cơ bản? Khóa này Mây giúp bạn chơi hay hơn: thêm hợp âm màu, mười mẫu đệm tay trái cho nhiều điệu, cách làm intro, fill-in và outro. Mình còn học tự đặt hợp âm và gạch nhịp cho một bản nhạc chỉ có giai điệu.",
+ "gets": [
+  "Mười mẫu đệm tay trái: ballad, slowrock, valse, rumba, tango, bossanova",
+  "Tự tạo intro, fill-in và outro cho bài mình chơi",
+  "Tự đặt hợp âm và gạch nhịp cho bản nhạc chỉ có giai điệu"
+ ],
+ "photo": "g16.jpg",
+ "photo_alt": "Mây biểu diễn trên sân khấu",
+ "topics": [
+  {
+   "title": "Phần 1: Hợp âm",
+   "lessons": [
+    {
+     "no": 1,
+     "title": "Ôn tập hợp âm căn bản",
+     "length": "4:19"
+    },
+    {
+     "no": 2,
+     "title": "Cách tìm hợp âm phức tạp",
+     "length": "4:53"
+    },
+    {
+     "no": 4,
+     "title": "Hợp âm maj7 và ứng dụng",
+     "length": "3:27"
+    },
+    {
+     "no": 5,
+     "title": "Hợp âm add9 và hợp âm 9",
+     "length": "5:25"
+    },
+    {
+     "no": 6,
+     "title": "Hợp âm đảo bass",
+     "length": "4:18"
+    },
+    {
+     "no": 7,
+     "title": "Hợp âm m7b5",
+     "length": "2:02"
+    },
+    {
+     "no": 8,
+     "title": "Hợp âm sus2 và sus4",
+     "length": "2:38"
+    }
+   ]
+  },
+  {
+   "title": "Phần 2: Các mẫu đệm tay trái",
+   "lessons": [
+    {
+     "no": 11,
+     "title": "Mẫu đệm tay trái số 1: Ballad",
+     "length": "15:03"
+    },
+    {
+     "no": 12,
+     "title": "Mẫu đệm tay trái số 2: Ballad, láy đuôi",
+     "length": "9:16"
+    },
+    {
+     "no": 13,
+     "title": "Mẫu đệm tay trái số 3: Slowrock",
+     "length": "5:07"
+    },
+    {
+     "no": 14,
+     "title": "Mẫu đệm tay trái số 4: Tạo điểm nhấn",
+     "length": "8:11"
+    },
+    {
+     "no": 15,
+     "title": "Mẫu đệm tay trái số 5: Bài có tiết tấu vui tươi",
+     "length": "5:32"
+    },
+    {
+     "no": 16,
+     "title": "Mẫu đệm tay trái số 6: Valse",
+     "length": "5:08"
+    },
+    {
+     "no": 17,
+     "title": "Mẫu đệm tay trái số 7: Điệp khúc",
+     "length": "10:22"
+    },
+    {
+     "no": 18,
+     "title": "Mẫu đệm tay trái số 8: Rumba",
+     "length": "10:13"
+    },
+    {
+     "no": 19,
+     "title": "Mẫu đệm tay trái số 9: Tango",
+     "length": "7:23"
+    },
+    {
+     "no": 20,
+     "title": "Mẫu đệm tay trái số 10: Bossanova",
+     "length": "8:12"
+    }
+   ]
+  },
+  {
+   "title": "Phần 3: Mẫu intro, outro và fill-in",
+   "lessons": [
+    {
+     "no": 21,
+     "title": "Tạo intro dựa vào vòng hoà thanh của bài",
+     "length": "9:19"
+    },
+    {
+     "no": 22,
+     "title": "Tạo intro dựa vào giai điệu của bài",
+     "length": "4:29"
+    },
+    {
+     "no": 23,
+     "title": "Mười mẫu intro cho giọng thứ",
+     "length": "7:36"
+    },
+    {
+     "no": 24,
+     "title": "Mười mẫu intro cho giọng trưởng",
+     "length": "7:58"
+    },
+    {
+     "no": 25,
+     "title": "Cách dịch tone",
+     "length": "9:00"
+    },
+    {
+     "no": 26,
+     "title": "Mẫu outro kéo dài hợp âm",
+     "length": "9:31"
+    },
+    {
+     "no": 27,
+     "title": "Mẫu outro lặp lại giai điệu",
+     "length": "4:43"
+    },
+    {
+     "no": 28,
+     "title": "Mẫu outro dùng hợp âm 4 thứ",
+     "length": "6:39"
+    },
+    {
+     "no": 30,
+     "title": "Mẫu fill-in dùng sus4 cho tay phải",
+     "length": "12:49"
+    },
+    {
+     "no": 31,
+     "title": "Mẫu fill-in dùng sus2",
+     "length": "8:04"
+    },
+    {
+     "no": 32,
+     "title": "Mẫu fill-in láy lại giai điệu",
+     "length": "8:35"
+    },
+    {
+     "no": 33,
+     "title": "Mẫu fill-in kéo dài hợp âm",
+     "length": "10:10"
+    },
+    {
+     "no": 34,
+     "title": "Mẫu fill-in tạo điểm nhấn",
+     "length": "8:26"
+    },
+    {
+     "no": 35,
+     "title": "Mẫu fill-in dùng hợp âm thứ 3 2 1 5",
+     "length": "8:49"
+    }
+   ]
+  },
+  {
+   "title": "Phần 4: Hướng dẫn 10 bản nhạc chi tiết",
+   "lessons": [
+    {
+     "no": 36,
+     "title": "Tuổi Đá Buồn, phần 1",
+     "length": "16:38"
+    },
+    {
+     "no": 37,
+     "title": "Tuổi Đá Buồn, phần 2",
+     "length": "14:40"
+    },
+    {
+     "no": 38,
+     "title": "Tình Lỡ Cách Xa, phần 1",
+     "length": "11:19"
+    },
+    {
+     "no": 39,
+     "title": "Tình Lỡ Cách Xa, phần 2",
+     "length": "12:11"
+    },
+    {
+     "no": 40,
+     "title": "Đôi Bờ, phần 1",
+     "length": "9:40"
+    },
+    {
+     "no": 41,
+     "title": "Đôi Bờ, phần 2",
+     "length": "11:34"
+    },
+    {
+     "no": 42,
+     "title": "La Maritza (Dòng Sông Tuổi Thơ), phần 1",
+     "length": "7:20"
+    },
+    {
+     "no": 43,
+     "title": "La Maritza, phần 2: đệm có tiết tấu",
+     "length": "7:26"
+    },
+    {
+     "no": 44,
+     "title": "Điệu Valse: Mùa Xuân Đầu Tiên, phần 1",
+     "length": "11:15"
+    },
+    {
+     "no": 45,
+     "title": "Điệu Valse: Mùa Xuân Đầu Tiên, phần 2",
+     "length": "6:58"
+    },
+    {
+     "no": 46,
+     "title": "Điệu Slowrock: Còn Tuổi Nào Cho Em, phần 1",
+     "length": "10:23"
+    },
+    {
+     "no": 47,
+     "title": "Điệu Slowrock: Còn Tuổi Nào Cho Em, phần 2",
+     "length": "6:33"
+    },
+    {
+     "no": 48,
+     "title": "Điệu Rumba: La Playa, phần 1",
+     "length": "11:59"
+    },
+    {
+     "no": 49,
+     "title": "Điệu Rumba: La Playa, phần 2",
+     "length": "9:06"
+    },
+    {
+     "no": 50,
+     "title": "Điệu Bossanova: Paroles (Những Lời Mê Hoặc), phần 1",
+     "length": "9:41"
+    },
+    {
+     "no": 51,
+     "title": "Điệu Bossanova: Paroles (Những Lời Mê Hoặc), phần 2",
+     "length": "11:19"
+    },
+    {
+     "no": 52,
+     "title": "Điệu Tango: El Choclo, phần 1",
+     "length": "7:37"
+    },
+    {
+     "no": 53,
+     "title": "Điệu Tango: El Choclo, phần 2",
+     "length": "8:58"
+    },
+    {
+     "no": 54,
+     "title": "Vĩnh Biệt Người Tình, phần 1",
+     "length": "9:13"
+    },
+    {
+     "no": 55,
+     "title": "Vĩnh Biệt Người Tình, phần 2",
+     "length": "8:08"
+    }
+   ]
+  },
+  {
+   "title": "Phần 5: Cách viết hợp âm và gạch nhịp cho một bản nhạc",
+   "lessons": [
+    {
+     "no": 56,
+     "title": "Tìm hợp âm chủ theo vòng tròn hoà thanh",
+     "length": "5:01"
+    },
+    {
+     "no": 57,
+     "title": "Tìm hợp âm phụ cho bản nhạc",
+     "length": "5:07"
+    },
+    {
+     "no": 58,
+     "title": "Thực hành đặt hợp âm vào bản nhạc, tone C",
+     "length": "5:28"
+    },
+    {
+     "no": 59,
+     "title": "Thực hành đặt hợp âm vào bản nhạc, tone Am và G",
+     "length": "6:35"
+    },
+    {
+     "no": 60,
+     "title": "Thực hành đặt hợp âm vào bản nhạc có dấu hoá, tone F",
+     "length": "6:03"
+    },
+    {
+     "no": 61,
+     "title": "Hai yếu tố căn bản cần biết để gạch nhịp",
+     "length": "2:41"
+    },
+    {
+     "no": 62,
+     "title": "Gạch nhịp 2/4",
+     "length": "4:22"
+    },
+    {
+     "no": 63,
+     "title": "Gạch nhịp 3/4",
+     "length": "5:27"
+    }
+   ]
+  }
+ ]
+}
