@@ -271,7 +271,7 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px"><sc-if value="{{c.buy}}"><a href="MuaKhoaHoc.dc.html?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a></sc-if><sc-if value="{{c.go}}"><a href="{{c.go}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Vào học</a></sc-if><button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button></div>
 <sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
-<p class="rise" role="status" style="margin: 20px 0 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
+<p class="rise" role="status" style="margin: 20px 0 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="{{c.songHref}}" style="white-space: nowrap; font-weight: 600">{{c.songLink}}</a></p>
 </sc-if>
 <sc-if value="{{c.open}}" hint-placeholder-val="{{ false }}">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; align-items: start">
@@ -298,7 +298,7 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between; padding-top: 12px"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
 <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"><sc-if value="{{c.buy}}"><a href="MuaKhoaHoc.dc.html?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a></sc-if><sc-if value="{{c.go}}"><a href="{{c.go}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Vào học</a></sc-if><button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button></div>
 <sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
-<p class="rise" role="status" style="margin: 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="#bai-hat" style="white-space: nowrap; font-weight: 600">Chọn bài khác</a></p>
+<p class="rise" role="status" style="margin: 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="{{c.songHref}}" style="white-space: nowrap; font-weight: 600">{{c.songLink}}</a></p>
 </sc-if>
 <sc-if value="{{c.open}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 16px">
@@ -701,7 +701,7 @@ try { saved = JSON.parse(window.localStorage.getItem('maypiano_dang_ky') || '{}'
 const picked = this.CUR[saved.region] ? saved.region : '';
 if (picked) this.setState({ region: picked });
 if (!window.MayPianoApi) return;
-window.MayPianoApi('config', { region: picked }).then((cfg) => { if (!this.gone && cfg) this.setState((st) => ({ prices: cfg.prices || null, mine: cfg.mine && !Array.isArray(cfg.mine) ? cfg.mine : null, me: this.keepMe(cfg.me), region: st.region || (this.CUR[cfg.region] ? cfg.region : 'VN') })); }).catch(() => {});
+window.MayPianoApi('config', { region: picked }).then((cfg) => { if (!this.gone && cfg) this.setState((st) => ({ prices: cfg.prices || null, songs: cfg.songs && !Array.isArray(cfg.songs) ? cfg.songs : null, mine: cfg.mine && !Array.isArray(cfg.mine) ? cfg.mine : null, me: this.keepMe(cfg.me), region: st.region || (this.CUR[cfg.region] ? cfg.region : 'VN') })); }).catch(() => {});
 }
 keepMe(me) {
 me = me && me.name ? me : null;
@@ -1162,7 +1162,9 @@ const all = open ? mk(x.name, found ? s.hit.song : '', at) : [];
 const mine = all.filter((p) => p.hit);
 const short = found && s.only && mine.length > 0;
 const where = found ? 'nằm ở ' + mine.map((p) => p.t.split(':')[0] + ', bài ' + p.lessons.map((l, i) => l.hit ? i + 1 : 0).filter(Boolean).join(' và ')).join('; ') + ' của khóa này.' + (s.hit.also.length ? ' Bài này còn có trong khóa ' + s.hit.also.join(' và ') + '.' : '') : '';
-return { ...x, buy: !my, go: my ? my.go : '', price: my && my.enrolled ? 'Đã đăng ký' : x.price, parts: short ? mine.map((p) => ({ ...p, lessons: p.lessons.filter((l) => l.hit) })) : all, open, found, song: found ? s.hit.song : '', where,
+/* A song Mây sells on its own: the bar offers to buy just that song. Otherwise it offers to pick another song. A learner who already has the course is not offered it. */
+const solo1 = found && !my && s.songs ? s.songs[low(s.hit.song)] || '' : '';
+return { ...x, buy: !my, go: my ? my.go : '', songHref: solo1 || '#bai-hat', songLink: solo1 ? 'Mua riêng bài này' : 'Chọn bài khác', price: my && my.enrolled ? 'Đã đăng ký' : x.price, parts: short ? mine.map((p) => ({ ...p, lessons: p.lessons.filter((l) => l.hit) })) : all, open, found, song: found ? s.hit.song : '', where,
 btn: short ? 'Xem cả khóa học' : open ? 'Thu gọn danh sách bài' : 'Xem nội dung khóa học',
 toggle: () => this.setState(short ? { only: false } : open ? { open: '', hit: null } : { open: key, hit: null, only: false }),
 ref: (el) => { if (el && this.jump === key) { this.jump = null; /* A block still waiting to slide in sits 22px low; settle it first so the jump lands exactly. */ for (let n = el; n && n.tagName !== 'SECTION'; n = n.parentElement) if (n.getAnimations) n.getAnimations().forEach((x) => { try { x.finish(); } catch (_) {} }); const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; el.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' }); } } };

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.12.4' );
+define( 'MAYPIANO_VERSION', '1.13.0' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -28,6 +28,7 @@ require get_theme_file_path( 'inc/enrol-by-hand.php' );
 require get_theme_file_path( 'inc/teacher-words.php' );
 require get_theme_file_path( 'inc/qna.php' );
 require get_theme_file_path( 'inc/sheets.php' );
+require get_theme_file_path( 'inc/songs.php' );
 require get_theme_file_path( 'inc/text-size.php' );
 
 add_action( 'after_setup_theme', function () {

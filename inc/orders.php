@@ -160,7 +160,7 @@ add_filter( 'tutor_wc_should_process_checkout_order_item', function ( $process, 
  * @return WC_Order|WP_Error
  */
 function maypiano_place_order( $args ) {
-	$catalog  = maypiano_catalog();
+	$catalog  = maypiano_catalog_all();
 	$region   = maypiano_region( $args['region'] );
 	$currency = maypiano_currency_for( $region );
 	$keys     = array_values( array_unique( array_filter( (array) $args['items'], function ( $key ) use ( $catalog ) {
@@ -439,6 +439,7 @@ add_action( 'rest_api_init', function () {
 				'region'     => maypiano_region( $req->get_param( 'region' ) ),
 				'prices'     => $prices,
 				'mine'       => maypiano_my_courses(),
+				'songs'      => function_exists( 'maypiano_song_links' ) ? maypiano_song_links() : array(),
 				'me'         => maypiano_me(),
 				'methods'    => $methods,
 				'cardMode'   => 'test' === $mode && ! maypiano_can_test() ? 'off' : $mode,

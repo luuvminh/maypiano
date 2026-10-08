@@ -1,0 +1,246 @@
+{
+ "note": "Bài hát bán lẻ. Mỗi bài là một khóa nhỏ, dùng lại video của khóa gốc. Giá = vnd_per_video × số video của bài. Chị Mây chọn ngày 08/10/2026.",
+ "groups": [
+  {
+   "from": "piano-cover-nhac-viet",
+   "label": "Piano Cover 40 Bài Nhạc Việt",
+   "vnd_per_video": 250000,
+   "songs": [
+    {
+     "slug": "mua-thu-cho-em",
+     "title": "Mùa Thu Cho Em",
+     "lessons": [
+      1
+     ]
+    },
+    {
+     "slug": "rieng-mot-goc-troi",
+     "title": "Riêng Một Góc Trời",
+     "lessons": [
+      2
+     ]
+    },
+    {
+     "slug": "ha-noi-mua-vang-nhung-con-mua",
+     "title": "Hà Nội Mùa Vắng Những Cơn Mưa",
+     "lessons": [
+      3
+     ]
+    },
+    {
+     "slug": "co-nhau-tron-doi",
+     "title": "Có Nhau Trọn Đời",
+     "lessons": [
+      4
+     ]
+    },
+    {
+     "slug": "chan-tinh",
+     "title": "Chân Tình",
+     "lessons": [
+      5
+     ]
+    },
+    {
+     "slug": "trai-tim-ben-le",
+     "title": "Trái Tim Bên Lề",
+     "lessons": [
+      6
+     ]
+    },
+    {
+     "slug": "dau-co-loi-lam",
+     "title": "Dẫu Có Lỗi Lầm",
+     "lessons": [
+      7
+     ]
+    },
+    {
+     "slug": "xuan-thi",
+     "title": "Xuân Thì",
+     "lessons": [
+      8
+     ]
+    },
+    {
+     "slug": "vet-mua",
+     "title": "Vết Mưa",
+     "lessons": [
+      9
+     ]
+    },
+    {
+     "slug": "chieu-nay-khong-co-mua-bay",
+     "title": "Chiều Nay Không Có Mưa Bay",
+     "lessons": [
+      10
+     ]
+    },
+    {
+     "slug": "thang-tu-la-loi-noi-doi-cua-em",
+     "title": "Tháng Tư Là Lời Nói Dối Của Em",
+     "lessons": [
+      11
+     ]
+    },
+    {
+     "slug": "nham-mat-thay-mua-he",
+     "title": "Nhắm Mắt Thấy Mùa Hè",
+     "lessons": [
+      12
+     ]
+    },
+    {
+     "slug": "noi-minh-dung-chan",
+     "title": "Nơi Mình Dừng Chân",
+     "lessons": [
+      13
+     ]
+    },
+    {
+     "slug": "buoc-qua-nhau",
+     "title": "Bước Qua Nhau",
+     "lessons": [
+      14
+     ]
+    },
+    {
+     "slug": "ngay-dau-tien",
+     "title": "Ngày Đầu Tiên",
+     "lessons": [
+      15
+     ]
+    },
+    {
+     "slug": "em-la-khong-the",
+     "title": "Em Là Không Thể",
+     "lessons": [
+      16
+     ]
+    },
+    {
+     "slug": "mua-thang-sau",
+     "title": "Mưa Tháng Sáu",
+     "lessons": [
+      17
+     ]
+    },
+    {
+     "slug": "ngay-mai-nguoi-ta-lay-chong",
+     "title": "Ngày Mai Người Ta Lấy Chồng",
+     "lessons": [
+      18
+     ]
+    },
+    {
+     "slug": "tung-la",
+     "title": "Từng Là",
+     "lessons": [
+      19
+     ]
+    },
+    {
+     "slug": "kho-bau",
+     "title": "Kho Báu",
+     "lessons": [
+      20
+     ]
+    },
+    {
+     "slug": "thiep-hong-sai-ten",
+     "title": "Thiệp Hồng Sai Tên",
+     "lessons": [
+      21
+     ]
+    }
+   ]
+  },
+  {
+   "from": "piano-solo-nang-cao",
+   "label": "Piano Solo Nâng Cao",
+   "vnd_per_video": 300000,
+   "songs": [
+    {
+     "slug": "tuoi-da-buon",
+     "title": "Tuổi Đá Buồn",
+     "lessons": [
+      36,
+      37
+     ]
+    },
+    {
+     "slug": "tinh-lo-cach-xa",
+     "title": "Tình Lỡ Cách Xa",
+     "lessons": [
+      38,
+      39
+     ]
+    },
+    {
+     "slug": "doi-bo",
+     "title": "Đôi Bờ",
+     "lessons": [
+      40,
+      41
+     ]
+    },
+    {
+     "slug": "la-maritza",
+     "title": "La Maritza",
+     "lessons": [
+      42,
+      43
+     ]
+    },
+    {
+     "slug": "mua-xuan-dau-tien",
+     "title": "Mùa Xuân Đầu Tiên",
+     "lessons": [
+      44,
+      45
+     ]
+    },
+    {
+     "slug": "con-tuoi-nao-cho-em",
+     "title": "Còn Tuổi Nào Cho Em",
+     "lessons": [
+      46,
+      47
+     ]
+    },
+    {
+     "slug": "la-playa",
+     "title": "La Playa",
+     "lessons": [
+      48,
+      49
+     ]
+    },
+    {
+     "slug": "paroles",
+     "title": "Paroles",
+     "lessons": [
+      50,
+      51
+     ]
+    },
+    {
+     "slug": "el-choclo",
+     "title": "El Choclo",
+     "lessons": [
+      52,
+      53
+     ]
+    },
+    {
+     "slug": "vinh-biet-nguoi-tinh",
+     "title": "Vĩnh Biệt Người Tình",
+     "lessons": [
+      54,
+      55
+     ]
+    }
+   ]
+  }
+ ]
+}

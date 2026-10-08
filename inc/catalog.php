@@ -47,6 +47,11 @@ function maypiano_catalog() {
 	);
 }
 
+/** The courses and the songs sold on their own (inc/songs.php). Orders, prices and opening a course read this. */
+function maypiano_catalog_all() {
+	return maypiano_catalog() + ( function_exists( 'maypiano_song_catalog' ) ? maypiano_song_catalog() : array() );
+}
+
 /** Regions the site sells to, each with its currency. */
 function maypiano_regions() {
 	return array(
@@ -100,8 +105,9 @@ function maypiano_product_for( $key ) {
 		return $found[ $key ];
 	}
 	$found[ $key ] = null;
-	$catalog       = maypiano_catalog();
-	if ( ! isset( $catalog[ $key ] ) || ! function_exists( 'wc_get_product' ) ) {
+	$catalog       = maypiano_catalog_all();
+	// A song has no product of its own.
+	if ( ! isset( $catalog[ $key ] ) || ! empty( $catalog[ $key ]['song'] ) || ! function_exists( 'wc_get_product' ) ) {
 		return null;
 	}
 	$picked = (array) get_option( 'maypiano_products', array() );
@@ -138,7 +144,7 @@ function maypiano_all_products() {
 
 /** The Tutor LMS course a buyer of this catalog entry gets into, or 0. */
 function maypiano_course_for( $key, $product_id = 0 ) {
-	$catalog = maypiano_catalog();
+	$catalog = maypiano_catalog_all();
 	if ( ! isset( $catalog[ $key ] ) || ! post_type_exists( 'courses' ) ) {
 		return 0;
 	}
@@ -166,6 +172,9 @@ function maypiano_course_for( $key, $product_id = 0 ) {
 	if ( $by_slug ) {
 		return (int) $by_slug[0];
 	}
+	if ( ! empty( $catalog[ $key ]['song'] ) ) {
+		return 0;
+	}
 	$needle = $catalog[ $key ]['match'];
 	foreach ( get_posts( array( 'post_type' => 'courses', 'post_status' => $statuses, 'numberposts' => 100 ) ) as $course ) {
 		if ( false !== mb_strpos( mb_strtolower( $course->post_title ), $needle ) ) {
@@ -180,9 +189,12 @@ function maypiano_course_for( $key, $product_id = 0 ) {
  * Order of trust: the price table in the settings, then (VND only) the product price, then the launch price.
  */
 function maypiano_price( $key, $currency ) {
-	$catalog = maypiano_catalog();
+	$catalog = maypiano_catalog_all();
 	if ( ! isset( $catalog[ $key ] ) ) {
 		return null;
+	}
+	if ( ! empty( $catalog[ $key ]['song'] ) ) {
+		return maypiano_song_price( $catalog[ $key ]['song'], $currency );
 	}
 	$table = (array) get_option( 'maypiano_prices', array() );
 	if ( isset( $table[ $key ][ $currency ] ) && (float) $table[ $key ][ $currency ] > 0 ) {
