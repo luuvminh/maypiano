@@ -400,3 +400,40 @@ function maypiano_stop_page( $message, $title = '', $args = array() ) {
 	maypiano_account_page( $head, $body );
 }
 
+
+/*
+ * Somebody signed in with a learner's account who opens an admin screen used to get one grey line in English.
+ * They now get our page, with a button that signs this account out and opens the sign-in for the admin screens,
+ * coming back to the screen they asked for.
+ */
+add_action( 'admin_page_access_denied', function () {
+	if ( wp_doing_ajax() || ! is_user_logged_in() ) {
+		return;
+	}
+	$back = isset( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+	$me   = wp_get_current_user();
+	status_header( 403 );
+	nocache_headers();
+	maypiano_account_page( 'Tài khoản này không vào được', '<p>Bạn đang đăng nhập bằng <strong>' . esc_html( $me->user_email ) . '</strong>. Tài khoản này không mở được trang quản trị.</p>'
+		. '<form method="post" action="' . esc_url( maypiano_account_url( 'doi-tai-khoan' ) ) . '"><input type="hidden" name="_wpnonce" value="' . esc_attr( wp_create_nonce( 'log-out' ) ) . '">'
+		. '<input type="hidden" name="ve" value="' . esc_attr( $back ) . '"><button type="submit">Đổi tài khoản</button></form>'
+		. '<p><a href="' . esc_url( maypiano_learn_url() ) . '">Vào học bằng tài khoản này</a></p>' );
+} );
+
+add_action( 'template_redirect', function () {
+	if ( ! isset( $_GET['tk'] ) || 'doi-tai-khoan' !== sanitize_key( wp_unslash( $_GET['tk'] ) ) ) {
+		return;
+	}
+	nocache_headers();
+	$back = isset( $_POST['ve'] ) ? wp_validate_redirect( home_url( esc_url_raw( wp_unslash( $_POST['ve'] ) ) ), admin_url() ) : admin_url();
+	$pass = isset( $_POST['_wpnonce'] ) ? sanitize_key( wp_unslash( $_POST['_wpnonce'] ) ) : '';
+	if ( is_user_logged_in() ) {
+		if ( '' === $pass || ! wp_verify_nonce( $pass, 'log-out' ) ) {
+			wp_safe_redirect( maypiano_account_url( 'dang-xuat' ) );
+			exit;
+		}
+		wp_logout();
+	}
+	wp_safe_redirect( wp_login_url( $back ) );
+	exit;
+}, 9 );
