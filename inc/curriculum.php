@@ -85,6 +85,10 @@ function maypiano_curriculum_build( $file ) {
 		return new WP_Error( 'maypiano_curriculum', 'Chưa có khóa học ở địa chỉ ' . $slug . '.' );
 	}
 	$course = (int) $courses[0];
+	// "publish": true in the file opens the course to visitors. Nothing here ever takes a course back down.
+	if ( ! empty( $data['publish'] ) && 'publish' !== get_post_status( $course ) ) {
+		wp_update_post( array( 'ID' => $course, 'post_status' => 'publish' ) );
+	}
 	$count  = 0;
 	foreach ( array_values( $data['topics'] ) as $t => $topic ) {
 		$topic_id = maypiano_curriculum_put( 'topics', $slug . '/phan-' . ( $t + 1 ), $topic['title'], $course, $t + 1 );
