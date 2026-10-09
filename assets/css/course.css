@@ -38,13 +38,13 @@ body.mp-app a.mpc-more:active{transform:scale(.97)}
 .mpc-part ol{list-style:none;margin:0 0 26px;padding:6px 22px;background:var(--mp-blush);border-radius:10px}
 .mpc-part li{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-top:1px solid var(--mp-muted);font-size:1.1875rem;line-height:1.4}
 .mpc-part li:first-child{border-top:0}
-.mpc-no{flex:none;width:1.9em;font-variant-numeric:tabular-nums;font-weight:600;color:var(--mp-plum)}
+.mpc-no{flex:none;width:1.9em;font-variant-numeric:lining-nums tabular-nums;font-weight:600;color:var(--mp-plum)}
 .mpc-name{flex:1 1 auto;min-width:0}
 body.mp-app a.mpc-name{font-weight:600;text-underline-offset:3px;padding:10px 0;margin:-10px 0}
 .mpc-free{flex:none;font-size:0.9375rem;font-weight:600;background:var(--mp-pink);border-radius:999px;padding:2px 12px;white-space:nowrap}
 body.mp-app a.mpc-solo{flex:none;font-size:0.9375rem;font-weight:600;background:#F7D9E1;color:var(--mp-ink);border:1px solid var(--mp-accent);border-radius:999px;padding:2px 12px;white-space:nowrap;text-decoration:none}
 body.mp-app a.mpc-solo:hover{background:var(--mp-accent);color:#fff}
-.mpc-len{flex:none;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mpc-len{flex:none;font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}
 .mpc-lock{flex:none;align-self:center;display:inline-flex;color:var(--mp-plum);opacity:.7}
 
 .mpc-may{background:var(--mp-plum);color:var(--mp-blush);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:40px 56px;align-items:center}
@@ -75,7 +75,7 @@ body.mp-app .mpc-hero h1{letter-spacing:-.025em;text-wrap:balance}
 .mpc h2{letter-spacing:-.018em;text-wrap:balance}
 .mpc p{text-wrap:pretty}
 .mpc-photo{border-radius:20px}
-.mpc-meta{color:var(--mp-plum);font-variant-numeric:tabular-nums}
+.mpc-meta{color:var(--mp-plum);font-variant-numeric:lining-nums tabular-nums}
 body.mp-app a.mpc-btn{transition:transform .1s ease-out,filter .15s ease}
 body.mp-app a.mpc-btn:active{transform:scale(.97)}
 
@@ -86,7 +86,7 @@ body.mp-app a.mpc-btn:active{transform:scale(.97)}
 .mpc-part summary{transition:color .15s ease}
 .mpc-part summary::after{transition:transform .35s var(--mp-ease)}
 @media (hover:hover){.mpc-part summary:hover{color:var(--mp-accent)}}
-.mpc-part-meta{color:var(--mp-plum);font-variant-numeric:tabular-nums}
+.mpc-part-meta{color:var(--mp-plum);font-variant-numeric:lining-nums tabular-nums}
 .mpc-part ol{padding:4px 8px;border-radius:16px}
 .mpc-part li{position:relative;padding:14px 14px;border-top:1px solid var(--mp-hair);border-radius:10px;transition:background-color .15s ease}
 .mpc-len{color:var(--mp-plum)}

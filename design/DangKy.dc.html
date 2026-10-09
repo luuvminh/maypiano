@@ -23,9 +23,12 @@ button{font-family:inherit;cursor:pointer}
 .press:hover{filter:brightness(1.08)}
 .press:active{transform:scale(.97)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+/* Phones: the five step names do not fit on one line each; one line under the bar names the current step instead. */
+.crumbnow{display:none}
+@media (max-width:600px){.crumbname{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.crumbnow{display:block}}
 </style>
 </helmet>
-<div style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.55; min-height: 100vh">
+<div style="font-family: 'Newsreader', serif; color: #2B1E24; background: #E3D7D7; font-size: 20px; line-height: 1.55; min-height: 100vh; font-variant-numeric: lining-nums">
 
 <header style="display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between; padding: 20px clamp(16px, 5vw, 80px)">
 <a href="BanNhac.dc.html" style="display: flex; align-items: center; text-decoration: none; padding: 4px 0"><img src="/_img/logo.png" alt="Mây Piano" width="413" height="240" style="display: block; height: 48px; width: auto"></a>
@@ -37,9 +40,10 @@ button{font-family:inherit;cursor:pointer}
 
 <ol aria-label="Các bước đăng ký" style="list-style: none; margin: 0; padding: 0 clamp(16px, 5vw, 80px); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
 <sc-for list="{{crumbs}}" as="b" hint-placeholder-count="5">
-<li aria-current="{{b.current}}" style="display: flex; flex-direction: column; gap: 8px"><span style="height: 6px; border-radius: 3px; background: {{b.bar}}; transition: background .3s ease"></span><span style="font-size: clamp(15px, 1.5vw, 18px); font-weight: {{b.weight}}; line-height: 1.25">{{b.label}}</span></li>
+<li aria-current="{{b.current}}" style="display: flex; flex-direction: column; gap: 8px"><span style="height: 6px; border-radius: 3px; background: {{b.bar}}; transition: background .3s ease"></span><span class="crumbname" style="font-size: clamp(15px, 1.5vw, 18px); font-weight: {{b.weight}}; line-height: 1.25">{{b.label}}</span></li>
 </sc-for>
 </ol>
+<p class="crumbnow" aria-hidden="true" style="margin: 8px 0 0; padding: 0 clamp(16px, 5vw, 80px); font-size: 17px; font-weight: 600">{{stepNow}}</p>
 
 <main style="padding: clamp(24px, 4vw, 56px) clamp(16px, 5vw, 80px) clamp(48px, 6vw, 96px)">
 
@@ -470,6 +474,7 @@ const labels = [isSheet ? 'Chọn sheet' : 'Chọn khóa', 'Giỏ hàng', 'Thôn
 
 return {
 accent,
+stepNow: 'Bước ' + (s.step + 1) + '/5 · ' + (labels[s.step] || ''),
 crumbs: labels.map((l, i) => ({ label: l, bar: i <= s.step ? accent : '#C9B6BA', weight: i === s.step ? 700 : 400, current: i === s.step ? 'step' : null })),
 isLoading: s.loading,
 isPick: !s.loading && s.step === 0, isCart: !s.loading && s.step === 1, isInfo: !s.loading && s.step === 2, isPay: !s.loading && s.step === 3 && !!s.order, isDone: !s.loading && s.step === 4 && !!s.order,

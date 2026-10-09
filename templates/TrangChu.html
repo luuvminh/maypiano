@@ -22,7 +22,6 @@ button{font-family:inherit;cursor:pointer}
 @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
 @keyframes ring{0%{box-shadow:0 0 0 0 rgba(194,69,107,.55)}100%{box-shadow:0 0 0 14px rgba(194,69,107,0)}}
 @keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
-@keyframes swing{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
 .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
 .lift{transition:transform .25s ease,box-shadow .25s ease}
 .press{transition:transform .12s ease,filter .12s ease}
@@ -81,7 +80,7 @@ html.mp-stuck .bar{box-shadow:0 1px 0 rgba(43,30,36,.14),0 12px 28px -20px rgba(
 @media (hover:hover){.flagopt:hover{background:#F6EFEF}}
 .flagopt:focus-visible{outline-offset:-3px}
 .flagname{flex:1 1 auto;white-space:nowrap}
-.flagcur{flex:none;font-size:15px;font-weight:500;letter-spacing:.04em;color:#5B2A3C;font-variant-numeric:tabular-nums}
+.flagcur{flex:none;font-size:15px;font-weight:500;letter-spacing:.04em;color:#5B2A3C;font-variant-numeric:lining-nums tabular-nums}
 .flagtick{flex:none}
 /* Profile menu of a signed-in learner: same pill and same sheet as the place menu. */
 .mebtn{padding:0 12px 0 6px!important;font:inherit;font-weight:600;white-space:nowrap}
@@ -127,10 +126,21 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 .crow{display:grid;grid-template-columns:clamp(200px,24vw,320px) minmax(0,1fr) auto;gap:6px 32px;align-items:center;padding:22px 0;border-top:2px solid #2B1E24;text-decoration:none;transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .12s ease}
 .crow:active{opacity:.6}
 @media (hover:hover){.crow:hover{transform:translateX(10px)}}
-.cnum{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(38px,4vw,56px);line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cnum{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(38px,4vw,56px);line-height:1;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums}
 .cgo{font-weight:600;text-decoration:underline;text-underline-offset:.16em;white-space:nowrap}
 @media (max-width:700px){.crow{grid-template-columns:1fr;padding:18px 0}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
+/* Playfair Display draws old-style figures by default: its 0 looks like the letter o ("từ con số o", "899.oood"). */
+.page{font-variant-numeric:lining-nums}
+/* Phones: a lower photo, so the course picker comes sooner. */
+@media (max-width:600px){.heroimg{aspect-ratio:4/3!important;max-height:340px!important}}
+/* The row of section links scrolls sideways; a fade at the right edge shows there is more. */
+@media (max-width:1040px){.sublinks{padding-right:56px;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 56px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 56px),transparent)}}
+/* "Xem nội dung khóa học": a quiet text button beside the one pink button of each course. */
+.more{display:inline-flex;align-items:center;gap:8px;min-height:48px;box-sizing:border-box;padding:0 6px;border:0;background:transparent;color:#2B1E24;font-size:18px;font-weight:600;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.2em}
+.morechev{display:inline-block;color:#C2456B;font-weight:700;text-decoration:none;transition:transform .2s ease}
+.more[aria-expanded="true"] .morechev{transform:rotate(90deg)}
+@media (hover:hover){.more:hover{color:#C2456B}}
 /* Reduced motion: nothing slides or loops; colour and opacity changes stay, as short fades. */
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-property:opacity,color,background-color,text-decoration-color,box-shadow!important}.rise{animation:fade .4s ease both!important}}
 </style>
@@ -164,7 +174,7 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 </div>
 
 <main>
-<header id="dau-trang" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px 56px; align-items: center; padding: clamp(28px, 4vw, 64px) clamp(20px, 6vw, 96px) 0">
+<header id="dau-trang" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px 56px; align-items: center; padding: clamp(28px, 4vw, 64px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
 <div style="display: flex; flex-direction: column; gap: 26px">
 <h1 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(42px, 5.8vw, 84px); line-height: 1.08; letter-spacing: -0.02em">
 <span class="rise" style="display: block">Học piano</span>
@@ -174,57 +184,18 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 </h1>
 <p class="rise" style="margin: 0; font-size: clamp(20px, 1.7vw, 23px); max-width: 30em; animation-delay: .6s">Mây dạy bạn từ nốt nhạc đầu tiên, bằng chính những bài hát bạn đã thuộc, tới lúc bạn tự soạn hợp âm cho bài mình thích.</p>
 <div class="rise" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; animation-delay: .75s">
-<a href="#hoc-thu" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Nhận bài học miễn phí</a>
-<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: #2B1E24; color: #F6EFEF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Đăng ký học</a>
+<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 16px 30px; border-radius: 999px; font-weight: 600">Đăng ký học</a>
+<a href="#hoc-thu" class="press" style="text-decoration: none; background: #FFFFFF; color: #2B1E24; border: 2px solid #2B1E24; padding: 14px 28px; border-radius: 999px; font-weight: 600">Nhận bài học miễn phí</a>
 </div>
 </div>
 <div class="rise" style="position: relative; animation-delay: .4s">
-<img width="790" height="1000" src="%%THEME%%/assets/img/p06.jpg" alt="Mây cười bên cây đàn piano" style="display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 600px; object-fit: cover; object-position: 60% 40%; border-radius: 280px 280px 12px 12px">
+<img class="heroimg" width="806" height="1000" src="%%THEME%%/assets/img/g12.jpg" alt="Mây mỉm cười bên cây đàn piano" style="display: block; width: 100%; aspect-ratio: 4 / 5; max-height: 600px; object-fit: cover; object-position: 50% 30%; border-radius: 280px 280px 12px 12px">
 <span aria-hidden="true" style="position: absolute; left: 6%; bottom: 30%; font-size: 44px; color: {{accent}}; animation: floatUp 5s ease-in infinite">♪</span>
 <span aria-hidden="true" style="position: absolute; left: 22%; bottom: 18%; font-size: 30px; color: #5B2A3C; animation: floatUp 6s ease-in 1.4s infinite">♫</span>
 <span aria-hidden="true" style="position: absolute; right: 10%; bottom: 26%; font-size: 52px; color: #5B2A3C; animation: floatUp 5.5s ease-in .7s infinite">♪</span>
 <span aria-hidden="true" style="position: absolute; right: 26%; bottom: 12%; font-size: 34px; color: {{accent}}; animation: floatUp 6.5s ease-in 2.4s infinite">♫</span>
 </div>
 </header>
-
-<div style="display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: clamp(36px, 5vw, 64px) 0 0; padding: 0 clamp(20px, 6vw, 96px)">
-<button type="button" class="press" aria-pressed="{{np.pressed}}" aria-label="{{np.aria}}" onClick="{{toggleMute}}" style="display: inline-flex; align-items: center; gap: 14px; min-height: 60px; padding: 6px 24px 6px 8px; border: 2px solid #2B1E24; border-radius: 999px; background: #FFFFFF; color: #2B1E24; font-size: 18px; text-align: left"><span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: {{np.dot}}; color: #FFFFFF; display: grid; place-items: center; animation: {{np.pulse}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l12-7z" style="opacity: {{np.play}}"></path><path d="M6.5 5h4v14h-4zM13.5 5h4v14h-4z" style="opacity: {{np.pause}}"></path></svg></span><span style="display: flex; flex-direction: column; line-height: 1.3"><span>{{np.label}}<strong style="margin-left: .35em">{{np.song}}</strong></span><span style="font-size: 16px; opacity: .8">{{np.hint}}</span></span><span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 3px; height: 18px; opacity: {{np.eq}}"><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.9s ease-in-out 0s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.7s ease-in-out 0.2s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 1.1s ease-in-out 0.4s infinite; animation-play-state: {{np.run}}"></span></span></button>
-<span style="font-size: 18px">Mây đàn, trích từ <a href="https://www.youtube.com/watch?v=d95HrWkox20">Những Bản Tình Ca Mùa Thu</a></span>
-</div>
-<div aria-hidden="true" style="position: relative; margin: 14px 0 0; height: 190px">
-<div style="position: absolute; left: 0; right: 0; top: 26px; height: 138px; background: linear-gradient(90deg, transparent, #E9B9C6 30%, #E9B9C6 70%, transparent); opacity: .28"></div>
-<div style="position: absolute; left: calc(clamp(190px, 30vw, 400px) - 22px); top: 34px; width: 44px; height: 122px; border-radius: 22px; background: {{accent}}; opacity: .16"></div>
-<div style="position: absolute; left: 0; right: 0; top: 54px; height: 82px; background: repeating-linear-gradient(180deg, #2B1E24 0 2px, transparent 2px 20px)"></div>
-<div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%)">
-<div ref="{{stripRef}}" style="position: absolute; left: clamp(190px, 30vw, 400px); top: 14px; width: 1px; height: 160px; will-change: transform">
-<sc-for list="{{barLines}}" as="b" hint-placeholder-count="4">
-<div style="position: absolute; left: {{b.x}}; top: 40px; width: {{b.w}}; height: 82px; background: #2B1E24"></div>
-</sc-for>
-<sc-for list="{{beamLines}}" as="b" hint-placeholder-count="6">
-<div style="position: absolute; left: {{b.x}}; top: {{b.y}}; width: {{b.w}}; height: 9px; background: #2B1E24; transform-origin: 0 0; transform: skewY({{b.a}})"></div>
-</sc-for>
-<sc-for list="{{notes}}" as="n" hint-placeholder-count="16">
-<div data-n="{{n.i}}" style="position: absolute; left: {{n.x}}; top: 0; color: #2B1E24; transition: color .12s ease"><div style="position: absolute; left: -18px; top: 140px; width: 36px; height: 2px; background: #2B1E24; opacity: {{n.ledger}}"></div><div style="position: absolute; left: {{n.sx}}; top: {{n.st}}; width: 2.4px; height: {{n.sh}}; background: currentColor"></div><div style="position: absolute; left: -11.5px; top: {{n.hy}}; width: 23px; height: 16px; box-sizing: border-box; border-radius: 50%; transform: rotate(-20deg); background: {{n.fill}}; border: {{n.bw}} solid currentColor"></div></div>
-</sc-for>
-</div>
-</div>
-<span style="position: absolute; left: clamp(16px, 3vw, 44px); top: 40px; font-family: 'Noto Music', 'Apple Symbols', 'Segoe UI Symbol', serif; font-size: 100px; line-height: 1; color: #2B1E24">𝄞</span>
-</div>
-
-<section style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
-<div class="kbsec">
-<p class="keyhint" style="margin: 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
-<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 0"><div style="position: relative; display: flex; box-sizing: border-box; min-width: 700px; aspect-ratio: 49 / 11; border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
-<sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
-<button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 16px; font-weight: 500">{{k.n}}</button>
-</sc-for>
-<sc-for list="{{blacks}}" as="k" hint-placeholder-count="7">
-<button type="button" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="position: absolute; top: 0; left: {{k.left}}; width: 3.6%; height: 60%; border: 0; border-radius: 0 0 5px 5px; background: #2B1E24; transition: background .15s ease"></button>
-</sc-for>
-</div></div>
-</div>
-</section>
-
 
 <section id="chon-khoa" style="background: #5B2A3C; color: #F6EFEF; padding: clamp(56px, 7vw, 104px) clamp(20px, 6vw, 96px)">
 <h2 style="margin: 0 0 28px; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bạn đang ở đâu trên hành trình?</h2>
@@ -261,7 +232,7 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 <p style="margin: 0">{{c.desc}}</p>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
 </div>
-<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px"><sc-if value="{{c.buy}}"><a href="%%SIGNUP%%?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a></sc-if><sc-if value="{{c.go}}"><a href="{{c.go}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Vào học</a></sc-if><button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button><sc-if value="{{c.soloAll}}"><a href="{{c.soloAll}}" class="press" style="display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; padding: 0 6px; font-size: 18px; font-weight: 600; color: #2B1E24; text-decoration: none">Mua lẻ từng bài<span aria-hidden="true" style="margin-left: 8px; color: {{accent}}; font-weight: 700">›</span></a></sc-if></div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px"><sc-if value="{{c.buy}}"><a href="%%SIGNUP%%?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 13px 26px; min-height: 48px; box-sizing: border-box; font-size: 18px; font-weight: 600">Đăng ký học</a></sc-if><sc-if value="{{c.go}}"><a href="{{c.go}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 13px 26px; min-height: 48px; box-sizing: border-box; font-size: 18px; font-weight: 600">Vào học</a></sc-if><button type="button" class="more" aria-expanded="{{c.open}}" onClick="{{c.toggle}}">{{c.btn}}<span class="morechev" aria-hidden="true">›</span></button><sc-if value="{{c.soloAll}}"><a href="{{c.soloAll}}" class="press" style="display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; padding: 0 6px; font-size: 18px; font-weight: 600; color: #2B1E24; text-decoration: none">Mua lẻ từng bài<span aria-hidden="true" style="margin-left: 8px; color: {{accent}}; font-weight: 700">›</span></a></sc-if></div>
 <sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
 <p class="rise" role="status" style="margin: 20px 0 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="{{c.songHref}}" style="white-space: nowrap; font-weight: 600">{{c.songLink}}</a></p>
 </sc-if>
@@ -270,7 +241,7 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: tabular-nums"><sc-if value="{{l.buy1}}"><a href="{{l.buy1}}" style="display: inline-block; margin-right: 10px; padding: 1px 10px; border: 1px solid {{accent}}; border-radius: 999px; background: #F7D9E1; color: #2B1E24; font-size: 15px; font-weight: 600; text-decoration: none">Mua riêng</a></sc-if>{{l.d}}<sc-if value="{{l.url}}"><span aria-hidden="true" style="display: inline-block; margin-left: 10px; color: {{accent}}; font-weight: 700">›</span></sc-if></span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: lining-nums tabular-nums"><sc-if value="{{l.buy1}}"><a href="{{l.buy1}}" style="display: inline-block; margin-right: 10px; padding: 1px 10px; border: 1px solid {{accent}}; border-radius: 999px; background: #F7D9E1; color: #2B1E24; font-size: 15px; font-weight: 600; text-decoration: none">Mua riêng</a></sc-if>{{l.d}}<sc-if value="{{l.url}}"><span aria-hidden="true" style="display: inline-block; margin-left: 10px; color: {{accent}}; font-weight: 700">›</span></sc-if></span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -288,7 +259,7 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">{{c.name}}</h3>
 <p style="margin: 0">{{c.desc}}</p>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 24px; align-items: baseline; justify-content: space-between; padding-top: 12px"><span>{{c.meta}}</span><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: 28px">{{c.price}}</span></div>
-<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"><sc-if value="{{c.buy}}"><a href="%%SIGNUP%%?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Đăng ký học</a></sc-if><sc-if value="{{c.go}}"><a href="{{c.go}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 12px 24px; font-size: 18px; font-weight: 600">Vào học</a></sc-if><button type="button" class="press" aria-expanded="{{c.open}}" onClick="{{c.toggle}}" style="border: 2px solid #2B1E24; background: #FFFFFF; color: #2B1E24; border-radius: 999px; padding: 10px 22px; min-height: 48px; font-size: 18px; font-weight: 600">{{c.btn}}</button><sc-if value="{{c.soloAll}}"><a href="{{c.soloAll}}" class="press" style="display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; padding: 0 6px; font-size: 18px; font-weight: 600; color: #2B1E24; text-decoration: none">Mua lẻ từng bài<span aria-hidden="true" style="margin-left: 8px; color: {{accent}}; font-weight: 700">›</span></a></sc-if></div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"><sc-if value="{{c.buy}}"><a href="%%SIGNUP%%?khoa={{c.key}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 13px 26px; min-height: 48px; box-sizing: border-box; font-size: 18px; font-weight: 600">Đăng ký học</a></sc-if><sc-if value="{{c.go}}"><a href="{{c.go}}" class="press" style="display: inline-block; text-decoration: none; background: {{accent}}; color: #FFFFFF; border-radius: 999px; padding: 13px 26px; min-height: 48px; box-sizing: border-box; font-size: 18px; font-weight: 600">Vào học</a></sc-if><button type="button" class="more" aria-expanded="{{c.open}}" onClick="{{c.toggle}}">{{c.btn}}<span class="morechev" aria-hidden="true">›</span></button><sc-if value="{{c.soloAll}}"><a href="{{c.soloAll}}" class="press" style="display: inline-flex; align-items: center; min-height: 48px; box-sizing: border-box; padding: 0 6px; font-size: 18px; font-weight: 600; color: #2B1E24; text-decoration: none">Mua lẻ từng bài<span aria-hidden="true" style="margin-left: 8px; color: {{accent}}; font-weight: 700">›</span></a></sc-if></div>
 <sc-if value="{{c.found}}" hint-placeholder-val="{{ false }}">
 <p class="rise" role="status" style="margin: 0; background: #F7D9E1; border-left: 6px solid {{accent}}; border-radius: 8px; padding: 14px 18px; line-height: 1.45"><strong>♪ {{c.song}}</strong><span style="margin: 0 .3em">{{c.where}}</span><a href="{{c.songHref}}" style="white-space: nowrap; font-weight: 600">{{c.songLink}}</a></p>
 </sc-if>
@@ -297,7 +268,7 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 <sc-for list="{{c.parts}}" as="p" hint-placeholder-count="4">
 <div class="rise" style="background: #F6EFEF; border-radius: 10px; padding: 22px"><div style="display: flex; justify-content: space-between; gap: 12px; font-weight: 600; margin-bottom: 10px"><span>{{p.t}}</span><span style="white-space: nowrap">{{p.count}}</span></div>
 <sc-for list="{{p.lessons}}" as="l" hint-placeholder-count="6">
-<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: tabular-nums"><sc-if value="{{l.buy1}}"><a href="{{l.buy1}}" style="display: inline-block; margin-right: 10px; padding: 1px 10px; border: 1px solid {{accent}}; border-radius: 999px; background: #F7D9E1; color: #2B1E24; font-size: 15px; font-weight: 600; text-decoration: none">Mua riêng</a></sc-if>{{l.d}}<sc-if value="{{l.url}}"><span aria-hidden="true" style="display: inline-block; margin-left: 10px; color: {{accent}}; font-weight: 700">›</span></sc-if></span></div>
+<div style="display: flex; justify-content: space-between; gap: 16px; padding: 7px 0; border-top: 1px solid #D2BFC3; font-size: 17px; line-height: 1.4; font-weight: {{l.fw}}; background: {{l.bg}}; box-shadow: {{l.sh}}"><sc-if value="{{l.url}}"><a href="{{l.url}}" style="text-decoration: none">{{l.n}}</a></sc-if><sc-if value="{{l.plain}}"><span>{{l.n}}</span></sc-if><span style="white-space: nowrap; font-variant-numeric: lining-nums tabular-nums"><sc-if value="{{l.buy1}}"><a href="{{l.buy1}}" style="display: inline-block; margin-right: 10px; padding: 1px 10px; border: 1px solid {{accent}}; border-radius: 999px; background: #F7D9E1; color: #2B1E24; font-size: 15px; font-weight: 600; text-decoration: none">Mua riêng</a></sc-if>{{l.d}}<sc-if value="{{l.url}}"><span aria-hidden="true" style="display: inline-block; margin-left: 10px; color: {{accent}}; font-weight: 700">›</span></sc-if></span></div>
 </sc-for>
 </div>
 </sc-for>
@@ -321,6 +292,47 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 <div class="mq" style="overflow: hidden; display: flex; flex-direction: column; gap: 10px">
 <div class="mqrow" data-t="38" style="display: flex; width: max-content; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap"><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsA}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
 <div class="mqrow" data-t="44" data-back style="display: flex; width: max-content; font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: clamp(24px, 3vw, 44px); line-height: 1.3; white-space: nowrap; color: {{accent}}"><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for><sc-for list="{{songsB}}" as="g" hint-placeholder-count="4"><button type="button" class="song" tabindex="-1" aria-hidden="true" onClick="{{g.go}}">{{g.name}}</button><span aria-hidden="true" style="padding: 0 .4em">♪</span></sc-for></div>
+</div>
+</section>
+
+<section id="nghe-may" aria-labelledby="nghe-may-h" style="padding-top: clamp(56px, 8vw, 112px)">
+<h2 id="nghe-may-h" style="margin: 0 0 24px; padding: 0 clamp(20px, 6vw, 96px); font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Nghe Mây đàn, rồi bấm thử phím</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 0; padding: 0 clamp(20px, 6vw, 96px)">
+<button type="button" class="press" aria-pressed="{{np.pressed}}" aria-label="{{np.aria}}" onClick="{{toggleMute}}" style="display: inline-flex; align-items: center; gap: 14px; min-height: 60px; padding: 6px 24px 6px 8px; border: 2px solid #2B1E24; border-radius: 999px; background: #FFFFFF; color: #2B1E24; font-size: 18px; text-align: left"><span aria-hidden="true" style="flex: none; width: 44px; height: 44px; border-radius: 50%; background: {{np.dot}}; color: #FFFFFF; display: grid; place-items: center; animation: {{np.pulse}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l12-7z" style="opacity: {{np.play}}"></path><path d="M6.5 5h4v14h-4zM13.5 5h4v14h-4z" style="opacity: {{np.pause}}"></path></svg></span><span style="display: flex; flex-direction: column; line-height: 1.3"><span>{{np.label}}<strong style="margin-left: .35em">{{np.song}}</strong></span><span style="font-size: 16px; opacity: .8">{{np.hint}}</span></span><span aria-hidden="true" style="display: inline-flex; align-items: flex-end; gap: 3px; height: 18px; opacity: {{np.eq}}"><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.9s ease-in-out 0s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 0.7s ease-in-out 0.2s infinite; animation-play-state: {{np.run}}"></span><span style="width: 4px; height: 18px; border-radius: 2px; background: {{accent}}; transform-origin: bottom; animation: eq 1.1s ease-in-out 0.4s infinite; animation-play-state: {{np.run}}"></span></span></button>
+<span style="font-size: 18px">Mây đàn, trích từ <a href="https://www.youtube.com/watch?v=d95HrWkox20">Những Bản Tình Ca Mùa Thu</a></span>
+</div>
+<div aria-hidden="true" style="position: relative; margin: 14px 0 0; height: 190px">
+<div style="position: absolute; left: 0; right: 0; top: 26px; height: 138px; background: linear-gradient(90deg, transparent, #E9B9C6 30%, #E9B9C6 70%, transparent); opacity: .28"></div>
+<div style="position: absolute; left: calc(clamp(190px, 30vw, 400px) - 22px); top: 34px; width: 44px; height: 122px; border-radius: 22px; background: {{accent}}; opacity: .16"></div>
+<div style="position: absolute; left: 0; right: 0; top: 54px; height: 82px; background: repeating-linear-gradient(180deg, #2B1E24 0 2px, transparent 2px 20px)"></div>
+<div style="position: absolute; inset: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0, transparent clamp(80px, 12vw, 150px), #000 clamp(170px, 26vw, 340px), #000 88%, transparent 100%)">
+<div ref="{{stripRef}}" style="position: absolute; left: clamp(190px, 30vw, 400px); top: 14px; width: 1px; height: 160px; will-change: transform">
+<sc-for list="{{barLines}}" as="b" hint-placeholder-count="4">
+<div style="position: absolute; left: {{b.x}}; top: 40px; width: {{b.w}}; height: 82px; background: #2B1E24"></div>
+</sc-for>
+<sc-for list="{{beamLines}}" as="b" hint-placeholder-count="6">
+<div style="position: absolute; left: {{b.x}}; top: {{b.y}}; width: {{b.w}}; height: 9px; background: #2B1E24; transform-origin: 0 0; transform: skewY({{b.a}})"></div>
+</sc-for>
+<sc-for list="{{notes}}" as="n" hint-placeholder-count="16">
+<div data-n="{{n.i}}" style="position: absolute; left: {{n.x}}; top: 0; color: #2B1E24; transition: color .12s ease"><div style="position: absolute; left: -18px; top: 140px; width: 36px; height: 2px; background: #2B1E24; opacity: {{n.ledger}}"></div><div style="position: absolute; left: {{n.sx}}; top: {{n.st}}; width: 2.4px; height: {{n.sh}}; background: currentColor"></div><div style="position: absolute; left: -11.5px; top: {{n.hy}}; width: 23px; height: 16px; box-sizing: border-box; border-radius: 50%; transform: rotate(-20deg); background: {{n.fill}}; border: {{n.bw}} solid currentColor"></div></div>
+</sc-for>
+</div>
+</div>
+<span style="position: absolute; left: clamp(16px, 3vw, 44px); top: 40px; font-family: 'Noto Music', 'Apple Symbols', 'Segoe UI Symbol', serif; font-size: 100px; line-height: 1; color: #2B1E24">𝄞</span>
+</div>
+
+<div style="padding: clamp(40px, 5vw, 72px) clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px)">
+<div class="kbsec">
+<p class="keyhint" style="margin: 0; font-size: 17px">Vuốt ngang để thấy thêm phím.</p>
+<div data-keys style="overflow-x: auto; -webkit-overflow-scrolling: touch; min-width: 0"><div style="position: relative; display: flex; box-sizing: border-box; min-width: 700px; aspect-ratio: 49 / 11; border: 3px solid #2B1E24; border-radius: 0 0 14px 14px; overflow: hidden; background: #2B1E24; gap: 2px">
+<sc-for list="{{whites}}" as="k" hint-placeholder-count="10">
+<button type="button" class="wkey" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="flex: 1; min-width: 0; border: 0; background: #FFFFFF; color: #2B1E24; display: flex; align-items: flex-end; justify-content: center; padding: 0 0 10px; font-size: 16px; font-weight: 500">{{k.n}}</button>
+</sc-for>
+<sc-for list="{{blacks}}" as="k" hint-placeholder-count="7">
+<button type="button" data-k="{{k.id}}" aria-label="{{k.aria}}" onClick="{{k.play}}" style="position: absolute; top: 0; left: {{k.left}}; width: 3.6%; height: 60%; border: 0; border-radius: 0 0 5px 5px; background: #2B1E24; transition: background .15s ease"></button>
+</sc-for>
+</div></div>
+</div>
 </div>
 </section>
 
@@ -348,10 +360,10 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 <img loading="lazy" decoding="async" width="666" height="1000" src="%%THEME%%/assets/img/g02.jpg" alt="Nút bạc YouTube 100.000 người đăng ký của kênh May Piano" style="display: block; width: 100%; height: auto; max-width: 420px; justify-self: center; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 45%; border-radius: 14px; border: 2px solid #2B1E24">
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; padding: 0 6px">
-<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="tilt" style="transform: rotate(-2deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.500" y="5.500" width="19" height="13" rx="3.500"></rect><path d="M10 9.500l5 2.500-5 2.500z"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">134.000+</span><span style="font-weight: 600">bạn đăng ký kênh YouTube</span><span style="font-size: 18px">Hàng trăm bài Mây dạy miễn phí.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Xem kênh YouTube</span></a>
-<a href="https://www.tiktok.com/@maypiano" class="tilt" style="transform: rotate(2deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v11.500a3.500 3.500 0 1 1-3.500-3.500"></path><path d="M14 3c.400 2.600 2.200 4.300 5 4.600"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">122.400</span><span style="font-weight: 600">bạn theo dõi TikTok</span><span style="font-size: 18px">Những đoạn đàn ngắn mỗi ngày.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Xem TikTok</span></a>
-<a href="https://www.facebook.com/maypianist" class="tilt" style="transform: rotate(-1.500deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 8.500V7c0-1.100.700-1.800 1.800-1.800H17V2.500h-2.200C12.300 2.500 11 4.200 11 6.600v1.900H8.500V11.500H11v10h3v-10h2.600l.4-3z"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">74.000+</span><span style="font-weight: 600">bạn theo dõi fanpage</span><span style="font-size: 18px">Tin mới và thông báo khóa học.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Theo dõi fanpage</span></a>
-<a href="https://www.facebook.com/groups/558515685499528/" class="tilt" style="transform: rotate(2.500deg); text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.500"></circle><path d="M2.500 20c.600-3.600 3.200-5.500 6.500-5.500s5.900 1.900 6.500 5.500"></path><circle cx="17" cy="9" r="2.600"></circle><path d="M17.500 14.200c2.200.400 3.600 2 4 4.300"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(40px, 4.2vw, 60px); line-height: 1; white-space: nowrap">33.198</span><span style="font-weight: 600">thành viên nhóm Facebook</span><span style="font-size: 18px">Hỏi bài, đăng video bạn tự đàn.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Vào nhóm</span></a>
+<a href="https://www.youtube.com/channel/UCHTx5Zck4uICJoIzeuDdq_g" class="tilt" style="text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.500" y="5.500" width="19" height="13" rx="3.500"></rect><path d="M10 9.500l5 2.500-5 2.500z"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(38px, 3.6vw, 52px); line-height: 1; white-space: nowrap">134.000+</span><span style="font-weight: 600">bạn đăng ký kênh YouTube</span><span style="font-size: 18px">Hàng trăm bài Mây dạy miễn phí.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Xem kênh YouTube</span></a>
+<a href="https://www.tiktok.com/@maypiano" class="tilt" style="text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v11.500a3.500 3.500 0 1 1-3.500-3.500"></path><path d="M14 3c.400 2.600 2.200 4.300 5 4.600"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(38px, 3.6vw, 52px); line-height: 1; white-space: nowrap">122.000+</span><span style="font-weight: 600">bạn theo dõi TikTok</span><span style="font-size: 18px">Những đoạn đàn ngắn mỗi ngày.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Xem TikTok</span></a>
+<a href="https://www.facebook.com/maypianist" class="tilt" style="text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 8.500V7c0-1.100.700-1.800 1.800-1.800H17V2.500h-2.200C12.300 2.500 11 4.200 11 6.600v1.900H8.500V11.500H11v10h3v-10h2.600l.4-3z"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(38px, 3.6vw, 52px); line-height: 1; white-space: nowrap">74.000+</span><span style="font-weight: 600">bạn theo dõi fanpage</span><span style="font-size: 18px">Tin mới và thông báo khóa học.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Theo dõi fanpage</span></a>
+<a href="https://www.facebook.com/groups/558515685499528/" class="tilt" style="text-decoration: none; background: #FFFFFF; border: 2px solid #2B1E24; border-radius: 14px; padding: 26px; display: flex; flex-direction: column; gap: 8px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C2456B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.500"></circle><path d="M2.500 20c.600-3.600 3.200-5.500 6.500-5.500s5.900 1.900 6.500 5.500"></path><circle cx="17" cy="9" r="2.600"></circle><path d="M17.500 14.200c2.200.400 3.600 2 4 4.300"></path></svg><span style="font-family: 'Playfair Display', serif; font-weight: 700; font-size: clamp(38px, 3.6vw, 52px); line-height: 1; white-space: nowrap">33.000+</span><span style="font-weight: 600">thành viên nhóm Facebook</span><span style="font-size: 18px">Hỏi bài, đăng video bạn tự đàn.</span><span style="font-weight: 600; margin-top: auto; padding-top: 8px; text-decoration: underline">Vào nhóm</span></a>
 </div>
 </section>
 
@@ -382,23 +394,14 @@ a.flagopt{text-decoration:none;box-sizing:border-box}
 </div>
 </section>
 
-<section style="margin: 0 clamp(20px, 6vw, 96px) clamp(48px, 6vw, 88px); padding: clamp(40px, 6vw, 88px) clamp(24px, 5vw, 72px); background: {{accent}}; color: #FFFFFF; border-radius: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; align-items: center">
+<section id="hoc-thu" style="background: #5B2A3C; color: #F6EFEF; padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px); display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px 64px; align-items: start">
 <div style="display: flex; flex-direction: column; gap: 26px; align-items: flex-start">
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(36px, 5vw, 72px); line-height: 1.08">Mở đàn ra, bắt đầu từ bài đầu tiên.</h2>
-<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: #2B1E24; color: #F6EFEF; padding: 18px 34px; border-radius: 999px; font-weight: 600; font-size: 21px">Đăng ký học</a>
+<a href="%%SIGNUP%%" class="press" style="text-decoration: none; background: {{accent}}; color: #FFFFFF; padding: 18px 34px; border-radius: 999px; font-weight: 600; font-size: 21px">Đăng ký học</a>
 </div>
-<div aria-hidden="true" style="justify-self: center; position: relative; width: 150px; height: 230px">
-<div style="position: absolute; left: 0; right: 0; bottom: 0; height: 200px; background: #2B1E24; clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%); border-radius: 6px"></div>
-<div style="position: absolute; left: 50%; bottom: 26px; width: 6px; height: 190px; margin-left: -3px; background: #F6EFEF; border-radius: 3px; transform-origin: bottom center; animation: swing 2s ease-in-out infinite"><span style="position: absolute; left: -9px; top: 46px; width: 24px; height: 18px; background: #E9B9C6; border-radius: 3px"></span></div>
-</div>
-</section>
-
-<section id="hoc-thu" style="background: #5B2A3C; color: #F6EFEF; padding: clamp(56px, 8vw, 112px) clamp(20px, 6vw, 96px); display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px 64px; align-items: center">
 <div style="display: flex; flex-direction: column; gap: 14px">
-<h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(34px, 4.6vw, 64px); line-height: 1.1">Bài học miễn phí và ưu đãi riêng</h2>
-<p style="margin: 0; max-width: 30em">Hơn 363.000 bạn yêu piano đang theo dõi Mây. Để lại email, Mây gửi bạn bài học mới nhất, ưu đãi riêng và những món quà đặc biệt.</p>
-</div>
-<div>
+<h3 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(25px, 2.5vw, 34px); line-height: 1.2">Hoặc nhận bài học miễn phí trước</h3>
+<p style="margin: 0 0 8px; max-width: 30em">Hơn 363.000 bạn yêu piano đang theo dõi Mây. Để lại email, Mây gửi bạn bài học mới nhất, ưu đãi riêng và những món quà đặc biệt.</p>
 <sc-if value="{{notSent}}" hint-placeholder-val="{{ true }}">
 <form onSubmit="{{sendEmail}}" style="display: flex; flex-direction: column; gap: 12px">
 <label for="email" style="font-weight: 600">Email của bạn</label>

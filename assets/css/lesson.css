@@ -212,7 +212,7 @@ body.mp-app .tutor-progress-card-thumbnail{flex:none;width:clamp(8.5rem,22vw,12.
 body.mp-app .tutor-progress-card-thumbnail img{display:block;width:100%;height:100%}
 body.mp-app .tutor-progress-card-content{flex:1 1 auto;min-width:0;max-width:none;width:auto;justify-content:center;gap:12px;padding:0}
 body.mp-app .tutor-progress-card-title{font-size:clamp(1.375rem,2.2vw,1.75rem);text-wrap:balance}
-body.mp-app .tutor-progress-card-details{flex-wrap:wrap;margin:0 0 8px;font-size:1rem;line-height:1.35;color:var(--mp-plum);font-variant-numeric:tabular-nums}
+body.mp-app .tutor-progress-card-details{flex-wrap:wrap;margin:0 0 8px;font-size:1rem;line-height:1.35;color:var(--mp-plum);font-variant-numeric:lining-nums tabular-nums}
 body.mp-app .tutor-progress-card-actions{position:static;inset:auto;transform:none;opacity:1;visibility:visible;flex:none}
 body.mp-app .tutor-dashboard-layout .tutor-progress-card-actions .tutor-btn{min-height:52px;padding:10px 26px;font-size:1.125rem;white-space:nowrap;transition:transform .12s ease,filter .12s ease}
 body.mp-app .tutor-dashboard-layout .tutor-progress-card-actions .tutor-btn:hover{filter:brightness(1.08)}
@@ -226,7 +226,7 @@ body.mp-app .tutor-student-dashboard-stats a.tutor-stat-card:hover{background:va
 body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-header{flex:1 1 auto;min-width:0}
 body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-icon{display:none}
 body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-title{font-family:var(--mp-body);font-size:1rem;font-weight:500;line-height:1.3;color:var(--mp-plum)}
-body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-value{font-size:1.875rem;line-height:1;font-variant-numeric:tabular-nums}
+body.mp-app .tutor-student-dashboard-stats .tutor-stat-card-value{font-size:1.875rem;line-height:1;font-variant-numeric:lining-nums tabular-nums}
 
 /* Phones: small photo beside the name, the button full width under it; the last block clears the bar at the bottom */
 @media (max-width:640px){
@@ -325,7 +325,7 @@ body.mp-app .tutor-learning-area .tutor-btn-icon{transition:transform .1s ease-o
 body.mp-app .mp-lesson-head{margin:22px 0 4px}
 body.mp-app .mp-lesson-head h1{margin:0;font-family:var(--mp-head)!important;font-weight:600;font-size:clamp(1.75rem,3.1vw,2.5rem);line-height:1.12;letter-spacing:-.02em;color:var(--mp-ink);text-wrap:balance}
 body.mp-app .mp-lesson-meta{margin:8px 0 0;font-size:1.0625rem;line-height:1.4;color:var(--mp-plum)}
-body.mp-app .mp-lesson-meta .mp-len{font-variant-numeric:tabular-nums;white-space:nowrap}
+body.mp-app .mp-lesson-meta .mp-len{font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}
 body.mp-app .mp-lesson-meta span+.mp-len::before{content:"·";margin:0 8px}
 
 /* Video: the one dark object on the page */
@@ -346,7 +346,7 @@ body.mp-app .tutor-learning-nav{scrollbar-width:thin;scrollbar-color:var(--mp-mu
 body.mp-app .tutor-learning-nav-item{transition:background-color .15s ease;padding-block:9px}
 body.mp-app .tutor-learning-nav-item:active{background:#F7D9E1}
 body.mp-app .tutor-learning-nav-item.active{background:#F7D9E1}
-body.mp-app .tutor-learning-nav-item .tutor-tiny-2{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+body.mp-app .tutor-learning-nav-item .tutor-tiny-2{font-variant-numeric:lining-nums tabular-nums;letter-spacing:.01em}
 body.mp-app .tutor-learning-nav-item svg{color:var(--mp-plum)}
 body.mp-app .tutor-learning-nav-item.active svg{color:var(--mp-accent)}
 
