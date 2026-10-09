@@ -6,7 +6,9 @@ body.mp-app{
 	--mp-ink:#2B1E24;--mp-accent:#C2456B;--mp-plum:#5B2A3C;--mp-bg:#E3D7D7;--mp-blush:#F6EFEF;--mp-pink:#E9B9C6;--mp-muted:#D2BFC3;--mp-white:#FFFFFF;
 	--mp-head:'Playfair Display',serif;--mp-body:'Newsreader',serif;--mp-side:clamp(20px,6vw,96px);
 	--tutor-color-primary:#C2456B;--tutor-color-primary-rgb:194,69,107;--tutor-color-primary-hover:#A8456F;--tutor-body-color:#2B1E24;--tutor-border-color:#2B1E24;
-	margin:0;background:var(--mp-bg);color:var(--mp-ink);font-family:var(--mp-body);font-size:1.25rem;line-height:1.6;overflow-x:hidden
+	margin:0;background:var(--mp-bg);color:var(--mp-ink);font-family:var(--mp-body);font-size:1.25rem;line-height:1.6;overflow-x:hidden;
+	/* Playfair Display draws old-style figures by default: its 0 looks like the letter o. */
+	font-variant-numeric:lining-nums
 }
 body.mp-app :where(p,li,label,input,select,textarea,button,td,th,span,div,a){font-family:var(--mp-body)}
 body.mp-app :is(h1,h2,h3,h4,.wc-block-components-title,.tutor-course-details-title,.tutor-fs-3,.tutor-fs-4,.tutor-fs-5){font-family:var(--mp-head);font-weight:600;color:var(--mp-ink);line-height:1.12;letter-spacing:-.01em}
