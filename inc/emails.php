@@ -17,19 +17,49 @@ function maypiano_mail( $to, $subject, $body ) {
 	return wp_mail( $to, $subject, maypiano_mail_wrap( $body ), maypiano_mail_headers() );
 }
 
+/** The site's own sending address. Mail from here is signed for this address only. */
+function maypiano_mail_own_address() {
+	$host = preg_replace( '/^www\./', '', strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) );
+	return 'wordpress@' . $host;
+}
+
+/** True when the address belongs to the site's own domain, so the site's server is allowed to send as it. */
+function maypiano_mail_from_ok( $address ) {
+	if ( ! is_email( $address ) ) {
+		return false;
+	}
+	$host   = preg_replace( '/^www\./', '', strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) ) );
+	$domain = strtolower( substr( strrchr( $address, '@' ), 1 ) );
+	return $domain === $host || substr( $host, -strlen( '.' . $domain ) ) === '.' . $domain;
+}
+
 /**
- * Sent as "Mây Piano" from the address set in WooCommerce > Settings > Emails, so the order emails
- * and WooCommerce's own share one sender. Without this WordPress signs them "WordPress <wordpress@…>".
+ * Sent as "Mây Piano". The address in WooCommerce > Settings > Emails is where replies go.
+ * It is used as the sender only when it is on the site's own domain: an outside address there (a Gmail one, say)
+ * makes mailboxes drop the email, because this server may not send for that domain.
  */
 function maypiano_mail_headers() {
 	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
-	$from    = get_option( 'woocommerce_email_from_address', '' );
-	if ( is_email( $from ) ) {
-		$headers[] = 'From: Mây Piano <' . $from . '>';
-		$headers[] = 'Reply-To: Mây Piano <' . $from . '>';
+	$reply   = get_option( 'woocommerce_email_from_address', '' );
+	$headers[] = 'From: Mây Piano <' . ( maypiano_mail_from_ok( $reply ) ? $reply : maypiano_mail_own_address() ) . '>';
+	if ( is_email( $reply ) ) {
+		$headers[] = 'Reply-To: Mây Piano <' . $reply . '>';
 	}
 	return $headers;
 }
+
+/** WooCommerce's own emails follow the same rule: the site's address as sender, the set address for replies. */
+add_filter( 'woocommerce_email_from_address', function ( $address ) {
+	return maypiano_mail_from_ok( $address ) ? $address : maypiano_mail_own_address();
+}, 99 );
+add_filter( 'woocommerce_email_headers', function ( $headers ) {
+	$reply = get_option( 'woocommerce_email_from_address', '' );
+	if ( ! is_email( $reply ) || maypiano_mail_from_ok( $reply ) ) {
+		return $headers;
+	}
+	$headers = preg_replace( '/^Reply-to:.*\R?/mi', '', (string) $headers );
+	return $headers . 'Reply-to: Mây Piano <' . $reply . ">\r\n";
+}, 99 );
 
 function maypiano_mail_wrap( $body ) {
 	return '<div style="background:#F6EFEF;padding:24px 12px;font-family:Georgia,\'Times New Roman\',serif;color:#2B1E24;font-size:17px;line-height:1.6">'
