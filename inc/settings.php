@@ -214,6 +214,7 @@ function maypiano_settings_page() {
 	echo '</table>';
 	maypiano_bunny_settings_section();
 	maypiano_teacher_settings_section();
+	maypiano_tg_settings_section();
 	submit_button();
 	echo '</form>';
 	maypiano_enrol_by_hand_section();
