@@ -424,8 +424,17 @@ function maypiano_tg_on_message( $msg ) {
 		}
 		return;
 	}
-	if ( (string) $chat['id'] !== maypiano_tg_chat() ) {
+	// Telegram gives a group a new number when it turns it into a "supergroup" (this happens by itself, for example
+	// when an admin's rights are edited). The site follows the group to its new number.
+	if ( (string) $chat['id'] === maypiano_tg_chat() && ! empty( $msg['migrate_to_chat_id'] ) ) {
+		update_option( 'maypiano_tg_chat', (string) $msg['migrate_to_chat_id'], false );
 		return;
+	}
+	if ( (string) $chat['id'] !== maypiano_tg_chat() ) {
+		if ( ! maypiano_tg_moved_here( $msg, $uid ) ) {
+			return;
+		}
+		update_option( 'maypiano_tg_chat', (string) $chat['id'], false );
 	}
 
 	$reply    = $msg['reply_to_message'] ?? array();
@@ -538,6 +547,38 @@ function maypiano_tg_on_message( $msg ) {
 	} else {
 		maypiano_tg_show( $id, $mid );
 	}
+}
+
+/**
+ * Is this other chat the tied group under its new number? Yes when Telegram says so in the message itself, or,
+ * for a message from the approver or someone allowed to ask, when Telegram answers that the old number moved here.
+ */
+function maypiano_tg_moved_here( $msg, $uid ) {
+	$here = (string) ( $msg['chat']['id'] ?? '' );
+	$old  = maypiano_tg_chat();
+	if ( '' === $here || '' === $old || 'supergroup' !== ( $msg['chat']['type'] ?? '' ) ) {
+		return false;
+	}
+	if ( (string) ( $msg['migrate_from_chat_id'] ?? '' ) === $old ) {
+		return true;
+	}
+	if ( $uid !== maypiano_tg_boss() && ! isset( maypiano_tg_askers()[ $uid ] ) ) {
+		return false;
+	}
+	if ( get_transient( 'mp_tg_probe' ) ) {
+		return false; // Asked Telegram a moment ago.
+	}
+	set_transient( 'mp_tg_probe', 1, MINUTE_IN_SECONDS );
+	$res = wp_remote_post( 'https://api.telegram.org/bot' . maypiano_tg_token() . '/sendChatAction', array(
+		'timeout' => 10,
+		'headers' => array( 'Content-Type' => 'application/json' ),
+		'body'    => wp_json_encode( array( 'chat_id' => $old, 'action' => 'typing' ) ),
+	) );
+	if ( is_wp_error( $res ) ) {
+		return false;
+	}
+	$json = json_decode( (string) wp_remote_retrieve_body( $res ), true );
+	return is_array( $json ) && (string) ( $json['parameters']['migrate_to_chat_id'] ?? '' ) === $here;
 }
 
 /** Someone new wrote to the bot: the approver decides whether that person may ask. Their first message is kept meanwhile. */
