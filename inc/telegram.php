@@ -16,7 +16,8 @@
  * admin screens and not the site's other tools, can approve a request or change what it says.
  *
  * When a request is approved the site can start the owner's tool right away (a "run now" address and its key, kept in
- * the settings). Without the key the request waits for the tool's own hourly round.
+ * the settings). Without the key, or when the call fails, the request stays approved and waits until the owner
+ * starts the tool by hand; the bot says so in the group.
  *
  * A request may come with pictures (a screenshot of the spot to fix). The site keeps only Telegram's own codes for those
  * pictures, never the pictures themselves; whoever does the work fetches them from Telegram with the bot's token.
@@ -165,7 +166,7 @@ function maypiano_tg_go() {
 
 /** Starts the work and says when it will be done. */
 function maypiano_tg_when() {
-	return maypiano_tg_go() ? 'Em làm ngay và báo lại ở đây.' : 'Em chưa gọi chạy ngay được, nên em sẽ làm trong lượt chạy tới (9 giờ 07 sáng hoặc 9 giờ 07 tối) và báo lại ở đây.';
+	return maypiano_tg_go() ? 'Em làm ngay và báo lại ở đây.' : 'Em đã ghi lại, nhưng chưa gọi chạy ngay được nên CHƯA làm. Anh Max mở routine "May Piano: chạy ngay" trong Claude và bấm Run now giúp em.';
 }
 
 /** One call to Telegram. Returns the "result" part, or null when the call failed. */
