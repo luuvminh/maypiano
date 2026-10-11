@@ -141,21 +141,22 @@ function maypiano_stats_enrolments() {
 	return $out;
 }
 
-/** New learners per day: the day Tutor LMS first marked the account as a student. */
+/**
+ * New learners per day: the day of each learner's first sign-up to a course or a song. Learners moved over from the
+ * old site keep the dates of their sign-ups there, so the day of the move does not count them all as new.
+ */
 function maypiano_stats_signups() {
 	global $wpdb;
-	$since = strtotime( maypiano_stats_since() . ' 00:00:00 ' . wp_timezone_string() );
-	$times = $wpdb->get_col( $wpdb->prepare( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		"SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = '_is_tutor_student' AND meta_value >= %d",
+	$since = maypiano_stats_since();
+	$days  = $wpdb->get_col( $wpdb->prepare( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		"SELECT DATE(MIN(post_date)) AS first FROM {$wpdb->posts}
+		WHERE post_type = 'tutor_enrolled' AND post_status = 'completed'
+		GROUP BY post_author HAVING first >= %s",
 		$since
 	) );
-	$count = array();
-	foreach ( (array) $times as $time ) {
-		$day           = gmdate( 'Y-m-d', (int) $time ); // Tutor LMS stores this time already shifted to the site's time zone.
-		$count[ $day ] = ( $count[ $day ] ?? 0 ) + 1;
-	}
-	$out = array();
-	for ( $t = $since; $t <= time(); $t += DAY_IN_SECONDS ) {
+	$count = array_count_values( (array) $days );
+	$out   = array();
+	for ( $t = strtotime( $since . ' 12:00:00 ' . wp_timezone_string() ); $t <= time(); $t += DAY_IN_SECONDS ) {
 		$day   = maypiano_stats_day( $t );
 		$out[] = array( 'day' => $day, 'students' => $count[ $day ] ?? 0 );
 	}
