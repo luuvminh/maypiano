@@ -222,5 +222,6 @@ function maypiano_settings_page() {
 	maypiano_sheet_settings_section();
 	maypiano_song_settings_section();
 	maypiano_fx_settings_section();
+	maypiano_stats_settings_section();
 	echo '</div>';
 }
