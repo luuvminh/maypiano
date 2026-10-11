@@ -86,13 +86,13 @@ function maypiano_teacher_set( $email ) {
 }
 
 add_action( 'admin_init', function () {
-	register_setting( 'maypiano', 'maypiano_teacher_email', array( 'sanitize_callback' => 'sanitize_email' ) );
+	register_setting( 'maypiano_khoa_hoc', 'maypiano_teacher_email', array( 'sanitize_callback' => 'sanitize_email' ) );
 } );
 
 /** The teacher part of Settings > May Piano. Opening the page keeps every course with the teacher, new ones included. */
 function maypiano_teacher_settings_section() {
 	$email = trim( (string) get_option( 'maypiano_teacher_email', '' ) );
-	echo '<h2>Người dạy</h2>';
+	echo '<h2 id="nguoi-day">Người dạy</h2>';
 	if ( '' !== $email ) {
 		$result = maypiano_teacher_set( $email );
 		echo '<p><strong>' . esc_html( is_wp_error( $result ) ? 'LỖI. ' . $result->get_error_message() : $result ) . '</strong></p>';

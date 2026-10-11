@@ -829,26 +829,26 @@ add_action( 'save_post_' . MAYPIANO_TG_TYPE, function ( $id, $post ) {
  */
 
 add_action( 'admin_init', function () {
-	register_setting( 'maypiano', 'maypiano_tg_token', array(
+	register_setting( 'maypiano_telegram', 'maypiano_tg_token', array(
 		'sanitize_callback' => function ( $value ) {
 			$value = trim( sanitize_text_field( (string) $value ) );
 			return '' === $value ? (string) get_option( 'maypiano_tg_token', '' ) : $value;
 		},
 	) );
-	register_setting( 'maypiano', 'maypiano_tg_fire_url', array(
+	register_setting( 'maypiano_telegram', 'maypiano_tg_fire_url', array(
 		'sanitize_callback' => function ( $value ) {
 			$value = trim( esc_url_raw( (string) $value ) );
 			return '' === $value ? (string) get_option( 'maypiano_tg_fire_url', '' ) : $value;
 		},
 	) );
-	register_setting( 'maypiano', 'maypiano_tg_fire_token', array(
+	register_setting( 'maypiano_telegram', 'maypiano_tg_fire_token', array(
 		'sanitize_callback' => function ( $value ) {
 			$value = trim( sanitize_text_field( (string) $value ) );
 			return '' === $value ? (string) get_option( 'maypiano_tg_fire_token', '' ) : $value;
 		},
 	) );
 	// Two switches that act when ticked and never stay stored.
-	register_setting( 'maypiano', 'maypiano_tg_unpair', array(
+	register_setting( 'maypiano_telegram', 'maypiano_tg_unpair', array(
 		'sanitize_callback' => function ( $value ) {
 			if ( $value ) {
 				foreach ( array( 'maypiano_tg_chat', 'maypiano_tg_boss', 'maypiano_tg_boss_name', 'maypiano_tg_group', 'maypiano_tg_askers' ) as $key ) {
@@ -859,7 +859,7 @@ add_action( 'admin_init', function () {
 			return '';
 		},
 	) );
-	register_setting( 'maypiano', 'maypiano_tg_off', array(
+	register_setting( 'maypiano_telegram', 'maypiano_tg_off', array(
 		'sanitize_callback' => function ( $value ) {
 			if ( $value ) {
 				maypiano_tg_api( 'deleteWebhook', array( 'drop_pending_updates' => true ) );
@@ -901,7 +901,7 @@ function maypiano_tg_setup() {
 }
 
 function maypiano_tg_settings_section() {
-	echo '<h2>Nhận yêu cầu sửa site qua Telegram</h2>';
+	echo '<h2 id="telegram">Nhận yêu cầu sửa site qua Telegram</h2>';
 	echo '<p><strong>' . esc_html( maypiano_tg_setup() ) . '</strong></p>';
 	$saved = '' !== maypiano_tg_token();
 	echo '<table class="form-table" role="presentation">';

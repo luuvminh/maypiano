@@ -72,7 +72,7 @@ add_action( 'admin_post_maypiano_enrol_by_hand', function () {
 		}
 	}
 	set_transient( 'maypiano_enrol_note_' . get_current_user_id(), $note, 10 * MINUTE_IN_SECONDS );
-	wp_safe_redirect( admin_url( 'options-general.php?page=maypiano#ghi-danh-tay' ) );
+	wp_safe_redirect( maypiano_settings_url( 'hoc-vien', 'ghi-danh-tay' ) );
 	exit;
 } );
 
