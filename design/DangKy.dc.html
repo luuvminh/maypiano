@@ -147,6 +147,7 @@ button{font-family:inherit;cursor:pointer}
 <div style="display: flex; flex-direction: column; gap: 6px"><label for="dt" style="font-weight: 600">Số điện thoại hoặc Zalo <span style="font-weight: 400">(không bắt buộc)</span></label><input id="dt" type="tel" inputmode="tel" autocomplete="tel" value="{{phone}}" onChange="{{setPhone}}" style="min-height: 54px; box-sizing: border-box; width: 100%; border: 2px solid #2B1E24; border-radius: 12px; padding: 0 16px; font-family: inherit; font-size: 20px; background: #F6EFEF; color: #2B1E24"></div>
 </div>
 <h2 style="margin: 0; font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(24px, 2.4vw, 28px); line-height: 1.2">Cách thanh toán</h2>
+<p style="margin: -10px 0 0; font-size: 18px">Mây đang tính giá cho bạn ở <strong style="font-weight: 600">{{at.label}}</strong>. <button type="button" onClick="{{flagJump}}" style="border: 0; background: none; padding: 0; font-size: inherit; font-weight: 600; color: #2B1E24; text-decoration: underline; text-underline-offset: 3px">Đổi nơi khác</button></p>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px">
 <sc-for list="{{methods}}" as="m" hint-placeholder-count="2">
 <button type="button" aria-pressed="{{m.pressed}}" onClick="{{m.pick}}" style="text-align: left; border: 2px solid #2B1E24; border-radius: 12px; padding: 16px 18px; min-height: 84px; font-size: 19px; background: {{m.bg}}; color: {{m.fg}}; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 600">{{m.label}}</span><span style="font-size: 17px">{{m.sub}}</span></button>
@@ -503,6 +504,8 @@ isLoading: s.loading,
 isPick: !s.loading && s.step === 0, isCart: !s.loading && s.step === 1, isInfo: !s.loading && s.step === 2, isPay: !s.loading && s.step === 3 && !!s.order, isDone: !s.loading && s.step === 4 && !!s.order,
 /* One flag button in the bar, the same as on the home page. Once an order is placed its currency is fixed, so the button goes. */
 regions, at, flagOn: !s.loading && s.step < 3, flagOpen: s.flagOpen ? 'true' : 'false', flagShown: !!s.flagOpen, flagAria: 'Xem giá cho bạn ở ' + at.label + '. Bấm để đổi nơi khác.', flagToggle: () => this.setState({ flagOpen: !s.flagOpen }), flagRef: this.flagRef,
+/* The line at the payment step opens the same menu: the page goes back up to the flag button. */
+flagJump: () => { window.scrollTo(0, 0); this.setState({ flagOpen: true }); const b = this.flagEl && this.flagEl.querySelector('button'); if (b) b.focus(); },
 tabs: COURSES.map((c, i) => ({ label: c.short, pick: () => this.setState({ sel: i }), ...on(s.sel === i) })),
 cur: { ...c0, priceText: price(c0) == null ? 'Mây báo giá qua email' : money(price(c0), cur) },
 soloUrl: cfg.songCourses && !Array.isArray(cfg.songCourses) ? cfg.songCourses[c0.key] || '' : '',
