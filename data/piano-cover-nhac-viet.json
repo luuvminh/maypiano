@@ -1,0 +1,245 @@
+{
+ "course": "piano-cover-nhac-viet",
+ "video_prefix": "Cover",
+ "doc_code": "Cover",
+ "intro": "Bạn đã biết nốt và hợp âm cơ bản. Giờ mình cùng đàn trọn những bài bạn thích nhé. Khóa này Mây hướng dẫn đàn hai tay 40 bài nhạc Việt, từ nhạc xưa bất hủ tới những bản hit mới, có đủ dạo đầu và nhiều kiểu đệm.",
+ "gets": [
+  "Đàn hai tay 40 bài nhạc Việt, có đủ dạo đầu",
+  "Dùng được nhiều thế bấm và kiểu đệm",
+  "Tự cover thêm bài khác theo cùng cách"
+ ],
+ "photo": "g07.jpg",
+ "photo_alt": "Mây bên cây đàn piano",
+ "topics": [
+  {
+   "title": "Phần 1: Những bản nhạc xưa bất hủ",
+   "lessons": [
+    {
+     "no": 0,
+     "title": "Giới thiệu khóa học",
+     "length": "1:54"
+    },
+    {
+     "no": 1,
+     "title": "Mùa Thu Cho Em",
+     "length": "19:14"
+    },
+    {
+     "no": 2,
+     "title": "Riêng Một Góc Trời",
+     "length": "20:14"
+    },
+    {
+     "no": 3,
+     "title": "Hà Nội Mùa Vắng Những Cơn Mưa",
+     "length": "15:18"
+    },
+    {
+     "no": 4,
+     "title": "Có Nhau Trọn Đời",
+     "length": "16:53"
+    },
+    {
+     "no": 5,
+     "title": "Chân Tình",
+     "length": "16:38"
+    }
+   ]
+  },
+  {
+   "title": "Phần 2: Những bản nhạc trẻ bất hủ",
+   "lessons": [
+    {
+     "no": 6,
+     "title": "Trái Tim Bên Lề",
+     "length": "26:46"
+    },
+    {
+     "no": 7,
+     "title": "Dẫu Có Lỗi Lầm",
+     "length": "22:08"
+    },
+    {
+     "no": 8,
+     "title": "Xuân Thì",
+     "length": "21:06"
+    },
+    {
+     "no": 9,
+     "title": "Vết Mưa",
+     "length": "27:49"
+    },
+    {
+     "no": 10,
+     "title": "Chiều Nay Không Có Mưa Bay",
+     "length": "23:18"
+    },
+    {
+     "no": 11,
+     "title": "Tháng Tư Là Lời Nói Dối Của Em",
+     "length": "26:17"
+    },
+    {
+     "no": 12,
+     "title": "Nhắm Mắt Thấy Mùa Hè",
+     "length": "19:07"
+    },
+    {
+     "no": 13,
+     "title": "Nơi Mình Dừng Chân",
+     "length": "15:00"
+    }
+   ]
+  },
+  {
+   "title": "Phần 3: Những bản hit hiện đại",
+   "lessons": [
+    {
+     "no": 14,
+     "title": "Bước Qua Nhau",
+     "length": "22:26"
+    },
+    {
+     "no": 15,
+     "title": "Ngày Đầu Tiên",
+     "length": "21:08"
+    },
+    {
+     "no": 16,
+     "title": "Em Là Không Thể",
+     "length": "19:29"
+    },
+    {
+     "no": 17,
+     "title": "Mưa Tháng Sáu",
+     "length": "22:55"
+    },
+    {
+     "no": 18,
+     "title": "Ngày Mai Người Ta Lấy Chồng",
+     "length": "23:19"
+    },
+    {
+     "no": 19,
+     "title": "Từng Là",
+     "length": "18:39"
+    },
+    {
+     "no": 20,
+     "title": "Kho Báu",
+     "length": "20:38"
+    },
+    {
+     "no": 21,
+     "title": "Thiệp Hồng Sai Tên",
+     "length": "17:13"
+    }
+   ]
+  },
+  {
+   "title": "Phần 4: Bài tự luyện, kèm sheet và video đàn mẫu",
+   "lessons": [
+    {
+     "no": 22,
+     "title": "Rồi Em Sẽ Gặp Một Chàng Trai Khác",
+     "length": "7:47"
+    },
+    {
+     "no": 23,
+     "title": "Và Con Tim Đã Vui Trở Lại",
+     "length": "10:58"
+    },
+    {
+     "no": 24,
+     "title": "Nỗi Đau Muộn Màng",
+     "length": "6:23"
+    },
+    {
+     "no": 25,
+     "title": "Chưa Quên Người Yêu Cũ",
+     "length": "8:53"
+    },
+    {
+     "no": 26,
+     "title": "Vùng Ký Ức",
+     "length": "5:13"
+    },
+    {
+     "no": 27,
+     "title": "Bản Tình Ca Đầu Tiên",
+     "length": "6:32"
+    },
+    {
+     "no": 28,
+     "title": "Có Chàng Trai Viết Lên Cây",
+     "length": "6:34"
+    },
+    {
+     "no": 29,
+     "title": "Nơi Pháo Hoa Rực Rỡ",
+     "length": "7:48"
+    },
+    {
+     "no": 30,
+     "title": "Ánh Sao và Bầu Trời",
+     "length": "8:38"
+    },
+    {
+     "no": 41,
+     "title": "Hoa và Váy",
+     "length": "3:43"
+    }
+   ]
+  },
+  {
+   "title": "Phần 5: Tặng kèm 10 bản nhạc hướng dẫn chi tiết",
+   "lessons": [
+    {
+     "no": 31,
+     "title": "Đừng Làm Trái Tim Anh Đau",
+     "length": "21:54"
+    },
+    {
+     "no": 32,
+     "title": "Nếu Em Được Lựa Chọn",
+     "length": "29:46"
+    },
+    {
+     "no": 33,
+     "title": "Sau Lời Từ Khước",
+     "length": "19:46"
+    },
+    {
+     "no": 34,
+     "title": "Mùa Xuân Đầu Tiên",
+     "length": "18:41"
+    },
+    {
+     "no": 35,
+     "title": "Nấu Ăn Cho Em",
+     "length": "15:56"
+    },
+    {
+     "no": 36,
+     "title": "Bài Không Tên Số 4",
+     "length": "27:11"
+    },
+    {
+     "no": 37,
+     "title": "Biển Cạn",
+     "length": "22:48"
+    },
+    {
+     "no": 39,
+     "title": "Một Thời Đã Xa",
+     "length": "32:56"
+    },
+    {
+     "no": 40,
+     "title": "Khoá Ly Biệt",
+     "length": "36:45"
+    }
+   ]
+  }
+ ]
+}
