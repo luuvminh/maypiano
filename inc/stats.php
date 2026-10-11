@@ -289,6 +289,15 @@ function maypiano_stats_bunny_chart( $from, $guid = '' ) {
 	return $out;
 }
 
+/** What the last call to Bunny's account API answered, in a few words, for the dashboard's notes. */
+function maypiano_stats_bunny_note( $add = null ) {
+	static $notes = array();
+	if ( null !== $add ) {
+		$notes[] = $add;
+	}
+	return implode( ' · ', $notes );
+}
+
 /** One answer of Bunny's account API (needs the account key), as an array, or null. */
 function maypiano_stats_bunny_account( $path ) {
 	$key = trim( (string) get_option( 'maypiano_bunny_account', '' ) );
@@ -302,11 +311,18 @@ function maypiano_stats_bunny_account( $path ) {
 			'accept'    => 'application/json',
 		),
 	) );
-	if ( is_wp_error( $res ) || 200 !== wp_remote_retrieve_response_code( $res ) ) {
+	$name = strtok( $path, '?' );
+	if ( is_wp_error( $res ) ) {
+		maypiano_stats_bunny_note( $name . ': ' . $res->get_error_message() );
 		return null;
 	}
+	$code = (int) wp_remote_retrieve_response_code( $res );
 	$body = json_decode( wp_remote_retrieve_body( $res ), true );
-	return is_array( $body ) ? $body : null;
+	if ( 200 !== $code || ! is_array( $body ) ) {
+		maypiano_stats_bunny_note( $name . ': HTTP ' . $code );
+		return null;
+	}
+	return $body;
 }
 
 /** Gigabytes sent per day by the video library's delivery zone, or null without the account key. */
@@ -314,16 +330,24 @@ function maypiano_stats_bunny_bandwidth( $from ) {
 	$library = absint( get_option( 'maypiano_bunny_library' ) );
 	$info    = $library ? maypiano_stats_bunny_account( 'videolibrary/' . $library ) : null;
 	if ( empty( $info['PullZoneId'] ) ) {
+		if ( $info ) {
+			maypiano_stats_bunny_note( 'videolibrary: không có PullZoneId' );
+		}
 		return null;
 	}
 	$stats = maypiano_stats_bunny_account( 'statistics?hourly=false&pullZone=' . (int) $info['PullZoneId'] . '&dateFrom=' . rawurlencode( $from . 'T00:00:00Z' ) . '&dateTo=' . rawurlencode( gmdate( 'Y-m-d' ) . 'T23:59:59Z' ) );
+	if ( ! $stats ) {
+		return null;
+	}
 	if ( ! isset( $stats['BandwidthUsedChart'] ) ) {
+		maypiano_stats_bunny_note( 'statistics: không có BandwidthUsedChart (có ' . implode( ', ', array_slice( array_keys( $stats ), 0, 12 ) ) . ')' );
 		return null;
 	}
 	$out = array();
 	foreach ( (array) $stats['BandwidthUsedChart'] as $when => $bytes ) {
 		$out[ substr( (string) $when, 0, 10 ) ] = round( (float) $bytes / 1e9, 3 );
 	}
+	maypiano_stats_bunny_note( sprintf( 'vùng phát %d: %s byte cả khoảng', (int) $info['PullZoneId'], number_format( (float) ( $stats['TotalBandwidthUsed'] ?? array_sum( (array) $stats['BandwidthUsedChart'] ) ), 0, '', '.' ) ) );
 	return $out;
 }
 
@@ -364,6 +388,7 @@ function maypiano_stats_bunny_bill() {
 			'traffic_usd' => round( $traffic, 4 ),
 			'balance_usd' => round( (float) ( $bill['Balance'] ?? 0 ), 2 ),
 			'usd_vnd'     => (float) $base['USD'],
+			'note'        => maypiano_stats_bunny_note(),
 		),
 	);
 }
