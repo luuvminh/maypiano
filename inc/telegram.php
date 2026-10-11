@@ -257,6 +257,11 @@ function maypiano_tg_body( $id ) {
 		foreach ( $files as $file ) {
 			$lines[] = $file;
 		}
+		$lines[] = '';
+		$lines[] = 'Đường dẫn tải ảnh (mỗi dòng một ảnh, cùng thứ tự; chỉ dùng được khi yêu cầu chưa xong):';
+		foreach ( array_keys( $files ) as $n ) {
+			$lines[] = maypiano_tg_picture_url( $id, $n );
+		}
 	}
 	$edit    = (string) get_post_meta( $id, '_mp_tg_edit_text', true );
 	if ( '' !== $edit ) {
@@ -291,6 +296,58 @@ function maypiano_tg_files_of( $id ) {
 	$files = get_post_meta( $id, '_mp_tg_files', true );
 	return is_array( $files ) ? $files : array();
 }
+
+/** The key that lets the owner's tool fetch one request's pictures from the site. Made once per request. */
+function maypiano_tg_picture_key( $id ) {
+	$key = (string) get_post_meta( $id, '_mp_tg_key', true );
+	if ( '' === $key ) {
+		$key = wp_generate_password( 32, false );
+		update_post_meta( $id, '_mp_tg_key', $key );
+	}
+	return $key;
+}
+
+function maypiano_tg_picture_url( $id, $n ) {
+	return rest_url( 'maypiano/v1/tg-anh' ) . '?a=' . (int) $id . '-' . (int) $n . '-' . maypiano_tg_picture_key( $id );
+}
+
+/**
+ * Hands one picture of an open request to whoever holds that request's key. The site fetches it from Telegram with
+ * the bot's token, so the tool doing the work never needs the token. Nothing is kept on the site.
+ */
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'maypiano/v1', '/tg-anh', array(
+		'methods'             => 'GET',
+		'permission_callback' => '__return_true',
+		'callback'            => function ( WP_REST_Request $req ) {
+			nocache_headers();
+			if ( ! preg_match( '/^(\d+)-(\d+)-([A-Za-z0-9]{32})$/', (string) $req->get_param( 'a' ), $m ) ) {
+				return new WP_Error( 'mp_no', 'Không có.', array( 'status' => 404 ) );
+			}
+			$id    = (int) $m[1];
+			$post  = get_post( $id );
+			$files = $post && MAYPIANO_TG_TYPE === $post->post_type ? maypiano_tg_files_of( $id ) : array();
+			$key   = $files ? (string) get_post_meta( $id, '_mp_tg_key', true ) : '';
+			if ( '' === $key || ! hash_equals( $key, $m[3] ) || ! isset( $files[ (int) $m[2] ] ) || ! in_array( $post->post_status, array( 'pending', 'draft' ), true ) ) {
+				return new WP_Error( 'mp_no', 'Không có.', array( 'status' => 404 ) );
+			}
+			$info = maypiano_tg_api( 'getFile', array( 'file_id' => $files[ (int) $m[2] ] ) );
+			$path = is_array( $info ) ? (string) ( $info['file_path'] ?? '' ) : '';
+			if ( '' === $path || (int) ( $info['file_size'] ?? 0 ) > 15 * MB_IN_BYTES ) {
+				return new WP_Error( 'mp_gone', 'Không lấy được ảnh.', array( 'status' => 502 ) );
+			}
+			$res = wp_remote_get( 'https://api.telegram.org/file/bot' . maypiano_tg_token() . '/' . $path, array( 'timeout' => 20 ) );
+			if ( is_wp_error( $res ) || 200 !== (int) wp_remote_retrieve_response_code( $res ) ) {
+				return new WP_Error( 'mp_gone', 'Không lấy được ảnh.', array( 'status' => 502 ) );
+			}
+			$type = (string) wp_remote_retrieve_header( $res, 'content-type' );
+			header( 'Content-Type: ' . ( 0 === strpos( $type, 'image/' ) ? $type : 'image/jpeg' ) );
+			header( 'X-Robots-Tag: noindex' );
+			echo wp_remote_retrieve_body( $res ); // phpcs:ignore WordPress.Security.EscapeOutput
+			exit;
+		},
+	) );
+} );
 
 /** Adds pictures to a request that is not done yet. */
 function maypiano_tg_add_files( $id, $files ) {
