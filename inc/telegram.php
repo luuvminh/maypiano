@@ -178,7 +178,7 @@ function maypiano_tg_name( $from ) {
 }
 
 function maypiano_tg_now() {
-	return wp_date( 'H:i d/m/Y' );
+	return wp_date( 'H:i d/m/Y', null, new DateTimeZone( 'Australia/Melbourne' ) ); // The group's own clock, whatever the site's is set to.
 }
 
 /** How many requests are waiting or approved but not done. */
