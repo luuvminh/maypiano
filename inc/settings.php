@@ -1,6 +1,7 @@
 <?php
 /**
  * Settings > May Piano: where the money goes, what each course costs, and how card payments behave.
+ * The page is split into tabs. Each tab does only its own work and saves only its own boxes.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -93,17 +94,69 @@ function maypiano_sanitize_products( $input ) {
 	return $clean;
 }
 
+/**
+ * The tabs of Settings > May Piano: slug => array( label, list of array( what is there, anchor, extra words to find it by ) ).
+ * A new block goes into the tab it belongs to here, and into maypiano_settings_page() below.
+ */
+function maypiano_settings_tabs() {
+	return array(
+		'tong-quan'  => array( 'Tổng quan', array() ),
+		'thanh-toan' => array( 'Thanh toán', array(
+			array( 'Chuyển khoản ngân hàng: số tài khoản, mã QR', 'chuyen-khoan', 'techcombank bin vietqr ngan hang tai khoan' ),
+			array( 'Thanh toán bằng thẻ: tắt, chạy thử, thật', 'the', 'stripe card duong dan chay thu' ),
+			array( 'PayPal', 'khac', 'paypal nuoc ngoai' ),
+			array( 'Thời gian kích hoạt, cách liên hệ, email nhận thông báo đơn mới', 'khac', 'ho tro zalo duyet don email thong bao' ),
+		) ),
+		'gia'        => array( 'Giá', array(
+			array( 'Bảng giá khóa học (VND, AUD, USD) và sản phẩm WooCommerce', 'bang-gia', 'gia khoa hoc san pham woocommerce tutor' ),
+			array( 'Tỷ giá: kiểm tra ngay, áp dụng giá đề xuất', 'ty-gia', 'ty gia vietcombank aud usd doi gia' ),
+		) ),
+		'khoa-hoc'   => array( 'Khóa học', array(
+			array( 'Video bài học (Bunny): ba khóa, gắn video vào bài', 'video', 'bunny video khoa api thu vien' ),
+			array( 'Người dạy: email của Mây', 'nguoi-day', 'nguoi day giao vien may teacher' ),
+			array( 'Tài liệu khóa học: tải PDF, file âm thanh lên', 'mp-docs', 'tai lieu pdf giao an m4a mp3' ),
+		) ),
+		'hoc-vien'   => array( 'Học viên', array(
+			array( 'Ghi danh tay: mở khóa cho một người không cần đơn', 'ghi-danh-tay', 'ghi danh tang khoa mo khoa tai khoan dat mat khau' ),
+		) ),
+		'ban-le'     => array( 'Sheet và bài lẻ', array(
+			array( 'Sheet nhạc: tải file PDF, xem bài nào đang bán', 'mp-sheets', 'sheet nhac lead sheet pdf' ),
+			array( 'Bài hát lẻ: bài nào đang bán, bài nào còn chờ', 'mp-songs', 'bai hat le mua rieng cover solo' ),
+		) ),
+		'telegram'   => array( 'Telegram', array(
+			array( 'Nhận yêu cầu sửa site qua Telegram: token, ghép nhóm, chạy ngay', 'telegram', 'bot telegram token nhom routine chay ngay' ),
+		) ),
+		'so-lieu'    => array( 'Số liệu', array(
+			array( 'Số liệu cho bảng theo dõi: đếm lại ngay', 'so-lieu', 'so lieu doanh thu thong ke bang theo doi dem lai' ),
+		) ),
+	);
+}
+
+/** The tab being looked at. */
+function maypiano_settings_tab() {
+	$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	return isset( maypiano_settings_tabs()[ $tab ] ) ? $tab : 'tong-quan';
+}
+
+/** Address of one tab, and of one block in it. */
+function maypiano_settings_url( $tab = '', $anchor = '', $args = array() ) {
+	$args = array_merge( array( 'page' => 'maypiano' ), $tab && 'tong-quan' !== $tab ? array( 'tab' => $tab ) : array(), $args );
+	return add_query_arg( $args, admin_url( 'options-general.php' ) ) . ( '' !== $anchor ? '#' . $anchor : '' );
+}
+
+/** Each tab saves its own boxes. One shared group would empty the boxes of every tab that was not on screen. */
 add_action( 'admin_init', function () {
 	foreach ( maypiano_fields() as $key => $field ) {
-		register_setting( 'maypiano', $key, array( 'sanitize_callback' => 'sanitize_text_field' ) );
+		register_setting( 'maypiano_thanh_toan', $key, array( 'sanitize_callback' => 'sanitize_text_field' ) );
 	}
-	register_setting( 'maypiano', 'maypiano_card_mode', array( 'sanitize_callback' => 'sanitize_key' ) );
-	register_setting( 'maypiano', 'maypiano_prices', array( 'sanitize_callback' => 'maypiano_sanitize_prices' ) );
-	register_setting( 'maypiano', 'maypiano_products', array( 'sanitize_callback' => 'maypiano_sanitize_products' ) );
+	register_setting( 'maypiano_thanh_toan', 'maypiano_card_mode', array( 'sanitize_callback' => 'sanitize_key' ) );
+	register_setting( 'maypiano_gia', 'maypiano_prices', array( 'sanitize_callback' => 'maypiano_sanitize_prices' ) );
+	register_setting( 'maypiano_gia', 'maypiano_products', array( 'sanitize_callback' => 'maypiano_sanitize_products' ) );
 } );
 
+/** The QR reader is only needed where the bank account is filled in. */
 add_action( 'admin_enqueue_scripts', function ( $hook ) {
-	if ( 'settings_page_maypiano' !== $hook ) {
+	if ( 'settings_page_maypiano' !== $hook || 'thanh-toan' !== maypiano_settings_tab() ) {
 		return;
 	}
 	wp_enqueue_script( 'maypiano-jsqr', get_theme_file_uri( 'assets/js/jsqr.js' ), array(), MAYPIANO_VERSION, true );
@@ -126,29 +179,122 @@ add_action( 'admin_menu', function () {
 } );
 
 function maypiano_settings_page() {
-	$fields   = maypiano_fields();
-	$prices   = (array) get_option( 'maypiano_prices', array() );
-	$picked   = (array) get_option( 'maypiano_products', array() );
-	$has_wc   = function_exists( 'wc_get_orders' );
-	$has_lms  = function_exists( 'tutor_utils' );
-	$mode     = maypiano_card_mode();
-	$bank     = array( 'maypiano_bank_bin', 'maypiano_account', 'maypiano_account_name', 'maypiano_qr' );
-	$other    = array( 'maypiano_paypal', 'maypiano_processing', 'maypiano_support', 'maypiano_notify' );
+	$tabs = maypiano_settings_tabs();
+	$tab  = maypiano_settings_tab();
 
 	echo '<div class="wrap"><h1>May Piano</h1>';
-	if ( ! $has_wc ) {
+	if ( ! function_exists( 'wc_get_orders' ) ) {
 		echo '<div class="notice notice-error"><p>WooCommerce đang tắt. Trang đăng ký không nhận được đơn cho tới khi bật lại.</p></div>';
 	}
-	if ( ! $has_lms ) {
+	if ( ! function_exists( 'tutor_utils' ) ) {
 		echo '<div class="notice notice-warning"><p>Tutor LMS đang tắt. Đơn vẫn được ghi, nhưng học viên không tự được cấp quyền học.</p></div>';
 	}
+	echo '<nav class="nav-tab-wrapper" style="margin-bottom:16px">';
+	foreach ( $tabs as $slug => $info ) {
+		printf( '<a class="nav-tab%s" href="%s">%s</a>', $slug === $tab ? ' nav-tab-active' : '', esc_url( maypiano_settings_url( $slug ) ), esc_html( $info[0] ) );
+	}
+	echo '</nav>';
+
+	switch ( $tab ) {
+		case 'thanh-toan':
+			maypiano_settings_tab_pay();
+			break;
+		case 'gia':
+			maypiano_settings_tab_prices();
+			maypiano_fx_settings_section();
+			break;
+		case 'khoa-hoc':
+			echo '<form method="post" action="options.php">';
+			settings_fields( 'maypiano_khoa_hoc' );
+			maypiano_bunny_settings_section();
+			maypiano_teacher_settings_section();
+			submit_button();
+			echo '</form>';
+			maypiano_docs_settings_section();
+			break;
+		case 'hoc-vien':
+			maypiano_enrol_by_hand_section();
+			break;
+		case 'ban-le':
+			maypiano_sheet_settings_section();
+			maypiano_song_settings_section();
+			break;
+		case 'telegram':
+			echo '<form method="post" action="options.php">';
+			settings_fields( 'maypiano_telegram' );
+			maypiano_tg_settings_section();
+			submit_button();
+			echo '</form>';
+			break;
+		case 'so-lieu':
+			maypiano_stats_settings_section();
+			break;
+		default:
+			maypiano_settings_tab_home();
+	}
+	echo '</div>';
+}
+
+/** First tab: nothing slow. A box to find a function by a few letters, and the list of everything, each line a link. */
+function maypiano_settings_tab_home() {
+	$tabs = maypiano_settings_tabs();
+	$old  = array();
+	echo '<p><input type="search" id="mp-find" class="regular-text" placeholder="Tìm chức năng, ví dụ: tỷ giá, sheet, ghi danh" autofocus></p>';
+	echo '<table class="widefat striped" style="max-width:820px" id="mp-index"><thead><tr><th style="width:150px">Mục</th><th>Chức năng</th></tr></thead><tbody>';
+	foreach ( $tabs as $slug => $info ) {
+		foreach ( $info[1] as $item ) {
+			$old[ $item[1] ] = $slug;
+			printf(
+				'<tr data-find="%s"><td><a href="%s">%s</a></td><td><a href="%s">%s</a></td></tr>',
+				esc_attr( strtolower( remove_accents( $info[0] . ' ' . $item[0] ) ) . ' ' . $item[2] ),
+				esc_url( maypiano_settings_url( $slug ) ),
+				esc_html( $info[0] ),
+				esc_url( maypiano_settings_url( $slug, $item[1] ) ),
+				esc_html( $item[0] )
+			);
+		}
+	}
+	echo '</tbody></table><p id="mp-none" hidden><strong>Không có chức năng nào khớp.</strong></p>';
 	foreach ( maypiano_curriculum_report() as $line ) {
 		echo '<div class="notice notice-info inline"><p>Nội dung khóa học đã dựng từ file. ' . esc_html( $line ) . '</p></div>';
 	}
-	echo '<form method="post" action="options.php">';
-	settings_fields( 'maypiano' );
+	?>
+<script>
+(function () {
+	/* Links made before the page had tabs end in #ty-gia and the like: they go on to the right tab. */
+	var old = <?php echo wp_json_encode( $old ); ?>, hash = location.hash.slice(1);
+	if (hash && old[hash]) { location.replace(location.pathname + '?page=maypiano&tab=' + old[hash] + '#' + hash); return; }
+	var box = document.getElementById('mp-find'), rows = document.querySelectorAll('#mp-index tbody tr'), none = document.getElementById('mp-none');
+	var plain = function (s) { return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd'); };
+	box.addEventListener('input', function () {
+		var words = plain(box.value).split(/\s+/).filter(Boolean), shown = 0;
+		rows.forEach(function (row) {
+			var text = row.getAttribute('data-find');
+			var hit = words.every(function (w) { return text.indexOf(w) !== -1; });
+			row.hidden = !hit;
+			if (hit) { shown++; }
+		});
+		none.hidden = shown > 0;
+	});
+	box.addEventListener('keydown', function (e) {
+		if (e.key !== 'Enter') { return; }
+		for (var i = 0; i < rows.length; i++) { if (!rows[i].hidden) { location.href = rows[i].querySelector('td:last-child a').href; break; } }
+	});
+})();
+</script>
+	<?php
+}
 
-	echo '<h2>Chuyển khoản ngân hàng (khách ở Việt Nam)</h2>';
+function maypiano_settings_tab_pay() {
+	$fields = maypiano_fields();
+	$mode   = maypiano_card_mode();
+	$bank   = array( 'maypiano_bank_bin', 'maypiano_account', 'maypiano_account_name', 'maypiano_qr' );
+	$other  = array( 'maypiano_paypal', 'maypiano_processing', 'maypiano_support', 'maypiano_notify' );
+
+	echo '<form method="post" action="options.php">';
+	settings_fields( 'maypiano_thanh_toan' );
+
+	echo '<h2 id="chuyen-khoan">Chuyển khoản ngân hàng (khách ở Việt Nam)</h2>';
 	echo '<p><input type="file" id="mp-qr-file" accept="image/*"> <span id="mp-qr-result" class="description">Đọc từ ảnh mã QR: chọn ảnh mã QR của ngân hàng, ba ô bên dưới sẽ tự điền. Ảnh chỉ được đọc trên máy của bạn.</span></p>';
 	echo '<table class="form-table" role="presentation">';
 	foreach ( $bank as $key ) {
@@ -156,7 +302,7 @@ function maypiano_settings_page() {
 	}
 	echo '</table>';
 
-	echo '<h2>Thanh toán bằng thẻ</h2><table class="form-table" role="presentation"><tr><th scope="row">Chế độ</th><td>';
+	echo '<h2 id="the">Thanh toán bằng thẻ</h2><table class="form-table" role="presentation"><tr><th scope="row">Chế độ</th><td>';
 	$modes = array(
 		'off'  => 'Tắt. Khách không thấy lựa chọn trả bằng thẻ.',
 		'test' => 'Chạy thử. Quản trị viên đang đăng nhập thấy, và khách mở đường dẫn chạy thử bên dưới cũng thấy. Không có tiền thật, không nhập số thẻ.',
@@ -171,7 +317,22 @@ function maypiano_settings_page() {
 	}
 	echo '</td></tr></table>';
 
-	echo '<h2>Bảng giá và sản phẩm</h2>';
+	echo '<h2 id="khac">PayPal và liên hệ</h2><table class="form-table" role="presentation">';
+	foreach ( $other as $key ) {
+		maypiano_settings_row( $key, $fields[ $key ] );
+	}
+	echo '</table>';
+	submit_button();
+	echo '</form>';
+}
+
+function maypiano_settings_tab_prices() {
+	$prices = (array) get_option( 'maypiano_prices', array() );
+	$picked = (array) get_option( 'maypiano_products', array() );
+
+	echo '<form method="post" action="options.php">';
+	settings_fields( 'maypiano_gia' );
+	echo '<h2 id="bang-gia">Bảng giá và sản phẩm</h2>';
 	echo '<p class="description">Ô VND để trống thì lấy giá của sản phẩm WooCommerce. Ô AUD hoặc USD để trống thì khách ở vùng đó đặt đơn được, nhưng Mây phải báo giá qua email.</p>';
 	echo '<table class="widefat striped" style="max-width:1000px"><thead><tr><th>Khóa học</th><th>VND</th><th>AUD</th><th>USD</th><th>Sản phẩm WooCommerce</th><th>Khóa Tutor LMS</th></tr></thead><tbody>';
 	foreach ( maypiano_catalog() as $key => $course ) {
@@ -207,21 +368,6 @@ function maypiano_settings_page() {
 	}
 	echo '</tbody></table>';
 
-	echo '<h2>Khác</h2><table class="form-table" role="presentation">';
-	foreach ( $other as $key ) {
-		maypiano_settings_row( $key, $fields[ $key ] );
-	}
-	echo '</table>';
-	maypiano_bunny_settings_section();
-	maypiano_teacher_settings_section();
-	maypiano_tg_settings_section();
 	submit_button();
 	echo '</form>';
-	maypiano_enrol_by_hand_section();
-	maypiano_docs_settings_section();
-	maypiano_sheet_settings_section();
-	maypiano_song_settings_section();
-	maypiano_fx_settings_section();
-	maypiano_stats_settings_section();
-	echo '</div>';
 }

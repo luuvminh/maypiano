@@ -350,7 +350,7 @@ add_action( 'admin_post_maypiano_sheet_upload', function () {
 	}
 	update_option( 'maypiano_sheet_files', $files, false );
 	set_transient( 'maypiano_sheet_upload_note', array( $done, $skip ), 60 );
-	wp_safe_redirect( admin_url( 'options-general.php?page=maypiano#mp-sheets' ) );
+	wp_safe_redirect( maypiano_settings_url( 'ban-le', 'mp-sheets' ) );
 	exit;
 } );
 

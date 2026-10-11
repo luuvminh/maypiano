@@ -150,7 +150,7 @@ function maypiano_fx_mail( $proposal, $base ) {
 	$body .= '<p>Giá đề xuất = giá VND chia cho tỷ giá Vietcombank mua chuyển khoản hôm nay, làm tròn lên.</p>';
 	$body .= maypiano_fx_table( $proposal );
 	$body .= '<p>Muốn đổi thì bấm nút dưới, rồi bấm "Áp dụng giá đề xuất" trong trang cài đặt. Không muốn đổi thì không cần làm gì: giá giữ nguyên.</p>';
-	$body .= maypiano_mail_button( admin_url( 'options-general.php?page=maypiano#ty-gia' ), 'Mở trang cài đặt' );
+	$body .= maypiano_mail_button( maypiano_settings_url( 'gia', 'ty-gia' ), 'Mở trang cài đặt' );
 	maypiano_mail( maypiano_notify_address(), 'May Piano: tỷ giá lệch ' . maypiano_fx_percent( max( array_map( 'abs', $proposal['drift'] ) ) ) . ', có đổi giá không?', $body );
 }
 
@@ -202,7 +202,7 @@ add_action( 'admin_post_maypiano_fx_check', function () {
 	}
 	check_admin_referer( 'maypiano_fx_check' );
 	maypiano_fx_check();
-	wp_safe_redirect( admin_url( 'options-general.php?page=maypiano#ty-gia' ) );
+	wp_safe_redirect( maypiano_settings_url( 'gia', 'ty-gia' ) );
 	exit;
 } );
 
@@ -228,7 +228,7 @@ add_action( 'admin_post_maypiano_fx_apply', function () {
 		maypiano_fx_sync_products( $proposal['prices'], $proposal['rates'] );
 		delete_option( 'maypiano_fx_proposal' );
 	}
-	wp_safe_redirect( admin_url( 'options-general.php?page=maypiano#ty-gia' ) );
+	wp_safe_redirect( maypiano_settings_url( 'gia', 'ty-gia' ) );
 	exit;
 } );
 

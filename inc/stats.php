@@ -505,7 +505,7 @@ add_action( 'admin_post_maypiano_stats_refresh', function () {
 	}
 	check_admin_referer( 'maypiano_stats_refresh' );
 	maypiano_stats_refresh();
-	wp_safe_redirect( admin_url( 'options-general.php?page=maypiano#so-lieu' ) );
+	wp_safe_redirect( maypiano_settings_url( 'so-lieu', 'so-lieu' ) );
 	exit;
 } );
 

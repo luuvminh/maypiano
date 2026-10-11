@@ -31,7 +31,7 @@ function maypiano_bunny_extra_keys() {
 /** An empty box on the settings page means "keep what is saved", so the keys never have to be shown again. */
 add_action( 'admin_init', function () {
 	foreach ( array_keys( maypiano_bunny_keys() + maypiano_bunny_extra_keys() ) as $key ) {
-		register_setting( 'maypiano', $key, array(
+		register_setting( 'maypiano_khoa_hoc', $key, array(
 			'sanitize_callback' => function ( $value ) use ( $key ) {
 				$value = trim( sanitize_text_field( (string) $value ) );
 				return '' === $value ? (string) get_option( $key, '' ) : $value;
@@ -186,9 +186,9 @@ add_filter( 'jetpack_relatedposts_filter_enabled_for_request', function ( $on ) 
 	return is_singular( array( 'lesson', 'courses' ) ) ? false : $on;
 } );
 
-/** The Bunny part of Settings > May Piano. Opening the page also looks for new videos. */
+/** The Bunny part of Settings > May Piano > Khóa học. Opening that tab also looks for new videos. */
 function maypiano_bunny_settings_section() {
-	echo '<h2>Video bài học (Bunny)</h2>';
+	echo '<h2 id="video">Video bài học (Bunny)</h2>';
 	foreach ( maypiano_bunny_match() as $line ) {
 		echo '<p><strong>' . esc_html( $line ) . '</strong></p>';
 	}

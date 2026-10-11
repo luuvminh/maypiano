@@ -485,7 +485,7 @@ add_action( 'admin_post_maypiano_docs_upload', function () {
 	}
 	update_option( 'maypiano_doc_files', $files, false );
 	set_transient( 'maypiano_docs_upload_note', array( $done, $skip ), 60 );
-	wp_safe_redirect( admin_url( 'options-general.php?page=maypiano&mp_docs=1#mp-docs' ) );
+	wp_safe_redirect( maypiano_settings_url( 'khoa-hoc', 'mp-docs', array( 'mp_docs' => 1 ) ) );
 	exit;
 } );
 
@@ -505,7 +505,7 @@ add_action( 'admin_post_maypiano_docs_remove', function () {
 		unset( $files[ $key ] );
 		update_option( 'maypiano_doc_files', $files, false );
 	}
-	wp_safe_redirect( admin_url( 'options-general.php?page=maypiano#mp-docs' ) );
+	wp_safe_redirect( maypiano_settings_url( 'khoa-hoc', 'mp-docs' ) );
 	exit;
 } );
 
