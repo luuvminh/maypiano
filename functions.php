@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.15.6' );
+define( 'MAYPIANO_VERSION', '1.15.7' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );

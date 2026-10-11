@@ -189,3 +189,39 @@ add_action( 'template_redirect', function () {
 		exit;
 	}
 }, 3 );
+
+/**
+ * The teacher's menu: no "Thông báo" and no "Lượt làm bài kiểm tra". The site sends no announcements from there
+ * and the courses have no tests.
+ */
+const MAYPIANO_TEACHER_MENU_OFF = array( 'announcements', 'quiz-attempts' );
+
+function maypiano_teacher_menu_trim( $items ) {
+	if ( ! is_array( $items ) ) {
+		return $items;
+	}
+	foreach ( MAYPIANO_TEACHER_MENU_OFF as $key ) {
+		unset( $items[ $key ] );
+	}
+	return $items;
+}
+add_filter( 'tutor_dashboard/nav_items', 'maypiano_teacher_menu_trim', 99 );
+add_filter( 'tutor_dashboard/instructor_nav_items', 'maypiano_teacher_menu_trim', 99 );
+add_filter( 'tutor_dashboard/nav_items_all', 'maypiano_teacher_menu_trim', 99 );
+
+/** The same two links, hidden wherever the menu is drawn without passing through the lists above. */
+add_action( 'wp_head', function () {
+	if ( ! is_user_logged_in() || ! function_exists( 'tutor_utils' ) || ! is_page( (int) tutor_utils()->get_option( 'tutor_dashboard_page_id' ) ) ) {
+		return;
+	}
+	$rules = array();
+	foreach ( MAYPIANO_TEACHER_MENU_OFF as $key ) {
+		$path = (string) wp_parse_url( tutor_utils()->tutor_dashboard_url( $key ), PHP_URL_PATH );
+		if ( '' !== $path && false === strpbrk( $path, '"\\<>' ) ) {
+			$rules[] = 'a[href$="' . untrailingslashit( $path ) . '"],a[href$="' . trailingslashit( $path ) . '"]';
+		}
+	}
+	if ( $rules ) {
+		echo '<style id="mp-teacher-menu">' . implode( ',', $rules ) . '{display:none!important}</style>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- paths of the site's own pages, checked above.
+	}
+}, 30 );
