@@ -141,6 +141,7 @@ function maypiano_site_header() {
 <a class="mp-enter" href="<?php echo esc_url( is_user_logged_in() ? maypiano_learn_url() : maypiano_login_url() ); ?>">Vào học</a>
 <a class="mp-pill" href="<?php echo esc_url( maypiano_signup_url() ); ?>">Đăng ký học</a>
 	<?php echo maypiano_me_menu(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+	<?php echo maypiano_place_menu(); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 </div>
 </nav>
 </header>

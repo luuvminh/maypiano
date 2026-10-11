@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.15.11' );
+define( 'MAYPIANO_VERSION', '1.16.0' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -15,6 +15,7 @@ require get_theme_file_path( 'inc/emails.php' );
 require get_theme_file_path( 'inc/orders.php' );
 require get_theme_file_path( 'inc/approve.php' );
 require get_theme_file_path( 'inc/account.php' );
+require get_theme_file_path( 'inc/place.php' );
 require get_theme_file_path( 'inc/chrome.php' );
 require get_theme_file_path( 'inc/i18n.php' );
 require get_theme_file_path( 'inc/fx.php' );

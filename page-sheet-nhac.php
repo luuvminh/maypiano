@@ -52,11 +52,16 @@ $kinds  = maypiano_sheet_kinds();
 			return r.json().then(function (j) { if (!r.ok) throw j; return j; });
 		});
 	};
-	post('config', {}).then(function (cfg) {
-		region = cfg.region || '';
+	var place = window.MayPianoPlace;
+	/* Prices for the place picked with the flag button; with no pick, for where the visitor is. */
+	var draw = function (id) {
+		region = id || '';
 		var attr = region === 'AU' ? 'data-aud' : (region === 'INTL' ? 'data-usd' : 'data-vnd');
 		list.querySelectorAll('.mp-sheet-price').forEach(function (el) { el.textContent = el.getAttribute(attr); });
-	}).catch(function () {});
+		if (place) { place.show(region); }
+	};
+	post('config', { region: place ? place.picked() : '' }).then(function (cfg) { draw(cfg.region); }).catch(function () {});
+	document.addEventListener('maypiano:place', function (e) { draw(e.detail.region); });
 	list.querySelectorAll('.mp-sheet-get').forEach(function (btn) {
 		btn.addEventListener('click', function () {
 			var form = document.getElementById(btn.getAttribute('aria-controls'));

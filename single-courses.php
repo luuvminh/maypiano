@@ -125,8 +125,11 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 (function () {
 	var cfg = window.MayPianoCfg, spots = document.querySelectorAll('[data-mp-price]');
 	if (!cfg || !cfg.rest || !spots.length || !window.fetch) { return; }
-	fetch(cfg.rest + 'config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).then(function (r) { return r.json(); }).then(function (c) {
-		var cur = { VN: 'VND', AU: 'AUD' }[c.region] || 'USD';
+	var place = window.MayPianoPlace, got = null;
+	/* Prices for the place picked with the flag button; with no pick, for where the visitor is. */
+	var draw = function (region) {
+		if (!got) { return; }
+		var c = got, cur = { VN: 'VND', AU: 'AUD' }[region] || 'USD';
 		spots.forEach(function (el) {
 			var p = c.prices && c.prices[el.getAttribute('data-mp-price')], v = p && p[cur];
 			if (!v) { return; }
@@ -134,7 +137,13 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 			var t = Number(v).toFixed(2).replace(/\.00$/, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 			el.textContent = (cur === 'AUD' ? 'A$' : 'US$') + t;
 		});
+	};
+	fetch(cfg.rest + 'config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ region: place ? place.picked() : '' }) }).then(function (r) { return r.json(); }).then(function (c) {
+		got = c;
+		if (place) { place.show(c.region); }
+		draw(c.region);
 	}).catch(function () {});
+	document.addEventListener('maypiano:place', function (e) { draw(e.detail.region); });
 })();
 </script>
 <?php endif; ?>
