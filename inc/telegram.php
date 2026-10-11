@@ -165,7 +165,7 @@ function maypiano_tg_go() {
 
 /** Starts the work and says when it will be done. */
 function maypiano_tg_when() {
-	return maypiano_tg_go() ? 'Em làm ngay và báo lại ở đây.' : 'Em sẽ làm trong lượt chạy tới (phút thứ 7 mỗi giờ, từ 8 giờ sáng tới 10 giờ tối) và báo lại ở đây.';
+	return maypiano_tg_go() ? 'Em làm ngay và báo lại ở đây.' : 'Em chưa gọi chạy ngay được, nên em sẽ làm trong lượt chạy tới (9 giờ 07 sáng hoặc 9 giờ 07 tối) và báo lại ở đây.';
 }
 
 /** One call to Telegram. Returns the "result" part, or null when the call failed. */
