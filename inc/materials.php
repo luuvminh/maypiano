@@ -287,7 +287,8 @@ add_action( 'tutor_load_template_after', function ( $template ) {
 			$topic = maypiano_curriculum_find( 'topics', $slug . '/phan-' . (int) $no );
 			echo '<h2 class="mp-docs-title">' . esc_html( $topic ? get_the_title( $topic ) : 'Phần ' . (int) $no ) . '</h2>' . maypiano_docs_list_html( $list ); // phpcs:ignore WordPress.Security.EscapeOutput
 		}
-		if ( $each ) {
+		// The whole-course file already holds every lesson's pages, so the lesson-by-lesson list only shows when there is no such file.
+		if ( $each && ! $whole ) {
 			echo '<h2 class="mp-docs-title">Tài liệu theo từng bài</h2>';
 			foreach ( $each as $no => $list ) {
 				$of = maypiano_curriculum_find( 'lesson', $slug . '/bai-' . (int) $no );
