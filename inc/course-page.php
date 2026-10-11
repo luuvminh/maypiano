@@ -237,3 +237,97 @@ document.querySelectorAll('.tutor-learning-nav-item .tutor-tiny-2').forEach(func
 </script>
 	<?php
 }, 98 );
+
+/**
+ * A lesson's number in its course ("Bài 3"), counted the way the course page counts: in order, leaving out the
+ * introduction and the materials lesson. 0 for a lesson without a number.
+ */
+function maypiano_lesson_numbers( $course_id ) {
+	static $memo = array();
+	$course_id = (int) $course_id;
+	if ( isset( $memo[ $course_id ] ) ) {
+		return $memo[ $course_id ];
+	}
+	$map    = array();
+	$count  = 0;
+	$topics = get_posts( array(
+		'post_type'      => 'topics',
+		'post_parent'    => $course_id,
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC',
+		'fields'         => 'ids',
+	) );
+	foreach ( $topics as $topic_id ) {
+		$items = get_posts( array(
+			'post_type'      => 'lesson',
+			'post_parent'    => $topic_id,
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'menu_order',
+			'order'          => 'ASC',
+			'fields'         => 'ids',
+		) );
+		foreach ( $items as $item ) {
+			if ( preg_match( '#/(bai-0|' . MAYPIANO_DOCS_LESSON_KEY . ')$#', (string) get_post_meta( $item, '_maypiano_key', true ) ) ) {
+				continue;
+			}
+			$map[ (int) $item ] = ++$count;
+		}
+	}
+	$memo[ $course_id ] = $map;
+	return $map;
+}
+
+/** On the lesson page every lesson's name starts with its number: "Bài 2: Cấu tạo 14 hợp âm căn bản". */
+add_filter( 'the_title', function ( $title, $id = 0 ) {
+	static $busy = false;
+	if ( $busy || is_admin() || ! $id || ! is_singular( 'lesson' ) || 'lesson' !== get_post_type( $id ) || preg_match( '/^\s*Bài \d+:/u', (string) $title ) ) {
+		return $title;
+	}
+	$busy   = true;
+	$course = (int) get_post_meta( $id, '_tutor_course_id_for_lesson', true );
+	$map    = $course ? maypiano_lesson_numbers( $course ) : array();
+	$busy   = false;
+	return isset( $map[ (int) $id ] ) ? 'Bài ' . $map[ (int) $id ] . ': ' . $title : $title;
+}, 10, 2 );
+
+/** The list of lessons beside the video gets the same numbers, in case it prints a name without asking for it the usual way. */
+add_action( 'wp_footer', function () {
+	if ( ! is_singular( 'lesson' ) ) {
+		return;
+	}
+	$course = (int) get_post_meta( (int) get_queried_object_id(), '_tutor_course_id_for_lesson', true );
+	$byurl  = array();
+	foreach ( ( $course ? maypiano_lesson_numbers( $course ) : array() ) as $lesson => $no ) {
+		$byurl[ untrailingslashit( (string) wp_parse_url( (string) get_permalink( $lesson ), PHP_URL_PATH ) ) ] = $no;
+	}
+	if ( ! $byurl ) {
+		return;
+	}
+	?>
+<script>
+(function () {
+	var nos = <?php echo wp_json_encode( $byurl ); ?>;
+	document.querySelectorAll('.tutor-learning-nav-item').forEach(function (el) {
+		var a = el.matches('a[href]') ? el : (el.querySelector('a[href]') || el.closest('a[href]'));
+		if (!a) { return; }
+		var path;
+		try { path = decodeURI(new URL(a.href, location.href).pathname).replace(/\/+$/, ''); } catch (e) { return; }
+		var no = nos[path];
+		if (!no) {
+			for (var k in nos) { try { if (decodeURI(k) === path) { no = nos[k]; break; } } catch (e) {} }
+		}
+		if (!no || /Bài \d+:/.test(el.textContent)) { return; }
+		var walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), node;
+		while ((node = walk.nextNode())) {
+			if (!node.nodeValue.trim() || (node.parentElement && node.parentElement.closest('.tutor-tiny-2'))) { continue; }
+			node.nodeValue = node.nodeValue.replace(/^(\s*)/, '$1Bài ' + no + ': ');
+			break;
+		}
+	});
+})();
+</script>
+	<?php
+}, 99 );
