@@ -319,7 +319,8 @@ function maypiano_stats_bunny_account( $path ) {
 	$code = (int) wp_remote_retrieve_response_code( $res );
 	$body = json_decode( wp_remote_retrieve_body( $res ), true );
 	if ( 200 !== $code || ! is_array( $body ) ) {
-		maypiano_stats_bunny_note( $name . ': HTTP ' . $code );
+		$why = is_array( $body ) ? (string) ( $body['Message'] ?? $body['message'] ?? '' ) : '';
+		maypiano_stats_bunny_note( $name . ': HTTP ' . $code . ( '' !== $why ? ' (' . mb_substr( $why, 0, 160 ) . ')' : '' ) );
 		return null;
 	}
 	return $body;
@@ -335,7 +336,9 @@ function maypiano_stats_bunny_bandwidth( $from ) {
 		}
 		return null;
 	}
-	$stats = maypiano_stats_bunny_account( 'statistics?hourly=false&pullZone=' . (int) $info['PullZoneId'] . '&dateFrom=' . rawurlencode( $from . 'T00:00:00Z' ) . '&dateTo=' . rawurlencode( gmdate( 'Y-m-d' ) . 'T23:59:59Z' ) );
+	// Bunny refuses long or oddly written ranges: ask for plain dates, at most the last 30 days.
+	$from  = max( $from, gmdate( 'Y-m-d', time() - 30 * DAY_IN_SECONDS ) );
+	$stats = maypiano_stats_bunny_account( 'statistics?hourly=false&pullZone=' . (int) $info['PullZoneId'] . '&dateFrom=' . $from . '&dateTo=' . gmdate( 'Y-m-d' ) );
 	if ( ! $stats ) {
 		return null;
 	}
