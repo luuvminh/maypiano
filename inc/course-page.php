@@ -113,7 +113,7 @@ function maypiano_course_view( $course_id ) {
 		$parts[]  = array(
 			'title'   => get_the_title( $topic ),
 			'lessons' => $rows,
-			'meta'    => preg_match( '#/phan-' . MAYPIANO_DOCS_LESSON_KEY . '$#', (string) get_post_meta( $topic->ID, '_maypiano_key', true ) ) ? 'File PDF tải về' : count( $rows ) . ' bài' . ( $total ? ', ' . maypiano_length_words( $total ) : '' ),
+			'meta'    => preg_match( '#/phan-' . MAYPIANO_DOCS_LESSON_KEY . '$#', (string) get_post_meta( $topic->ID, '_maypiano_key', true ) ) ? 'File tải về' : count( $rows ) . ' bài' . ( $total ? ', ' . maypiano_length_words( $total ) : '' ),
 		);
 	}
 

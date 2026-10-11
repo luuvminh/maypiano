@@ -14,6 +14,7 @@
  * "Tài liệu khóa học", which the site makes once the course has a file. Only a learner of the course (or the buyer of
  * a song, for that song's lessons) can download: the link checks who is asking every time.
  * The name a learner sees comes from the last part of the file name, through data/tai-lieu.json (see maypiano_docs_title).
+ * A file may also be a sound file (.m4a or .mp3), named the same way: MayPiano-<mã khóa>-Bai-<số bài>-am-thanh.m4a.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,6 +22,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 const MAYPIANO_DOCS_LESSON_KEY = 'tai-lieu-chung';
+
+/** The kinds of file a course takes: ending => array( type sent to the browser, word a learner sees ). */
+function maypiano_docs_kinds() {
+	return array(
+		'pdf' => array( 'application/pdf', 'PDF' ),
+		'm4a' => array( 'audio/mp4', 'Âm thanh' ),
+		'mp3' => array( 'audio/mpeg', 'Âm thanh' ),
+	);
+}
+
+/** The ending of a file name when it is a kind the site takes, else ''. */
+function maypiano_docs_ext( $name ) {
+	$ext = strtolower( (string) pathinfo( (string) $name, PATHINFO_EXTENSION ) );
+	return isset( maypiano_docs_kinds()[ $ext ] ) ? $ext : '';
+}
+
+/** True when the first bytes of an uploaded file are what its ending says. */
+function maypiano_docs_looks_right( $path, $ext ) {
+	$head = (string) file_get_contents( $path, false, null, 0, 12 ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	if ( 'pdf' === $ext ) {
+		return 0 === strpos( $head, '%PDF-' );
+	}
+	if ( 'm4a' === $ext ) {
+		return 'ftyp' === substr( $head, 4, 4 );
+	}
+	if ( 'mp3' === $ext ) {
+		return 0 === strpos( $head, 'ID3' ) || ( strlen( $head ) > 1 && "\xFF" === $head[0] && 0xE0 === ( ord( $head[1] ) & 0xE0 ) );
+	}
+	return false;
+}
 
 /** Where the uploaded PDFs live. */
 function maypiano_docs_dir() {
@@ -70,10 +101,10 @@ function maypiano_docs_title( $rest ) {
 
 /**
  * Reads a file name. Returns array( key, course, lesson, part, rest ) or null when the name does not name a course.
- * key is the name in lower case without ".pdf": it is what the download link carries.
+ * key is the name in lower case without its ending: it is what the download link carries.
  */
 function maypiano_docs_parse( $name ) {
-	$base = preg_replace( '/\.pdf$/i', '', sanitize_file_name( (string) $name ) );
+	$base = preg_replace( '/\.(pdf|m4a|mp3)$/i', '', sanitize_file_name( (string) $name ) );
 	if ( ! preg_match( '/^MayPiano[-_]([A-Za-z0-9]+)(?:[-_](.*))?$/i', $base, $m ) ) {
 		return null;
 	}
@@ -126,6 +157,7 @@ function maypiano_docs_all() {
 		$out[ $key ] = $doc + array(
 			'title' => $title,
 			'size'  => (int) filesize( $path ),
+			'ext'   => maypiano_docs_ext( $path ) ? maypiano_docs_ext( $path ) : 'pdf',
 			'path'  => $path,
 			'name'  => (string) $row['name'],
 		);
@@ -201,10 +233,10 @@ function maypiano_docs_url( $doc ) {
 	return add_query_arg( 'mp_tl', rawurlencode( $doc['key'] ), home_url( '/' ) );
 }
 
-/** "PDF, 1,2 MB". */
+/** "PDF, 1,2 MB" or "Âm thanh, 3,4 MB". */
 function maypiano_docs_meta( $doc ) {
 	$mb = $doc['size'] / 1048576;
-	return 'PDF, ' . ( $mb >= 1 ? str_replace( '.', ',', (string) round( $mb, 1 ) ) . ' MB' : max( 1, (int) round( $doc['size'] / 1024 ) ) . ' KB' );
+	return maypiano_docs_kinds()[ $doc['ext'] ][1] . ', ' . ( $mb >= 1 ? str_replace( '.', ',', (string) round( $mb, 1 ) ) . ' MB' : max( 1, (int) round( $doc['size'] / 1024 ) ) . ' KB' );
 }
 
 /** One list of files with their download buttons. */
@@ -217,7 +249,7 @@ function maypiano_docs_list_html( $docs ) {
 	return $html . '</ul>';
 }
 
-/** Hands the PDF to a learner who may have it. */
+/** Hands the file to a learner who may have it. */
 add_action( 'template_redirect', function () {
 	if ( ! isset( $_GET['mp_tl'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 		return;
@@ -238,7 +270,7 @@ add_action( 'template_redirect', function () {
 	while ( ob_get_level() ) {
 		ob_end_clean();
 	}
-	header( 'Content-Type: application/pdf' );
+	header( 'Content-Type: ' . maypiano_docs_kinds()[ $doc['ext'] ][0] );
 	header( 'Content-Disposition: attachment; filename="' . preg_replace( '/[^A-Za-z0-9._-]/', '', $doc['name'] ) . '"' );
 	header( 'Content-Length: ' . $doc['size'] );
 	readfile( $doc['path'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions
@@ -373,12 +405,12 @@ add_action( 'admin_post_maypiano_docs_upload', function () {
 		$name = sanitize_file_name( (string) $name );
 		$doc  = maypiano_docs_parse( $name );
 		$tmp  = (string) $up['tmp_name'][ $i ];
-		$head = is_uploaded_file( $tmp ) ? (string) file_get_contents( $tmp, false, null, 0, 5 ) : ''; // phpcs:ignore WordPress.WP.AlternativeFunctions
-		if ( ! $doc || UPLOAD_ERR_OK !== (int) $up['error'][ $i ] || '%PDF-' !== $head ) {
+		$ext  = maypiano_docs_ext( $name );
+		if ( ! $doc || '' === $ext || UPLOAD_ERR_OK !== (int) $up['error'][ $i ] || ! is_uploaded_file( $tmp ) || ! maypiano_docs_looks_right( $tmp, $ext ) ) {
 			$skip[] = $name;
 			continue;
 		}
-		$stored = substr( $doc['key'], 0, 60 ) . '-' . strtolower( wp_generate_password( 28, false ) ) . '.pdf';
+		$stored = substr( $doc['key'], 0, 60 ) . '-' . strtolower( wp_generate_password( 28, false ) ) . '.' . $ext;
 		if ( ! move_uploaded_file( $tmp, $dir . '/' . $stored ) ) {
 			$skip[] = $name;
 			continue;
@@ -386,7 +418,7 @@ add_action( 'admin_post_maypiano_docs_upload', function () {
 		if ( ! empty( $files[ $doc['key'] ]['file'] ) && is_file( $dir . '/' . basename( $files[ $doc['key'] ]['file'] ) ) ) {
 			unlink( $dir . '/' . basename( $files[ $doc['key'] ]['file'] ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 		}
-		$files[ $doc['key'] ] = array( 'file' => $stored, 'name' => preg_replace( '/\.pdf$/i', '', $name ) . '.pdf', 'at' => time() );
+		$files[ $doc['key'] ] = array( 'file' => $stored, 'name' => preg_replace( '/\.(pdf|m4a|mp3)$/i', '', $name ) . '.' . $ext, 'at' => time() );
 		$done[]               = $name;
 	}
 	update_option( 'maypiano_doc_files', $files, false );
@@ -431,10 +463,10 @@ function maypiano_docs_settings_section() {
 			echo '<div class="notice notice-success inline"><p>Đã nhận: ' . esc_html( implode( ', ', $note[0] ) ) . '.</p></div>';
 		}
 		if ( $note[1] ) {
-			echo '<div class="notice notice-warning inline"><p>Bỏ qua (không phải PDF, hoặc tên file không đúng mã khóa nào): ' . esc_html( implode( ', ', $note[1] ) ) . '.</p></div>';
+			echo '<div class="notice notice-warning inline"><p>Bỏ qua (không phải PDF hay file âm thanh m4a/mp3, hoặc tên file không đúng mã khóa nào): ' . esc_html( implode( ', ', $note[1] ) ) . '.</p></div>';
 		}
 	}
-	echo '<p>Tên file nói file thuộc về đâu: <code>MayPiano-&lt;mã khóa&gt;-Bai-&lt;số bài&gt;-&lt;tên&gt;.pdf</code> đi với một bài, <code>MayPiano-&lt;mã khóa&gt;-Phan-&lt;số phần&gt;.pdf</code> đi với mọi bài của phần đó, <code>MayPiano-&lt;mã khóa&gt;-&lt;tên&gt;.pdf</code> là tài liệu chung của khóa. Tải lên file trùng tên là thay file cũ. Học viên của khóa thấy file ngay dưới video của bài, và thấy mọi file ở bài cuối "Tài liệu khóa học".</p>';
+	echo '<p>Tên file nói file thuộc về đâu: <code>MayPiano-&lt;mã khóa&gt;-Bai-&lt;số bài&gt;-&lt;tên&gt;.pdf</code> đi với một bài, <code>MayPiano-&lt;mã khóa&gt;-Phan-&lt;số phần&gt;.pdf</code> đi với mọi bài của phần đó, <code>MayPiano-&lt;mã khóa&gt;-&lt;tên&gt;.pdf</code> là tài liệu chung của khóa. File âm thanh (<code>.m4a</code>, <code>.mp3</code>) đặt tên cùng cách, thêm tên ở cuối để khỏi trùng với file PDF của bài: <code>MayPiano-&lt;mã khóa&gt;-Bai-&lt;số bài&gt;-am-thanh.m4a</code>. Tải lên file trùng tên là thay file cũ. Học viên của khóa thấy file ngay dưới video của bài, và thấy mọi file ở bài cuối "Tài liệu khóa học".</p>';
 	echo '<p>Mã khóa: ';
 	$codes = array();
 	foreach ( $courses as $slug => $code ) {
@@ -458,7 +490,7 @@ function maypiano_docs_settings_section() {
 	}
 	echo '<form method="post" enctype="multipart/form-data" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="margin-top:12px">';
 	wp_nonce_field( 'maypiano_docs_upload' );
-	echo '<input type="hidden" name="action" value="maypiano_docs_upload"><input type="file" name="mp_docs[]" accept="application/pdf" multiple required> ';
+	echo '<input type="hidden" name="action" value="maypiano_docs_upload"><input type="file" name="mp_docs[]" accept="application/pdf,.pdf,.m4a,.mp3,audio/mp4,audio/mpeg" multiple required> ';
 	submit_button( 'Tải tài liệu lên', 'secondary', 'submit', false );
 	echo '</form>';
 }
