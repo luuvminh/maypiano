@@ -14,6 +14,9 @@
  * An entry becomes "draft" only through the approver's button in Telegram. Nothing else, not the admin screens and
  * not the site's other tools, can approve a request or change what it says.
  *
+ * A request may come with pictures (a screenshot of the spot to fix). The site keeps only Telegram's own codes for those
+ * pictures, never the pictures themselves; whoever does the work fetches them from Telegram with the bot's token.
+ *
  * The bot's token lives in the site's settings, never in this repository. Telegram's calls are accepted only with
  * the secret the site handed to Telegram when it registered the address.
  */
@@ -26,6 +29,7 @@ const MAYPIANO_TG_TYPE     = 'mp_lenh';
 const MAYPIANO_TG_HOOK_VER = '1';
 const MAYPIANO_TG_MAX_OPEN = 20;
 const MAYPIANO_TG_MAX_TEXT = 2000;
+const MAYPIANO_TG_MAX_FILES = 6;
 
 add_action( 'init', function () {
 	register_post_type( MAYPIANO_TG_TYPE, array(
@@ -197,6 +201,14 @@ function maypiano_tg_body( $id ) {
 	$lines[] = '';
 	$lines[] = 'Yêu cầu:';
 	$lines[] = (string) get_post_meta( $id, '_mp_tg_text', true );
+	$files   = maypiano_tg_files_of( $id );
+	if ( $files ) {
+		$lines[] = '';
+		$lines[] = 'Ảnh kèm (mã ảnh của Telegram, mỗi dòng một ảnh):';
+		foreach ( $files as $file ) {
+			$lines[] = $file;
+		}
+	}
 	$edit    = (string) get_post_meta( $id, '_mp_tg_edit_text', true );
 	if ( '' !== $edit ) {
 		$lines[] = '';
@@ -211,8 +223,38 @@ function maypiano_tg_body( $id ) {
 	return implode( "\n", array_map( 'esc_html', $lines ) );
 }
 
+/** Telegram's codes for the pictures in one message: a photo (its largest size) or an image sent as a file. */
+function maypiano_tg_pictures( $msg ) {
+	$found = array();
+	if ( ! empty( $msg['photo'] ) && is_array( $msg['photo'] ) ) {
+		$largest = end( $msg['photo'] );
+		$found[] = is_array( $largest ) ? (string) ( $largest['file_id'] ?? '' ) : '';
+	}
+	if ( ! empty( $msg['document']['file_id'] ) && 0 === strpos( (string) ( $msg['document']['mime_type'] ?? '' ), 'image/' ) ) {
+		$found[] = (string) $msg['document']['file_id'];
+	}
+	return array_values( array_filter( array_map( function ( $code ) {
+		return preg_replace( '/[^A-Za-z0-9_-]/', '', $code );
+	}, $found ) ) );
+}
+
+function maypiano_tg_files_of( $id ) {
+	$files = get_post_meta( $id, '_mp_tg_files', true );
+	return is_array( $files ) ? $files : array();
+}
+
+/** Adds pictures to a request that is not done yet. */
+function maypiano_tg_add_files( $id, $files ) {
+	if ( ! $files || ! in_array( get_post_status( $id ), array( 'pending', 'draft' ), true ) ) {
+		return;
+	}
+	$all = array_slice( array_values( array_unique( array_merge( maypiano_tg_files_of( $id ), $files ) ) ), 0, MAYPIANO_TG_MAX_FILES );
+	update_post_meta( $id, '_mp_tg_files', $all );
+	maypiano_tg_write( array( 'ID' => $id, 'post_content' => maypiano_tg_body( $id ) ) );
+}
+
 /** Makes the entry for a new request. $approved: the approver wrote it, so it needs no second yes. */
-function maypiano_tg_make( $text, $from, $message_id, $about = 0, $approved = false ) {
+function maypiano_tg_make( $text, $from, $message_id, $about = 0, $approved = false, $files = array(), $album = '' ) {
 	$text = maypiano_tg_cut( $text, MAYPIANO_TG_MAX_TEXT );
 	$name = maypiano_tg_name( $from );
 	$id   = maypiano_tg_write( array(
@@ -228,6 +270,15 @@ function maypiano_tg_make( $text, $from, $message_id, $about = 0, $approved = fa
 	update_post_meta( $id, '_mp_tg_asker', wp_slash( $name ) );
 	update_post_meta( $id, '_mp_tg_at', maypiano_tg_now() );
 	update_post_meta( $id, '_mp_tg_src', (int) $message_id );
+	update_post_meta( $id, '_mp_tg_uid', (string) ( $from['id'] ?? '' ) );
+	if ( '' !== $album ) {
+		update_post_meta( $id, '_mp_tg_album', $album );
+		$early = get_transient( 'mp_tg_al_' . md5( $album ) ); // Pictures of the same album that arrived first.
+		$files = array_merge( $files, is_array( $early ) ? $early : array() );
+	}
+	if ( $files ) {
+		update_post_meta( $id, '_mp_tg_files', array_slice( array_values( array_unique( $files ) ), 0, MAYPIANO_TG_MAX_FILES ) );
+	}
 	if ( $about ) {
 		update_post_meta( $id, '_mp_tg_about', (int) $about );
 	}
@@ -265,7 +316,7 @@ function maypiano_tg_entry_by( $key, $message_id ) {
 }
 
 function maypiano_tg_card_text( $id ) {
-	return 'Yêu cầu #' . (int) $id . ' của ' . get_post_meta( $id, '_mp_tg_asker', true ) . ":\n\n" . get_post_meta( $id, '_mp_tg_text', true );
+	return 'Yêu cầu #' . (int) $id . ' của ' . get_post_meta( $id, '_mp_tg_asker', true ) . ( maypiano_tg_files_of( $id ) ? ' (có kèm ảnh)' : '' ) . ":\n\n" . get_post_meta( $id, '_mp_tg_text', true );
 }
 
 /** Shows a new request to the approver. */
@@ -400,6 +451,28 @@ function maypiano_tg_on_message( $msg ) {
 		return;
 	}
 
+	// More pictures of an album: they belong to the request made from the album's first picture.
+	$album = preg_replace( '/[^0-9A-Za-z_-]/', '', (string) ( $msg['media_group_id'] ?? '' ) );
+	$own   = maypiano_tg_pictures( $msg );
+	if ( '' !== $album && $own && ! $named && ( $is_boss || isset( maypiano_tg_askers()[ $uid ] ) ) && ! preg_match( '/^\//u', $text ) ) {
+		$found = get_posts( array(
+			'post_type'   => MAYPIANO_TG_TYPE,
+			'post_status' => array( 'pending', 'draft' ),
+			'meta_key'    => '_mp_tg_album', // phpcs:ignore WordPress.DB.SlowDBQuery
+			'meta_value'  => $album, // phpcs:ignore WordPress.DB.SlowDBQuery
+			'fields'      => 'ids',
+			'numberposts' => 1,
+		) );
+		if ( $found && (string) get_post_meta( $found[0], '_mp_tg_uid', true ) === $uid ) {
+			maypiano_tg_add_files( (int) $found[0], $own );
+		} elseif ( ! $found ) {
+			$key   = 'mp_tg_al_' . md5( $album );
+			$early = get_transient( $key );
+			set_transient( $key, array_slice( array_merge( is_array( $early ) ? $early : array(), $own ), 0, MAYPIANO_TG_MAX_FILES ), 10 * MINUTE_IN_SECONDS );
+		}
+		return;
+	}
+
 	// A message is a request only when it is plainly meant for the bot.
 	$command = (bool) preg_match( '/^\/(lam|yeucau)\b\s*/u', $text, $m );
 	if ( $command ) {
@@ -414,8 +487,14 @@ function maypiano_tg_on_message( $msg ) {
 		return;
 	}
 	if ( '' === $text ) {
-		$has_file = ! empty( $msg['photo'] ) || ! empty( $msg['voice'] ) || ! empty( $msg['document'] ) || ! empty( $msg['video'] ) || ! empty( $msg['audio'] );
-		maypiano_tg_say( $has_file ? 'Em chỉ đọc được chữ, chưa xem được ảnh, file hay ghi âm. Anh chị viết yêu cầu bằng chữ giúp em.' : 'Anh chị viết giúp em cần sửa gì trên site.', $mid );
+		if ( $own ) {
+			$say = 'Em nhận được ảnh rồi, nhưng chưa biết cần sửa gì. Anh chị gửi lại ảnh kèm vài chữ, hoặc trả lời (reply) vào ảnh, có gọi tên em.';
+		} elseif ( ! empty( $msg['voice'] ) || ! empty( $msg['video'] ) || ! empty( $msg['audio'] ) || ! empty( $msg['document'] ) || ! empty( $msg['video_note'] ) ) {
+			$say = 'Em đọc được chữ và xem được ảnh, chưa nghe được ghi âm hay xem được video, file. Anh chị viết bằng chữ hoặc gửi ảnh chụp màn hình giúp em.';
+		} else {
+			$say = 'Anh chị viết giúp em cần sửa gì trên site.';
+		}
+		maypiano_tg_say( $say, $mid );
 		return;
 	}
 	if ( maypiano_tg_seen( $mid ) ) {
@@ -425,11 +504,16 @@ function maypiano_tg_on_message( $msg ) {
 		maypiano_tg_say( 'Hàng chờ đang đầy (' . MAYPIANO_TG_MAX_OPEN . ' yêu cầu chưa xong). Em chưa nhận thêm được.', $mid );
 		return;
 	}
-	if ( ! empty( $msg['photo'] ) || ! empty( $msg['document'] ) ) {
-		$text .= "\n\n(Tin nhắn có kèm ảnh hoặc file. Em chưa xem được phần đó.)";
+	// Pictures: this message's own, and the one it replies to (a screenshot sent first, the words after).
+	$files = $own;
+	if ( $reply && ! $to_bot ) {
+		$files = array_merge( $files, maypiano_tg_pictures( $reply ) );
+	}
+	if ( ! $files && ( ! empty( $msg['voice'] ) || ! empty( $msg['video'] ) || ! empty( $msg['document'] ) ) ) {
+		$text .= "\n\n(Tin nhắn có kèm ghi âm, video hoặc file. Em không xem được phần đó.)";
 	}
 	$about = $to_bot ? maypiano_tg_entry_by( '_mp_tg_report', $reply_id ) : 0;
-	$id    = maypiano_tg_make( $text, $from, $mid, $about, $is_boss );
+	$id    = maypiano_tg_make( $text, $from, $mid, $about, $is_boss, $files, $album );
 	if ( ! $id ) {
 		maypiano_tg_say( 'Em chưa ghi được yêu cầu này. Anh chị nhắn lại giúp em.', $mid );
 	} elseif ( $is_boss ) {
