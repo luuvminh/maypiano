@@ -218,6 +218,7 @@ function maypiano_settings_page() {
 	echo '</form>';
 	maypiano_enrol_by_hand_section();
 	maypiano_sheet_settings_section();
+	maypiano_material_settings_section();
 	maypiano_song_settings_section();
 	maypiano_fx_settings_section();
 	echo '</div>';
