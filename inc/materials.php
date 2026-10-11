@@ -277,6 +277,68 @@ add_action( 'template_redirect', function () {
 	exit;
 }, 2 );
 
+/**
+ * Where the "Tài liệu khóa học" row of a course leads: straight to the file when the course has one whole-course file
+ * the person may download, else to the page that lists the files. '' when the course has no such row.
+ */
+function maypiano_docs_row_url( $slug ) {
+	$lesson = function_exists( 'maypiano_curriculum_find' ) ? maypiano_curriculum_find( 'lesson', $slug . '/' . MAYPIANO_DOCS_LESSON_KEY ) : 0;
+	if ( ! $lesson ) {
+		return '';
+	}
+	$whole = array();
+	foreach ( maypiano_docs_of_course( $slug ) as $doc ) {
+		if ( ! $doc['lesson'] && ! $doc['part'] && maypiano_docs_may_get( $doc ) ) {
+			$whole[] = $doc;
+		}
+	}
+	return 1 === count( $whole ) ? maypiano_docs_url( $whole[0] ) : (string) get_permalink( $lesson );
+}
+
+/**
+ * The lesson page's list of lessons: "Tài liệu khóa học" is one row, with no row to open under it.
+ * Pressing it downloads the course's file (or opens the page of files when there are several).
+ */
+add_action( 'wp_footer', function () {
+	if ( ! is_singular( 'lesson' ) ) {
+		return;
+	}
+	$place = (string) get_post_meta( get_queried_object_id(), '_maypiano_key', true );
+	$own   = (string) get_post_meta( get_queried_object_id(), '_maypiano_song_src', true );
+	$slug  = (string) strtok( '' !== $own ? $own : $place, '/' );
+	if ( '' === $slug || ! isset( maypiano_docs_courses()[ $slug ] ) ) {
+		return;
+	}
+	$lesson = maypiano_curriculum_find( 'lesson', $slug . '/' . MAYPIANO_DOCS_LESSON_KEY );
+	$go     = maypiano_docs_row_url( $slug );
+	if ( ! $lesson || '' === $go ) {
+		return;
+	}
+	?>
+<style>.mp-docs-row .tutor-learning-nav-body,.mp-docs-row .tutor-learning-nav-header-arrow,.mp-docs-row .tutor-learning-nav-header-progress{display:none!important}.mp-docs-row .tutor-learning-nav-header{cursor:pointer}.mp-docs-row .tutor-learning-nav-header-title::after{content:"Tải về";margin-left:10px;font-family:var(--mp-body);font-weight:500;font-size:.8em;color:var(--mp-accent);white-space:nowrap}</style>
+<script>
+(function(){
+	var page=<?php echo wp_json_encode( untrailingslashit( (string) get_permalink( $lesson ) ) ); ?>,go=<?php echo wp_json_encode( $go ); ?>;
+	function fix(){
+		document.querySelectorAll('a.tutor-learning-nav-item').forEach(function(a){
+			if(a.href.split('?')[0].replace(/\/$/,'')!==page){return;}
+			var body=a.closest('.tutor-learning-nav-body'),box=body&&body.parentElement,head=box&&box.querySelector('.tutor-learning-nav-header');
+			if(!head||box.classList.contains('mp-docs-row')||body.querySelectorAll('a.tutor-learning-nav-item').length!==1){return;}
+			box.classList.add('mp-docs-row');
+			var first=head.firstElementChild;
+			if(first&&!first.classList.contains('tutor-learning-nav-header-title')){first.classList.add('tutor-learning-nav-header-progress');}
+			head.setAttribute('role','link');head.setAttribute('tabindex','0');
+			function open(e){e.preventDefault();e.stopImmediatePropagation();location.href=go;}
+			head.addEventListener('click',open,true);
+			head.addEventListener('keydown',function(e){if('Enter'===e.key||' '===e.key){open(e);}},true);
+		});
+	}
+	fix();document.addEventListener('DOMContentLoaded',fix);setTimeout(fix,800);
+})();
+</script>
+	<?php
+}, 30 );
+
 /** True on the last lesson of a course, the one that holds every file. */
 function maypiano_docs_is_all_lesson( $lesson_id ) {
 	return (bool) preg_match( '#/' . MAYPIANO_DOCS_LESSON_KEY . '$#', (string) get_post_meta( $lesson_id, '_maypiano_key', true ) );

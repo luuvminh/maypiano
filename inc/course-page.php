@@ -114,6 +114,9 @@ function maypiano_course_view( $course_id ) {
 			'title'   => get_the_title( $topic ),
 			'lessons' => $rows,
 			'meta'    => preg_match( '#/phan-' . MAYPIANO_DOCS_LESSON_KEY . '$#', (string) get_post_meta( $topic->ID, '_maypiano_key', true ) ) ? 'File tải về' : count( $rows ) . ' bài' . ( $total ? ', ' . maypiano_length_words( $total ) : '' ),
+			// The materials part is one row with nothing to open under it: 'docs' is where it leads for a learner of the course ('' for a visitor).
+			'docs'    => (bool) preg_match( '#/phan-' . MAYPIANO_DOCS_LESSON_KEY . '$#', (string) get_post_meta( $topic->ID, '_maypiano_key', true ) ),
+			'go'      => $inside && function_exists( 'maypiano_docs_row_url' ) ? maypiano_docs_row_url( (string) get_post_field( 'post_name', $course_id ) ) : '',
 		);
 	}
 

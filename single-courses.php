@@ -54,6 +54,16 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 <h2 id="mpc-list-h">Nội dung khóa học</h2>
 <p class="mpc-lead"><?php echo $mp['enrolled'] ? 'Bạn bấm vào bài nào để học bài đó nhé.' : 'Bạn bấm vào từng phần để xem Mây dạy những bài nào.'; ?></p>
 	<?php foreach ( $mp['parts'] as $mp_i => $mp_part ) : ?>
+		<?php if ( ! empty( $mp_part['docs'] ) ) : ?>
+<div class="mpc-part mpc-part-docs">
+			<?php if ( '' !== $mp_part['go'] ) : ?>
+<a class="mpc-part-row" href="<?php echo esc_url( $mp_part['go'] ); ?>"><span class="mpc-part-name"><?php echo esc_html( $mp_part['title'] ); ?></span><span class="mpc-part-meta">Tải về</span></a>
+			<?php else : ?>
+<div class="mpc-part-row"><span class="mpc-part-name"><?php echo esc_html( $mp_part['title'] ); ?></span><span class="mpc-part-meta">File tải về, mở sau khi đăng ký</span></div>
+			<?php endif; ?>
+</div>
+			<?php continue; ?>
+		<?php endif; ?>
 <details class="mpc-part"<?php echo 0 === $mp_i ? ' open' : ''; ?>>
 <summary><span class="mpc-part-name"><?php echo esc_html( $mp_part['title'] ); ?></span><span class="mpc-part-meta"><?php echo esc_html( $mp_part['meta'] ); ?></span></summary>
 <ol>
