@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__WordPress_com__wpcom-mcp-content-authoring",
+      "mcp__WordPress_com__wpcom-mcp-site"
+    ]
+  }
+}
