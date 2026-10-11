@@ -225,3 +225,102 @@ add_action( 'wp_head', function () {
 		echo '<style id="mp-teacher-menu">' . implode( ',', $rules ) . '{display:none!important}</style>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- paths of the site's own pages, checked above.
 	}
 }, 30 );
+
+/** Whole courses and songs bought one by one that are open for sale, counted apart (for the teacher's first page). */
+function maypiano_teacher_counts() {
+	$counts = array( 'khoa' => 0, 'bai-hat' => 0 );
+	foreach ( get_posts( array( 'post_type' => 'courses', 'post_status' => 'publish', 'posts_per_page' => -1, 'fields' => 'ids' ) ) as $course ) {
+		$counts[ '' === (string) get_post_meta( $course, '_maypiano_song', true ) ? 'khoa' : 'bai-hat' ]++;
+	}
+	return $counts;
+}
+
+/**
+ * The teacher's first page: no "Tổng thu", no "Số học viên" and no "Học viên học tới đâu" bar (nor the number of
+ * learners in the greeting); "Số khóa học" counts whole courses only, with the songs sold one by one in a box of their
+ * own next to it. Tutor LMS draws these boxes, so they are found by their (Vietnamese) titles once the page is shown.
+ */
+add_action( 'wp_footer', function () {
+	if ( ! is_user_logged_in() || ! function_exists( 'tutor_utils' ) || ! is_page( (int) tutor_utils()->get_option( 'tutor_dashboard_page_id' ) ) ) {
+		return;
+	}
+	$page = (string) get_query_var( 'tutor_dashboard_page' );
+	if ( '' !== $page && 'index' !== $page && 'dashboard' !== $page ) {
+		return;
+	}
+	$counts = maypiano_teacher_counts();
+	?>
+<script id="mp-teacher-home">
+(function () {
+	var COURSES = <?php echo (int) $counts['khoa']; ?>, SONGS = <?php echo (int) $counts['bai-hat']; ?>;
+	var OFF = ['Tổng thu', 'Số học viên', 'Học viên học tới đâu'];
+	var TITLES = OFF.concat(['Số khóa học', 'Điểm đánh giá', 'Đánh giá mới của học viên', 'Khóa học nổi bật', '<?php echo esc_js( MAYPIANO_SONG_LABEL ); ?>']);
+	var STOP = /^(BODY|MAIN|HTML)$/;
+	function own(el) { return (el.textContent || '').replace(/\s+/g, ' ').trim(); }
+	function titled(text) {
+		var all = document.querySelectorAll('h1,h2,h3,h4,h5,h6,div,span,p,strong');
+		for (var i = 0; i < all.length; i++) {
+			if (!all[i].children.length && own(all[i]) === text) { return all[i]; }
+		}
+		return null;
+	}
+	// The box around a title: the largest block holding that title and no other.
+	function box(el) {
+		while (el.parentElement && !STOP.test(el.parentElement.tagName) && !el.parentElement.classList.contains('tutor-dashboard-content')) {
+			var p = el.parentElement, t = own(p), n = 0;
+			for (var i = 0; i < TITLES.length; i++) { if (t.indexOf(TITLES[i]) !== -1) { n++; } }
+			if (n > 1) { break; }
+			el = p;
+		}
+		return el;
+	}
+	function setNumber(card, n) {
+		var all = card.querySelectorAll('*');
+		for (var i = 0; i < all.length; i++) {
+			if (!all[i].children.length && /^\d[\d.,]*$/.test(own(all[i]))) { all[i].textContent = String(n); return; }
+		}
+	}
+	function run() {
+		var done = false;
+		OFF.forEach(function (text) {
+			var el = titled(text);
+			if (el) { box(el).style.display = 'none'; done = true; }
+		});
+		var label = titled('Số khóa học');
+		if (label && !document.querySelector('.mp-song-count')) {
+			var card = box(label), copy = card.cloneNode(true);
+			setNumber(card, COURSES);
+			copy.classList.add('mp-song-count');
+			var t = copy.querySelectorAll('*');
+			for (var i = 0; i < t.length; i++) {
+				if (!t[i].children.length && own(t[i]) === 'Số khóa học') { t[i].textContent = '<?php echo esc_js( MAYPIANO_SONG_LABEL ); ?>'; }
+			}
+			setNumber(copy, SONGS);
+			card.parentNode.insertBefore(copy, card.nextSibling);
+			var grid = card.parentNode, cols = getComputedStyle(grid).gridTemplateColumns;
+			if (getComputedStyle(grid).display.indexOf('grid') !== -1 && cols && cols.split(' ').length === 4) {
+				grid.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
+			}
+			done = true;
+		}
+		// Greeting line: "N khóa học đang hoạt động • M học viên đã đăng ký" becomes the number of whole courses only.
+		// The innermost block holding both halves is the line itself.
+		var lines = document.querySelectorAll('div,p,span'), line = null;
+		for (var j = 0; j < lines.length; j++) {
+			var s = own(lines[j]);
+			if (/khóa học đang hoạt động/.test(s) && /học viên đã đăng ký/.test(s)) { line = lines[j]; }
+		}
+		if (line && own(line).indexOf('Xin chào') === -1) {
+			line.textContent = COURSES + ' khóa học' + (SONGS ? ' • ' + SONGS + ' bài hát mua riêng' : '');
+		}
+		return done;
+	}
+	function start() {
+		if (run()) { return; }
+		var tries = 0, timer = setInterval(function () { if (run() || ++tries > 20) { clearInterval(timer); } }, 250);
+	}
+	if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', start); } else { start(); }
+})();
+</script>
+	<?php
+}, 30 );
