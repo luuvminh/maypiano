@@ -466,10 +466,20 @@ function maypiano_tg_on_message( $msg ) {
 		if ( $found && (string) get_post_meta( $found[0], '_mp_tg_uid', true ) === $uid ) {
 			maypiano_tg_add_files( (int) $found[0], $own );
 		} elseif ( ! $found ) {
+			$kept = get_transient( 'mp_tg_last_' . $uid );
+			set_transient( 'mp_tg_last_' . $uid, array_slice( array_merge( is_array( $kept ) ? $kept : array(), $own ), -MAYPIANO_TG_MAX_FILES ), 5 * MINUTE_IN_SECONDS );
 			$key   = 'mp_tg_al_' . md5( $album );
 			$early = get_transient( $key );
 			set_transient( $key, array_slice( array_merge( is_array( $early ) ? $early : array(), $own ), 0, MAYPIANO_TG_MAX_FILES ), 10 * MINUTE_IN_SECONDS );
 		}
+		return;
+	}
+
+	// A picture sent on its own, with the words coming in the next message: kept for a few minutes for that message.
+	$known = $is_boss || isset( maypiano_tg_askers()[ $uid ] );
+	if ( $own && $known && ! $named && ! $to_bot && ! preg_match( '/^\//u', $text ) ) {
+		$kept = get_transient( 'mp_tg_last_' . $uid );
+		set_transient( 'mp_tg_last_' . $uid, array_slice( array_merge( is_array( $kept ) ? $kept : array(), $own ), -MAYPIANO_TG_MAX_FILES ), 5 * MINUTE_IN_SECONDS );
 		return;
 	}
 
@@ -509,6 +519,13 @@ function maypiano_tg_on_message( $msg ) {
 	if ( $reply && ! $to_bot ) {
 		$files = array_merge( $files, maypiano_tg_pictures( $reply ) );
 	}
+	if ( ! $files ) {
+		$kept = get_transient( 'mp_tg_last_' . $uid );
+		if ( is_array( $kept ) && $kept ) {
+			$files = $kept;
+		}
+	}
+	delete_transient( 'mp_tg_last_' . $uid );
 	if ( ! $files && ( ! empty( $msg['voice'] ) || ! empty( $msg['video'] ) || ! empty( $msg['document'] ) ) ) {
 		$text .= "\n\n(Tin nhắn có kèm ghi âm, video hoặc file. Em không xem được phần đó.)";
 	}
@@ -589,7 +606,8 @@ function maypiano_tg_on_button( $query ) {
 		$askers[ $m[2] ] = $name;
 		update_option( 'maypiano_tg_askers', $askers, false );
 		delete_transient( $key );
-		maypiano_tg_rewrite( $card, $name . ' được ra yêu cầu trong nhóm này.' );
+		$waiting = is_array( $kept ) && '' !== $kept['text'];
+		maypiano_tg_rewrite( $card, $name . ' được ra yêu cầu trong nhóm này.' . ( $waiting ? '' : ' Giờ nhắn cho em cần sửa gì trên site, có gọi tên em (@' . get_option( 'maypiano_tg_bot', '' ) . '). Gửi ảnh thì viết chữ ngay trong ảnh, hoặc gửi ảnh trước rồi nhắn chữ liền sau.' ) );
 		$answer( 'Đã cho phép.' );
 		if ( is_array( $kept ) && '' !== $kept['text'] && ! maypiano_tg_seen( $kept['mid'] ) && maypiano_tg_open() < MAYPIANO_TG_MAX_OPEN ) {
 			$id = maypiano_tg_make( $kept['text'], array( 'id' => (int) $m[2], 'first_name' => $name ), $kept['mid'] );
