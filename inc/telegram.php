@@ -11,8 +11,12 @@
  *   draft   = approved, waiting to be done
  *   private = done; the entry's excerpt is the report, sent to the group once
  *   trash   = refused
- * An entry becomes "draft" only through the approver's button in Telegram. Nothing else, not the admin screens and
- * not the site's other tools, can approve a request or change what it says.
+ * An entry becomes "draft" only inside this file: through the approver's button in Telegram, or, while the approver
+ * keeps "direct" on, at once when someone the approver has allowed to ask writes to the bot. Nothing else, not the
+ * admin screens and not the site's other tools, can approve a request or change what it says.
+ *
+ * When a request is approved the site can start the owner's tool right away (a "run now" address and its key, kept in
+ * the settings). Without the key the request waits for the tool's own hourly round.
  *
  * A request may come with pictures (a screenshot of the spot to fix). The site keeps only Telegram's own codes for those
  * pictures, never the pictures themselves; whoever does the work fetches them from Telegram with the bot's token.
@@ -30,6 +34,7 @@ const MAYPIANO_TG_HOOK_VER = '1';
 const MAYPIANO_TG_MAX_OPEN = 20;
 const MAYPIANO_TG_MAX_TEXT = 2000;
 const MAYPIANO_TG_MAX_FILES = 6;
+const MAYPIANO_TG_FIRE_URL  = 'https://api.anthropic.com/v1/claude_code/routines/trig_01Vnjf58TU36DaHBTVBf9qfU/fire';
 
 add_action( 'init', function () {
 	register_post_type( MAYPIANO_TG_TYPE, array(
@@ -117,6 +122,44 @@ function maypiano_tg_boss() {
 function maypiano_tg_askers() {
 	$askers = get_option( 'maypiano_tg_askers', array() );
 	return is_array( $askers ) ? $askers : array();
+}
+
+/** Direct: a person allowed to ask needs no yes for each request. On unless the approver turns it off (/tuduyet tat). */
+function maypiano_tg_direct() {
+	return '0' !== (string) get_option( 'maypiano_tg_direct', '1' );
+}
+
+/** Starts the owner's tool now. True when a run was started (or one was started a few seconds ago and will see this too). */
+function maypiano_tg_go() {
+	$key = trim( (string) get_option( 'maypiano_tg_fire_token', '' ) );
+	if ( '' === $key ) {
+		return false;
+	}
+	if ( get_transient( 'mp_tg_fired' ) ) {
+		return true;
+	}
+	$res  = wp_remote_post( MAYPIANO_TG_FIRE_URL, array(
+		'timeout' => 10,
+		'headers' => array(
+			'Authorization'     => 'Bearer ' . $key,
+			'anthropic-beta'    => 'experimental-cc-routine-2026-04-01',
+			'anthropic-version' => '2023-06-01',
+			'Content-Type'      => 'application/json',
+		),
+		'body'    => '{}',
+	) );
+	$code = is_wp_error( $res ) ? 0 : (int) wp_remote_retrieve_response_code( $res );
+	update_option( 'maypiano_tg_fire_last', $code . ' ' . maypiano_tg_now(), false );
+	if ( $code < 200 || $code >= 300 ) {
+		return false;
+	}
+	set_transient( 'mp_tg_fired', 1, 10 );
+	return true;
+}
+
+/** Starts the work and says when it will be done. */
+function maypiano_tg_when() {
+	return maypiano_tg_go() ? 'Em làm ngay và báo lại ở đây.' : 'Em sẽ làm trong lượt chạy tới (phút thứ 7 mỗi giờ, từ 8 giờ sáng tới 10 giờ tối) và báo lại ở đây.';
 }
 
 /** One call to Telegram. Returns the "result" part, or null when the call failed. */
@@ -253,7 +296,7 @@ function maypiano_tg_add_files( $id, $files ) {
 	maypiano_tg_write( array( 'ID' => $id, 'post_content' => maypiano_tg_body( $id ) ) );
 }
 
-/** Makes the entry for a new request. $approved: the approver wrote it, so it needs no second yes. */
+/** Makes the entry for a new request. $approved: 'boss' when the approver wrote it, 'direct' when it needs no yes; empty when it waits. */
 function maypiano_tg_make( $text, $from, $message_id, $about = 0, $approved = false, $files = array(), $album = '' ) {
 	$text = maypiano_tg_cut( $text, MAYPIANO_TG_MAX_TEXT );
 	$name = maypiano_tg_name( $from );
@@ -283,7 +326,7 @@ function maypiano_tg_make( $text, $from, $message_id, $about = 0, $approved = fa
 		update_post_meta( $id, '_mp_tg_about', (int) $about );
 	}
 	if ( $approved ) {
-		update_post_meta( $id, '_mp_tg_ok', wp_slash( maypiano_tg_now() . ', do chính người duyệt viết' ) );
+		update_post_meta( $id, '_mp_tg_ok', wp_slash( maypiano_tg_now() . ( 'direct' === $approved ? ', không cần duyệt từng yêu cầu: người duyệt đã cho người này yêu cầu thẳng' : ', do chính người duyệt viết' ) ) );
 	}
 	maypiano_tg_write( array( 'ID' => $id, 'post_content' => maypiano_tg_body( $id ), 'post_status' => $approved ? 'draft' : 'pending' ) );
 	return $id;
@@ -350,7 +393,7 @@ function maypiano_tg_approve( $id, $edit = '' ) {
 	if ( '' !== $edit ) {
 		$text .= "\n\nĐã chỉnh lại thành:\n" . get_post_meta( $id, '_mp_tg_edit_text', true );
 	}
-	maypiano_tg_rewrite( (int) get_post_meta( $id, '_mp_tg_card', true ), $text . "\n\nĐã duyệt lúc " . maypiano_tg_now() . '. Em sẽ làm trong lượt chạy tới và báo lại ở đây.' );
+	maypiano_tg_rewrite( (int) get_post_meta( $id, '_mp_tg_card', true ), $text . "\n\nĐã duyệt lúc " . maypiano_tg_now() . '. ' . maypiano_tg_when() );
 	return true;
 }
 
@@ -455,6 +498,15 @@ function maypiano_tg_on_message( $msg ) {
 		}
 	}
 
+	// The approver's switch: with "direct" on, people allowed to ask need no yes for each request.
+	if ( $is_boss && preg_match( '/^\/tuduyet\b\s*(bat|bật|tat|tắt)?/u', $text, $m ) ) {
+		if ( ! empty( $m[1] ) ) {
+			update_option( 'maypiano_tg_direct', in_array( $m[1], array( 'bat', 'bật' ), true ) ? '1' : '0', false );
+		}
+		maypiano_tg_say( maypiano_tg_direct() ? 'Đang BẬT yêu cầu thẳng: người đã được cho phép nhắn là em làm, không chờ duyệt. Tắt thì gõ /tuduyet tat.' : 'Đang TẮT yêu cầu thẳng: mỗi yêu cầu chờ người duyệt bấm Duyệt. Bật thì gõ /tuduyet bat.', $mid );
+		return;
+	}
+
 	if ( preg_match( '/^\/hangcho\b/u', $text ) ) {
 		maypiano_tg_say( maypiano_tg_queue_text(), $mid );
 		return;
@@ -539,11 +591,12 @@ function maypiano_tg_on_message( $msg ) {
 		$text .= "\n\n(Tin nhắn có kèm ghi âm, video hoặc file. Em không xem được phần đó.)";
 	}
 	$about = $to_bot ? maypiano_tg_entry_by( '_mp_tg_report', $reply_id ) : 0;
-	$id    = maypiano_tg_make( $text, $from, $mid, $about, $is_boss, $files, $album );
+	$auto  = $is_boss ? 'boss' : ( maypiano_tg_direct() ? 'direct' : '' );
+	$id    = maypiano_tg_make( $text, $from, $mid, $about, $auto, $files, $album );
 	if ( ! $id ) {
 		maypiano_tg_say( 'Em chưa ghi được yêu cầu này. Anh chị nhắn lại giúp em.', $mid );
-	} elseif ( $is_boss ) {
-		maypiano_tg_say( 'Đã nhận yêu cầu #' . $id . '. Người duyệt tự viết nên không cần duyệt lại. Em sẽ làm trong lượt chạy tới và báo lại ở đây.', $mid );
+	} elseif ( $auto ) {
+		maypiano_tg_say( 'Đã nhận yêu cầu #' . $id . ( maypiano_tg_files_of( $id ) ? ' (có kèm ảnh)' : '' ) . '. ' . maypiano_tg_when(), $mid );
 	} else {
 		maypiano_tg_show( $id, $mid );
 	}
@@ -651,8 +704,11 @@ function maypiano_tg_on_button( $query ) {
 		maypiano_tg_rewrite( $card, $name . ' được ra yêu cầu trong nhóm này.' . ( $waiting ? '' : ' Giờ nhắn cho em cần sửa gì trên site, có gọi tên em (@' . get_option( 'maypiano_tg_bot', '' ) . '). Gửi ảnh thì viết chữ ngay trong ảnh, hoặc gửi ảnh trước rồi nhắn chữ liền sau.' ) );
 		$answer( 'Đã cho phép.' );
 		if ( is_array( $kept ) && '' !== $kept['text'] && ! maypiano_tg_seen( $kept['mid'] ) && maypiano_tg_open() < MAYPIANO_TG_MAX_OPEN ) {
-			$id = maypiano_tg_make( $kept['text'], array( 'id' => (int) $m[2], 'first_name' => $name ), $kept['mid'] );
-			if ( $id ) {
+			$auto = maypiano_tg_direct() ? 'direct' : '';
+			$id   = maypiano_tg_make( $kept['text'], array( 'id' => (int) $m[2], 'first_name' => $name ), $kept['mid'], 0, $auto );
+			if ( $id && $auto ) {
+				maypiano_tg_say( 'Đã nhận yêu cầu #' . $id . '. ' . maypiano_tg_when(), $kept['mid'] );
+			} elseif ( $id ) {
 				maypiano_tg_show( $id, $kept['mid'] );
 			}
 		}
@@ -713,6 +769,12 @@ add_action( 'admin_init', function () {
 		'sanitize_callback' => function ( $value ) {
 			$value = trim( sanitize_text_field( (string) $value ) );
 			return '' === $value ? (string) get_option( 'maypiano_tg_token', '' ) : $value;
+		},
+	) );
+	register_setting( 'maypiano', 'maypiano_tg_fire_token', array(
+		'sanitize_callback' => function ( $value ) {
+			$value = trim( sanitize_text_field( (string) $value ) );
+			return '' === $value ? (string) get_option( 'maypiano_tg_fire_token', '' ) : $value;
 		},
 	) );
 	// Two switches that act when ticked and never stay stored.
@@ -790,6 +852,16 @@ function maypiano_tg_settings_section() {
 			echo '<p><label><input type="checkbox" name="maypiano_tg_unpair" value="1"> Bỏ ghép nhóm này (xóa người duyệt và danh sách người được ra yêu cầu, rồi ghép lại từ đầu)</label></p>';
 		}
 		echo '<p><label><input type="checkbox" name="maypiano_tg_off" value="1"> Tắt hẳn bot (xóa token khỏi site)</label></p>';
+		echo '</td></tr>';
+		$fire = '' !== trim( (string) get_option( 'maypiano_tg_fire_token', '' ) );
+		$last = (string) get_option( 'maypiano_tg_fire_last', '' );
+		echo '<tr><th scope="row"><label for="maypiano_tg_fire_token">Khóa chạy ngay</label></th><td>';
+		echo '<input type="password" autocomplete="off" class="regular-text" id="maypiano_tg_fire_token" name="maypiano_tg_fire_token" value="" placeholder="' . esc_attr( $fire ? 'Đã lưu' : 'Chưa có' ) . '">';
+		echo '<p class="description">Có khóa này thì yêu cầu được làm ngay khi được nhận, không chờ lượt chạy mỗi giờ. Lấy trong Claude: mở tác vụ theo lịch "May Piano: làm yêu cầu đã duyệt qua Telegram", Edit, Add another trigger, API, Generate token. Đã lưu thì để trống là giữ nguyên.</p>';
+		if ( '' !== $last ) {
+			echo '<p class="description">Lần gọi gần nhất: ' . esc_html( 0 === strpos( $last, '2' ) ? 'được, lúc ' . substr( $last, 4 ) : 'KHÔNG được (mã ' . $last . '). Kiểm tra lại khóa.' ) . '</p>';
+		}
+		echo '<p>Yêu cầu thẳng (không chờ duyệt từng yêu cầu): <strong>' . ( maypiano_tg_direct() ? 'đang bật' : 'đang tắt' ) . '</strong>. Người duyệt đổi bằng cách gõ <code>/tuduyet bat</code> hoặc <code>/tuduyet tat</code> trong nhóm.</p>';
 		echo '</td></tr>';
 	}
 	echo '</table>';
