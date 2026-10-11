@@ -34,7 +34,6 @@ const MAYPIANO_TG_HOOK_VER = '1';
 const MAYPIANO_TG_MAX_OPEN = 20;
 const MAYPIANO_TG_MAX_TEXT = 2000;
 const MAYPIANO_TG_MAX_FILES = 6;
-const MAYPIANO_TG_FIRE_URL  = 'https://api.anthropic.com/v1/claude_code/routines/trig_01Vnjf58TU36DaHBTVBf9qfU/fire';
 
 add_action( 'init', function () {
 	register_post_type( MAYPIANO_TG_TYPE, array(
@@ -129,16 +128,23 @@ function maypiano_tg_direct() {
 	return '0' !== (string) get_option( 'maypiano_tg_direct', '1' );
 }
 
+/** The "run now" address. Only an address of the owner's own tool is ever called. */
+function maypiano_tg_fire_url() {
+	$url = trim( (string) get_option( 'maypiano_tg_fire_url', '' ) );
+	return preg_match( '#^https://api\.anthropic\.com/v1/claude_code/routines/trig_[A-Za-z0-9]+/fire$#', $url ) ? $url : '';
+}
+
 /** Starts the owner's tool now. True when a run was started (or one was started a few seconds ago and will see this too). */
 function maypiano_tg_go() {
 	$key = trim( (string) get_option( 'maypiano_tg_fire_token', '' ) );
-	if ( '' === $key ) {
+	$url = maypiano_tg_fire_url();
+	if ( '' === $key || '' === $url ) {
 		return false;
 	}
 	if ( get_transient( 'mp_tg_fired' ) ) {
 		return true;
 	}
-	$res  = wp_remote_post( MAYPIANO_TG_FIRE_URL, array(
+	$res  = wp_remote_post( $url, array(
 		'timeout' => 10,
 		'headers' => array(
 			'Authorization'     => 'Bearer ' . $key,
@@ -771,6 +777,12 @@ add_action( 'admin_init', function () {
 			return '' === $value ? (string) get_option( 'maypiano_tg_token', '' ) : $value;
 		},
 	) );
+	register_setting( 'maypiano', 'maypiano_tg_fire_url', array(
+		'sanitize_callback' => function ( $value ) {
+			$value = trim( esc_url_raw( (string) $value ) );
+			return '' === $value ? (string) get_option( 'maypiano_tg_fire_url', '' ) : $value;
+		},
+	) );
 	register_setting( 'maypiano', 'maypiano_tg_fire_token', array(
 		'sanitize_callback' => function ( $value ) {
 			$value = trim( sanitize_text_field( (string) $value ) );
@@ -855,9 +867,16 @@ function maypiano_tg_settings_section() {
 		echo '</td></tr>';
 		$fire = '' !== trim( (string) get_option( 'maypiano_tg_fire_token', '' ) );
 		$last = (string) get_option( 'maypiano_tg_fire_last', '' );
+		$url = (string) get_option( 'maypiano_tg_fire_url', '' );
+		echo '<tr><th scope="row"><label for="maypiano_tg_fire_url">Địa chỉ chạy ngay</label></th><td>';
+		echo '<input type="url" class="large-text" id="maypiano_tg_fire_url" name="maypiano_tg_fire_url" value="' . esc_attr( $url ) . '" placeholder="https://api.anthropic.com/v1/claude_code/routines/trig_.../fire">';
+		if ( '' !== $url && '' === maypiano_tg_fire_url() ) {
+			echo '<p class="description" style="color:#b32d2e">Địa chỉ này không đúng dạng. Nó phải bắt đầu bằng https://api.anthropic.com/v1/claude_code/routines/ và kết thúc bằng /fire.</p>';
+		}
+		echo '<p class="description">Dòng URL hiện trong Claude khi thêm trigger API cho routine.</p></td></tr>';
 		echo '<tr><th scope="row"><label for="maypiano_tg_fire_token">Khóa chạy ngay</label></th><td>';
 		echo '<input type="password" autocomplete="off" class="regular-text" id="maypiano_tg_fire_token" name="maypiano_tg_fire_token" value="" placeholder="' . esc_attr( $fire ? 'Đã lưu' : 'Chưa có' ) . '">';
-		echo '<p class="description">Có khóa này thì yêu cầu được làm ngay khi được nhận, không chờ lượt chạy mỗi giờ. Lấy trong Claude: mở tác vụ theo lịch "May Piano: làm yêu cầu đã duyệt qua Telegram", Edit, Add another trigger, API, Generate token. Đã lưu thì để trống là giữ nguyên.</p>';
+		echo '<p class="description">Có khóa này thì yêu cầu được làm ngay khi được nhận, không chờ lượt chạy mỗi giờ. Lấy trong Claude, trang Routines: mở routine, Edit, Add another trigger, API, Generate token. Đã lưu thì để trống là giữ nguyên.</p>';
 		if ( '' !== $last ) {
 			echo '<p class="description">Lần gọi gần nhất: ' . esc_html( 0 === strpos( $last, '2' ) ? 'được, lúc ' . substr( $last, 4 ) : 'KHÔNG được (mã ' . $last . '). Kiểm tra lại khóa.' ) . '</p>';
 		}
