@@ -206,6 +206,77 @@ function maypiano_qna_all() {
 	return 'tat-ca' === ( isset( $_GET['xem'] ) ? sanitize_key( wp_unslash( $_GET['xem'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification
 }
 
+/**
+ * Who reads everyone's questions: the people who run the course (the teacher, the owner).
+ * A learner reads only the questions they asked themselves, with the answers to them.
+ */
+function maypiano_qna_sees_all( $course = 0 ) {
+	if ( current_user_can( 'manage_options' ) || current_user_can( 'tutor_instructor' ) ) {
+		return true;
+	}
+	return $course && current_user_can( 'edit_post', (int) $course );
+}
+
+/**
+ * Every list of questions Tutor LMS makes (the course's questions page, the learner's own pages, the counts) comes
+ * from one query. For a learner that query gets one more condition: asked by me. So no page, old or new, can show a
+ * learner somebody else's question.
+ */
+function maypiano_qna_only_mine( $sql ) {
+	if ( false === strpos( $sql, "_question.comment_type = 'tutor_q_and_a'" ) || false === strpos( $sql, '_question.comment_parent = 0' ) ) {
+		return $sql;
+	}
+	if ( ! did_action( 'init' ) || ! is_user_logged_in() || maypiano_qna_sees_all() ) {
+		return $sql;
+	}
+	$where = ' AND _question.user_id = ' . (int) get_current_user_id() . ' ';
+	return preg_replace_callback( '/\sORDER BY _question\.comment_ID\s/', function ( $m ) use ( $where ) {
+		return $where . $m[0];
+	}, $sql, 1 );
+}
+add_filter( 'query', 'maypiano_qna_only_mine' );
+
+/** May the signed-in person read this question? */
+function maypiano_qna_may_read( $question ) {
+	if ( ! $question || 'tutor_q_and_a' !== $question->comment_type ) {
+		return false;
+	}
+	if ( (int) $question->comment_parent ) {
+		$question = get_comment( (int) $question->comment_parent );
+		if ( ! $question ) {
+			return false;
+		}
+	}
+	return (int) $question->user_id === get_current_user_id() || maypiano_qna_sees_all( (int) $question->comment_post_ID );
+}
+
+/** A question opened by its address is shown only to its asker and to the people who run the course. */
+add_action( 'template_redirect', function () {
+	if ( is_admin() || ! is_user_logged_in() ) {
+		return;
+	}
+	// phpcs:disable WordPress.Security.NonceVerification
+	$back = '';
+	$id   = 0;
+	if ( is_singular( 'courses' ) && ! empty( $_GET['question_id'] ) ) {
+		$id   = absint( wp_unslash( $_GET['question_id'] ) );
+		$back = remove_query_arg( 'question_id' );
+	} elseif ( ! empty( $_GET['id'] ) && function_exists( 'tutor_utils' ) && is_page( (int) tutor_utils()->get_option( 'tutor_dashboard_page_id' ) ) && 'discussions' === (string) get_query_var( 'tutor_dashboard_page' ) && 'lesson-comments' !== ( isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '' ) ) {
+		$id   = absint( wp_unslash( $_GET['id'] ) );
+		$back = tutor_utils()->tutor_dashboard_url( 'discussions' );
+	}
+	// phpcs:enable
+	if ( ! $id ) {
+		return;
+	}
+	$question = get_comment( $id );
+	if ( $question && 'tutor_q_and_a' === $question->comment_type && ! maypiano_qna_may_read( $question ) ) {
+		nocache_headers();
+		wp_safe_redirect( $back, 302 );
+		exit;
+	}
+}, 4 );
+
 /** The questions page goes through the theme (see maypiano_qna_page), and its menu link carries the lesson. */
 add_filter( 'tutor_learning_area_sub_page_menu_items', function ( $items ) {
 	if ( ! is_array( $items ) || empty( $items['qna'] ) ) {
@@ -242,6 +313,9 @@ function maypiano_qna_page() {
 		}, $sql, 1 );
 	};
 
+	// A learner's list holds their own questions only (see maypiano_qna_only_mine).
+	$everyone = maypiano_qna_sees_all( (int) $tutor_course_id );
+
 	$GLOBALS['maypiano_qna_labels'] = ! $narrow && ! $single;
 	if ( $narrow ) {
 		add_filter( 'query', $only );
@@ -257,14 +331,17 @@ function maypiano_qna_page() {
 		$bar  = '<div class="mp-qna-scope">'
 			. '<p class="mp-qna-scope-bai">Bài: <a href="' . esc_url( get_permalink( $lesson ) ) . '">' . esc_html( get_the_title( $lesson ) ) . '</a></p>'
 			. '<div class="mp-qna-tabs" role="group" aria-label="Chọn câu hỏi muốn xem">'
-			. '<a class="mp-qna-tab' . ( $all ? '' : ' is-on' ) . '" href="' . esc_url( $base ) . '"' . ( $all ? '' : ' aria-current="true"' ) . '>Câu hỏi của bài này</a>'
-			. '<a class="mp-qna-tab' . ( $all ? ' is-on' : '' ) . '" href="' . esc_url( add_query_arg( 'xem', 'tat-ca', $base ) ) . '"' . ( $all ? ' aria-current="true"' : '' ) . '>Xem tất cả</a>'
+			. '<a class="mp-qna-tab' . ( $all ? '' : ' is-on' ) . '" href="' . esc_url( $base ) . '"' . ( $all ? '' : ' aria-current="true"' ) . '>' . ( $everyone ? 'Câu hỏi của bài này' : 'Câu hỏi của mình ở bài này' ) . '</a>'
+			. '<a class="mp-qna-tab' . ( $all ? ' is-on' : '' ) . '" href="' . esc_url( add_query_arg( 'xem', 'tat-ca', $base ) ) . '"' . ( $all ? ' aria-current="true"' : '' ) . '>' . ( $everyone ? 'Xem tất cả' : 'Của mình trong cả khóa' ) . '</a>'
 			. '</div></div>';
 		$spot = strpos( $html, '<div class="tutor-learning-area-qna"' );
 		$html = false === $spot ? $bar . $html : substr_replace( $html, $bar, $spot, 0 );
 		if ( $narrow && empty( $_GET['search'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			$html = str_replace( esc_html__( 'No Questions Found!', 'tutor' ), 'Bài này chưa có câu hỏi nào.', $html );
+			$html = str_replace( esc_html__( 'No Questions Found!', 'tutor' ), $everyone ? 'Bài này chưa có câu hỏi nào.' : 'Bạn chưa hỏi câu nào ở bài này.', $html );
 		}
+	}
+	if ( ! $everyone && ! $single ) {
+		$html = '<p class="mp-qna-private">Chỉ bạn và Mây đọc được câu hỏi của bạn.</p>' . $html;
 	}
 	echo $html; // phpcs:ignore WordPress.Security.EscapeOutput -- Tutor LMS's own page, already escaped there.
 }
@@ -300,11 +377,11 @@ add_action( 'tutor_load_template_after', function ( $template, $variables ) {
 
 const MAYPIANO_QNA_BOX_SHOWN = 5;
 
-/** The newest questions of one lesson with their answers, and how many questions the lesson has. */
-function maypiano_qna_of_lesson( $course, $lesson, $limit ) {
+/** The newest questions of one lesson with their answers, and how many there are. With $asker, only that person's questions. */
+function maypiano_qna_of_lesson( $course, $lesson, $limit, $asker = 0 ) {
 	global $wpdb;
 	$from = "FROM {$wpdb->comments} c INNER JOIN {$wpdb->commentmeta} m ON m.comment_id = c.comment_ID AND m.meta_key = 'mp_lesson' AND m.meta_value = %s
-		WHERE c.comment_type = 'tutor_q_and_a' AND c.comment_parent = 0 AND c.comment_post_ID = %d
+		WHERE c.comment_type = 'tutor_q_and_a' AND c.comment_parent = 0 AND c.comment_post_ID = %d" . ( $asker ? ' AND c.user_id = ' . (int) $asker : '' ) . "
 		AND NOT EXISTS (SELECT 1 FROM {$wpdb->commentmeta} a WHERE a.comment_id = c.comment_ID AND a.meta_key = 'tutor_qna_archived' AND a.meta_value = '1')";
 	$total     = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) {$from}", (string) $lesson, (int) $course ) ); // phpcs:ignore WordPress.DB
 	$questions = $total ? $wpdb->get_results( $wpdb->prepare( "SELECT c.comment_ID, c.comment_author, c.comment_date_gmt, c.comment_content, c.user_id {$from} ORDER BY c.comment_ID DESC LIMIT %d", (string) $lesson, (int) $course, (int) $limit ) ) : array(); // phpcs:ignore WordPress.DB
@@ -336,19 +413,20 @@ add_action( 'tutor_load_template_after', function ( $template ) {
 	if ( ! $lesson || empty( $menu['qna'] ) ) {
 		return; // Questions are off for this course, or this visitor may not ask.
 	}
-	list( $total, $questions, $answers ) = maypiano_qna_of_lesson( $course, $lesson, MAYPIANO_QNA_BOX_SHOWN );
+	$everyone                            = maypiano_qna_sees_all( $course );
+	list( $total, $questions, $answers ) = maypiano_qna_of_lesson( $course, $lesson, MAYPIANO_QNA_BOX_SHOWN, $everyone ? 0 : get_current_user_id() );
 	$page = add_query_arg( array( 'subpage' => 'qna', 'bai' => $lesson ), get_permalink( $course ) );
 	?>
 <details class="mp-qna-box" id="mp-hoi-dap">
 	<summary>
 		<span class="mp-qna-box-title">Hỏi đáp về bài này</span>
-		<span class="mp-qna-box-count"><?php echo $total ? esc_html( $total . ' câu hỏi' ) : 'Chưa có câu hỏi'; ?></span>
+		<span class="mp-qna-box-count"><?php echo $total ? esc_html( $total . ( $everyone ? ' câu hỏi' : ' câu hỏi của bạn' ) ) : ( $everyone ? 'Chưa có câu hỏi' : 'Bạn chưa hỏi câu nào' ); ?></span>
 		<span class="mp-qna-box-arrow" aria-hidden="true"></span>
 	</summary>
 	<div class="mp-qna-box-body">
 		<?php // The theme's own form: Tutor LMS only loads its question form's script on its questions page, not on a lesson. ?>
 		<form class="mp-qna-ask" data-course="<?php echo (int) $course; ?>" data-bai="<?php echo (int) $lesson; ?>">
-			<label class="mp-qna-box-lead" for="mp-qna-ask-text">Bạn có chỗ nào chưa rõ trong bài này thì viết câu hỏi ở đây nhé.</label>
+			<label class="mp-qna-box-lead" for="mp-qna-ask-text">Bạn có chỗ nào chưa rõ trong bài này thì viết câu hỏi ở đây nhé. Chỉ bạn và Mây đọc được câu hỏi của bạn.</label>
 			<textarea id="mp-qna-ask-text" name="answer" rows="3" maxlength="2000" placeholder="<?php echo esc_attr__( 'Asked questions...', 'tutor' ); ?>"></textarea>
 			<div class="mp-qna-ask-row">
 				<p class="mp-qna-ask-note" role="status" aria-live="polite"></p>
@@ -374,9 +452,9 @@ add_action( 'tutor_load_template_after', function ( $template ) {
 		<?php endif; ?>
 		<p class="mp-qna-more">
 			<?php if ( $total > count( $questions ) ) : ?>
-			<a href="<?php echo esc_url( $page ); ?>">Xem cả <?php echo (int) $total; ?> câu hỏi của bài này</a>
+			<a href="<?php echo esc_url( $page ); ?>">Xem cả <?php echo (int) $total; ?> câu hỏi <?php echo $everyone ? 'của bài này' : 'của bạn ở bài này'; ?></a>
 			<?php endif; ?>
-			<a href="<?php echo esc_url( add_query_arg( 'xem', 'tat-ca', $page ) ); ?>">Xem câu hỏi của cả khóa</a>
+			<a href="<?php echo esc_url( add_query_arg( 'xem', 'tat-ca', $page ) ); ?>"><?php echo $everyone ? 'Xem câu hỏi của cả khóa' : 'Xem câu hỏi của bạn trong cả khóa'; ?></a>
 		</p>
 	</div>
 </details>

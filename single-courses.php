@@ -59,7 +59,7 @@ $mp_lock  = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke=
 <ol>
 		<?php foreach ( $mp_part['lessons'] as $mp_row ) : ?>
 <li>
-<span class="mpc-no"><?php echo (int) $mp_row['no']; ?></span>
+<span class="mpc-no"><?php echo '' === $mp_row['no'] ? '' : (int) $mp_row['no']; ?></span>
 			<?php if ( '' !== $mp_row['url'] ) : ?>
 <a class="mpc-name" href="<?php echo esc_url( $mp_row['url'] ); ?>"><?php echo esc_html( $mp_row['title'] ); ?></a>
 			<?php else : ?>

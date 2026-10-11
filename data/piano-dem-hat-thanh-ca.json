@@ -1,7 +1,8 @@
 {
  "course": "piano-dem-hat-thanh-ca",
-  "publish": true,
+ "publish": true,
  "video_prefix": "Thánh Ca",
+ "doc_code": "ThanhCa",
  "intro": "Bạn đang đệm đàn cho ca đoàn, hay muốn bắt đầu? Mây lớn lên cùng cây đàn nhà thờ, nên khóa này Mây soạn rất kỹ cho bạn. Mình đi từ hợp âm căn bản, cách tự đặt hợp âm và tạo intro, rồi đệm từng phần thánh lễ, từ Nhập lễ tới Kết lễ.",
  "gets": [
   "Tự đặt hợp âm cho bài chưa có hợp âm sẵn",

@@ -94,6 +94,9 @@ function maypiano_bunny_match() {
 		$with  = 0;
 		foreach ( $data['topics'] as $topic ) {
 			foreach ( $topic['lessons'] as $lesson ) {
+				if ( ! empty( $lesson['youtube'] ) ) {
+					continue; // Its video is on YouTube, there is nothing to look for on Bunny.
+				}
 				$total++;
 				$lesson_id = maypiano_curriculum_find( 'lesson', $slug . '/bai-' . (int) $lesson['no'] );
 				if ( ! $lesson_id ) {

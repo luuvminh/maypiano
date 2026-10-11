@@ -479,3 +479,30 @@ body.mp-app .tutor-learning-header-content>.mp-size{margin-inline-start:auto}
 body.mp-app .tutor-learning-header-content>.tutor-ml-auto+.mp-size{margin-inline-start:0}
 @media (max-width:991.98px){body.mp-app .tutor-learning-header-content>.tutor-ml-auto.tutor-md-hidden+.mp-size{margin-inline-start:auto}}
 @media (max-width:380px){body.mp-app .mp-size button{width:40px;min-width:40px}}
+
+/* Songs bought one by one, apart from whole courses (inc/learner.php) */
+body.mp-app .mp-card-kind{display:inline-block;align-self:flex-start;max-width:100%;margin:0 0 6px;padding:3px 12px;border-radius:999px;background:#F7D9E1;color:var(--mp-plum);font-family:var(--mp-body);font-size:1rem;font-weight:600;line-height:1.35;letter-spacing:0;text-transform:none;white-space:nowrap}
+body.mp-app .mp-kind-scope{justify-content:flex-start}
+body.mp-app .mp-my-songs{order:1}
+
+/* Course materials under the video (inc/materials.php) */
+body.mp-app .mp-docs{margin:24px 0 0;padding:18px 20px 8px;background:#fff;border:2px solid var(--mp-ink);border-radius:16px;color:var(--mp-ink);scroll-margin-top:84px}
+body.mp-app .mp-docs .mp-docs-title{margin:0 0 6px;font-family:var(--mp-head)!important;font-weight:600;font-size:1.375rem;line-height:1.2;letter-spacing:-.01em}
+body.mp-app .mp-docs .mp-docs-title:not(:first-child){margin-top:22px}
+body.mp-app .mp-docs .mp-docs-sub{margin:16px 0 0;font-family:var(--mp-body)!important;font-weight:600;font-size:1.125rem;line-height:1.3;color:var(--mp-plum)}
+body.mp-app .mp-docs .mp-docs-sub a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+body.mp-app .mp-docs-lead{margin:0 0 10px;font-size:1.125rem;line-height:1.45}
+body.mp-app .mp-docs-list{list-style:none;margin:0;padding:0}
+body.mp-app .mp-docs-list li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:10px 0;border-top:1px solid var(--mp-muted)}
+body.mp-app .mp-docs-list li:first-child{border-top:0}
+body.mp-app .mp-docs-name{flex:1 1 12rem;min-width:0;font-size:1.1875rem;font-weight:600;line-height:1.3}
+body.mp-app .mp-docs-meta{flex:none;font-size:1rem;color:var(--mp-plum);font-variant-numeric:lining-nums tabular-nums;white-space:nowrap}
+body.mp-app a.mp-docs-get{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 22px;border:2px solid var(--mp-ink);border-radius:999px;background:#fff;color:var(--mp-ink);font-size:1.0625rem;font-weight:600;text-decoration:none;white-space:nowrap;transition:transform .1s ease-out,background-color .15s ease}
+body.mp-app a.mp-docs-get:hover{background:var(--mp-blush);color:var(--mp-ink)}
+body.mp-app a.mp-docs-get:active{transform:scale(.97)}
+body.mp-app .mp-qna-private{margin:0 0 12px;font-size:1.0625rem;color:var(--mp-plum)}
+@media (max-width:640px){
+	body.mp-app .mp-docs{padding:14px 14px 6px}
+	body.mp-app .mp-docs-name{flex-basis:100%}
+	body.mp-app a.mp-docs-get{margin-inline-start:auto}
+}

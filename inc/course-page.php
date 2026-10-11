@@ -96,8 +96,10 @@ function maypiano_course_view( $course_id ) {
 			if ( '' === $first && $inside ) {
 				$first = $url;
 			}
+			// The course's introduction (lesson 0 in its file) and the materials lesson are not numbered: numbers match the course file.
+			$plain  = (bool) preg_match( '#/(bai-0|' . MAYPIANO_DOCS_LESSON_KEY . ')$#', (string) get_post_meta( $item->ID, '_maypiano_key', true ) );
 			$rows[] = array(
-				'no'     => ++$lessons,
+				'no'     => $plain ? '' : ++$lessons,
 				'title'  => get_the_title( $item ),
 				'length' => $secs ? sprintf( '%d:%02d', intdiv( $secs, 60 ), $secs % 60 ) : '',
 				'url'    => $url,
@@ -111,7 +113,7 @@ function maypiano_course_view( $course_id ) {
 		$parts[]  = array(
 			'title'   => get_the_title( $topic ),
 			'lessons' => $rows,
-			'meta'    => count( $rows ) . ' bài' . ( $total ? ', ' . maypiano_length_words( $total ) : '' ),
+			'meta'    => preg_match( '#/phan-' . MAYPIANO_DOCS_LESSON_KEY . '$#', (string) get_post_meta( $topic->ID, '_maypiano_key', true ) ) ? 'File PDF tải về' : count( $rows ) . ' bài' . ( $total ? ', ' . maypiano_length_words( $total ) : '' ),
 		);
 	}
 
@@ -155,6 +157,7 @@ function maypiano_my_courses() {
 			continue;
 		}
 		$lessons = array();
+		$first   = '';
 		$topics  = get_posts( array(
 			'post_type'      => 'topics',
 			'post_parent'    => $course_id,
@@ -174,12 +177,20 @@ function maypiano_my_courses() {
 				'order'          => 'ASC',
 			) );
 			foreach ( $items as $item ) {
-				$lessons[] = array( html_entity_decode( get_the_title( $item ), ENT_QUOTES, 'UTF-8' ), esc_url_raw( get_permalink( $item->ID ) ) );
+				$url = esc_url_raw( get_permalink( $item->ID ) );
+				if ( '' === $first ) {
+					$first = $url;
+				}
+				// The home page matches this list against the lessons it names, so the introduction and the materials lesson stay out of it.
+				if ( preg_match( '#/(bai-0|' . MAYPIANO_DOCS_LESSON_KEY . ')$#', (string) get_post_meta( $item->ID, '_maypiano_key', true ) ) ) {
+					continue;
+				}
+				$lessons[] = array( html_entity_decode( get_the_title( $item ), ENT_QUOTES, 'UTF-8' ), $url );
 			}
 		}
 		$mine[ $key ] = array(
 			'enrolled' => $enrolled,
-			'go'       => $lessons ? $lessons[0][1] : esc_url_raw( get_permalink( $course_id ) ),
+			'go'       => '' !== $first ? $first : esc_url_raw( get_permalink( $course_id ) ),
 			'lessons'  => $lessons,
 		);
 	}

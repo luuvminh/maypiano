@@ -2,6 +2,7 @@
  "course": "piano-solo-nang-cao",
  "publish": true,
  "video_prefix": "Solo Nâng Cao",
+ "doc_code": "SoloNangCao",
  "intro": "Bạn đã đọc được bản nhạc và chơi được hai tay những bài cơ bản? Khóa này Mây giúp bạn chơi hay hơn: thêm hợp âm màu, mười mẫu đệm tay trái cho nhiều điệu, cách làm intro, fill-in và outro. Mình còn học tự đặt hợp âm và gạch nhịp cho một bản nhạc chỉ có giai điệu.",
  "gets": [
   "Mười mẫu đệm tay trái: ballad, slowrock, valse, rumba, tango, bossanova",
@@ -14,6 +15,12 @@
   {
    "title": "Phần 1: Hợp âm",
    "lessons": [
+    {
+     "no": 0,
+     "title": "Giới thiệu khóa học",
+     "length": "",
+     "youtube": "fAuvnefS848"
+    },
     {
      "no": 1,
      "title": "Ôn tập hợp âm căn bản",

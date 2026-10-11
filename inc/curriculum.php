@@ -105,6 +105,12 @@ function maypiano_curriculum_build( $file ) {
 			$video            = get_post_meta( $id, '_video', true );
 			$video            = is_array( $video ) ? $video : array( 'source' => '-1' );
 			$video['runtime'] = maypiano_curriculum_runtime( isset( $lesson['length'] ) ? $lesson['length'] : '' );
+			// "youtube": a lesson whose video is one of Mây's public YouTube videos (a course's introduction), not a Bunny one.
+			$youtube = isset( $lesson['youtube'] ) ? preg_replace( '/[^A-Za-z0-9_-]/', '', (string) $lesson['youtube'] ) : '';
+			if ( '' !== $youtube ) {
+				$video['source']         = 'youtube';
+				$video['source_youtube'] = 'https://www.youtube.com/watch?v=' . $youtube;
+			}
 			update_post_meta( $id, '_video', $video );
 			$count++;
 		}
