@@ -289,17 +289,83 @@ function maypiano_stats_bunny_chart( $from, $guid = '' ) {
 	return $out;
 }
 
-/** Plays and minutes watched per day across the whole Bunny library. */
+/** One answer of Bunny's account API (needs the account key), as an array, or null. */
+function maypiano_stats_bunny_account( $path ) {
+	$key = trim( (string) get_option( 'maypiano_bunny_account', '' ) );
+	if ( '' === $key ) {
+		return null;
+	}
+	$res = wp_remote_get( 'https://api.bunny.net/' . ltrim( $path, '/' ), array(
+		'timeout' => 20,
+		'headers' => array(
+			'AccessKey' => $key,
+			'accept'    => 'application/json',
+		),
+	) );
+	if ( is_wp_error( $res ) || 200 !== wp_remote_retrieve_response_code( $res ) ) {
+		return null;
+	}
+	$body = json_decode( wp_remote_retrieve_body( $res ), true );
+	return is_array( $body ) ? $body : null;
+}
+
+/** Gigabytes sent per day by the video library's delivery zone, or null without the account key. */
+function maypiano_stats_bunny_bandwidth( $from ) {
+	$library = absint( get_option( 'maypiano_bunny_library' ) );
+	$info    = $library ? maypiano_stats_bunny_account( 'videolibrary/' . $library ) : null;
+	if ( empty( $info['PullZoneId'] ) ) {
+		return null;
+	}
+	$stats = maypiano_stats_bunny_account( 'statistics?hourly=false&pullZone=' . (int) $info['PullZoneId'] . '&dateFrom=' . rawurlencode( $from . 'T00:00:00Z' ) . '&dateTo=' . rawurlencode( gmdate( 'Y-m-d' ) . 'T23:59:59Z' ) );
+	if ( ! isset( $stats['BandwidthUsedChart'] ) ) {
+		return null;
+	}
+	$out = array();
+	foreach ( (array) $stats['BandwidthUsedChart'] as $when => $bytes ) {
+		$out[ substr( (string) $when, 0, 10 ) ] = round( (float) $bytes / 1e9, 3 );
+	}
+	return $out;
+}
+
+/** Plays, minutes watched and gigabytes sent per day across the whole Bunny library. */
 function maypiano_stats_bunny_days() {
 	$chart = maypiano_stats_bunny_chart( maypiano_stats_since() );
 	if ( null === $chart ) {
 		return null;
 	}
+	$gb  = (array) maypiano_stats_bunny_bandwidth( maypiano_stats_since() );
 	$out = array();
 	foreach ( $chart as $day => $v ) {
-		$out[] = array( 'day' => $day, 'plays' => (int) ( $v['plays'] ?? 0 ), 'minutes' => (int) round( ( $v['seconds'] ?? 0 ) / 60 ) );
+		$out[] = array( 'day' => $day, 'plays' => (int) ( $v['plays'] ?? 0 ), 'minutes' => (int) round( ( $v['seconds'] ?? 0 ) / 60 ), 'gb' => (float) ( $gb[ $day ] ?? 0 ) );
 	}
 	return $out;
+}
+
+/**
+ * What Bunny has charged the account this month, in US dollars, split into traffic and the rest, with the dollar
+ * rate the site's prices use. Null without the account key.
+ */
+function maypiano_stats_bunny_bill() {
+	$bill = maypiano_stats_bunny_account( 'billing' );
+	if ( ! $bill || ! isset( $bill['ThisMonthCharges'] ) ) {
+		return null;
+	}
+	$traffic = 0.0;
+	foreach ( $bill as $key => $value ) {
+		if ( is_numeric( $value ) && preg_match( '/^MonthlyCharges.*Traffic$/', (string) $key ) ) {
+			$traffic += (float) $value;
+		}
+	}
+	$base = maypiano_fx_base();
+	return array(
+		array(
+			'month'       => wp_date( 'Y-m' ),
+			'charges_usd' => round( (float) $bill['ThisMonthCharges'], 4 ),
+			'traffic_usd' => round( $traffic, 4 ),
+			'balance_usd' => round( (float) ( $bill['Balance'] ?? 0 ), 2 ),
+			'usd_vnd'     => (float) $base['USD'],
+		),
+	);
 }
 
 /**
@@ -373,6 +439,9 @@ function maypiano_stats_refresh() {
 	);
 	if ( maypiano_bunny_ready() ) {
 		$sets['bunny-ngay'] = array( 'Video Bunny mỗi ngày', 'maypiano_stats_bunny_days', 'Không đọc được thống kê Bunny.' );
+		if ( '' !== trim( (string) get_option( 'maypiano_bunny_account', '' ) ) ) {
+			$sets['bunny-tien'] = array( 'Tiền Bunny tháng này', 'maypiano_stats_bunny_bill', 'Không đọc được hóa đơn Bunny. Kiểm tra khóa API tài khoản.' );
+		}
 	}
 	foreach ( $sets as $slug => $set ) {
 		$rows = call_user_func( $set[1] );
@@ -416,7 +485,7 @@ add_action( 'admin_post_maypiano_stats_refresh', function () {
 function maypiano_stats_settings_section() {
 	$last = (array) get_option( 'maypiano_stats_last', array() );
 	echo '<h2 id="so-lieu">Số liệu cho bảng theo dõi</h2>';
-	echo '<p>Mỗi giờ site đếm đơn hàng, học viên mới, lượt ghi danh, nguồn khách và lượt xem video Bunny, rồi giữ lại để bảng số liệu đọc. Chỉ người quản trị đọc được.</p>';
+	echo '<p>Mỗi giờ site đếm đơn hàng, học viên mới, lượt ghi danh, nguồn khách, lượt xem và lưu lượng video Bunny, tiền Bunny tính, rồi giữ lại để bảng số liệu đọc. Chỉ người quản trị đọc được.</p>';
 	if ( ! empty( $last['time'] ) ) {
 		printf( '<p>Lần đếm gần nhất: %s.</p>', esc_html( wp_date( 'd/m/Y H:i', (int) $last['time'] ) ) );
 		foreach ( (array) ( $last['errors'] ?? array() ) as $error ) {

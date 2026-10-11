@@ -21,9 +21,16 @@ function maypiano_bunny_keys() {
 	);
 }
 
+/** Keys that are not needed to play lessons. The account key lets the dashboard read bandwidth and charges. */
+function maypiano_bunny_extra_keys() {
+	return array(
+		'maypiano_bunny_account' => array( 'Khóa API tài khoản (không bắt buộc)', 'Bunny > Account settings > API key. Chỉ dùng để đọc lưu lượng và tiền Bunny tính cho bảng số liệu. Khóa này mở được cả tài khoản Bunny, nên đừng gửi cho ai.' ),
+	);
+}
+
 /** An empty box on the settings page means "keep what is saved", so the keys never have to be shown again. */
 add_action( 'admin_init', function () {
-	foreach ( array_keys( maypiano_bunny_keys() ) as $key ) {
+	foreach ( array_keys( maypiano_bunny_keys() + maypiano_bunny_extra_keys() ) as $key ) {
 		register_setting( 'maypiano', $key, array(
 			'sanitize_callback' => function ( $value ) use ( $key ) {
 				$value = trim( sanitize_text_field( (string) $value ) );
@@ -187,7 +194,7 @@ function maypiano_bunny_settings_section() {
 	}
 	echo '<p class="description">Ô nào đã lưu thì để trống là giữ nguyên. Site không hiện lại khóa đã lưu.</p>';
 	echo '<table class="form-table" role="presentation">';
-	foreach ( maypiano_bunny_keys() as $key => $field ) {
+	foreach ( maypiano_bunny_keys() + maypiano_bunny_extra_keys() as $key => $field ) {
 		$saved = '' !== trim( (string) get_option( $key, '' ) );
 		echo '<tr><th scope="row"><label for="' . esc_attr( $key ) . '">' . esc_html( $field[0] ) . '</label></th><td>';
 		echo '<input type="password" autocomplete="off" class="regular-text" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="" placeholder="' . esc_attr( $saved ? 'Đã lưu' : 'Chưa có' ) . '">';
