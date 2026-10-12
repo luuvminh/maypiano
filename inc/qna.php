@@ -220,10 +220,12 @@ function maypiano_qna_sees_all( $course = 0 ) {
 /**
  * SQL condition: the question $alias is the reader's own, or someone other than its asker has answered it.
  * Unanswered questions stay between the asker and Mây; once answered they are open to every learner (anh Max chọn, 13/10/2026).
+ * A question hidden in the Hỏi đáp page (archived) is seen by no learner, its asker included.
  */
 function maypiano_qna_visible_sql( $alias, $user_id ) {
 	global $wpdb;
-	return ' AND ( ' . $alias . '.user_id = ' . (int) $user_id . " OR EXISTS (SELECT 1 FROM {$wpdb->comments} mp_tl WHERE mp_tl.comment_type = 'tutor_q_and_a' AND mp_tl.comment_parent = " . $alias . '.comment_ID AND mp_tl.user_id <> ' . $alias . '.user_id) ) ';
+	return ' AND ( ' . $alias . '.user_id = ' . (int) $user_id . " OR EXISTS (SELECT 1 FROM {$wpdb->comments} mp_tl WHERE mp_tl.comment_type = 'tutor_q_and_a' AND mp_tl.comment_parent = " . $alias . '.comment_ID AND mp_tl.user_id <> ' . $alias . '.user_id) ) '
+		. " AND NOT EXISTS (SELECT 1 FROM {$wpdb->commentmeta} mp_an WHERE mp_an.comment_id = " . $alias . ".comment_ID AND mp_an.meta_key = 'tutor_qna_archived' AND mp_an.meta_value = '1') ";
 }
 
 /** Has someone other than the asker answered this question? */
