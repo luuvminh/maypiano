@@ -141,6 +141,11 @@ add_action( 'template_redirect', function () {
 			update_post_meta( $id, '_mp_reviewed_by', (int) $me->ID );
 			wp_update_post( array( 'ID' => $id, 'post_excerpt' => $answer, 'post_status' => 'private' ) );
 			$posted = get_post_meta( $id, '_mp_posted', true );
+			if ( ! get_post_meta( $id, '_mp_question', true ) ) {
+				// A practice entry made by hand, with no learner's question behind it: nothing is posted anywhere.
+				wp_safe_redirect( maypiano_qna_review_url( array( 'thu_muc' => $id ) ) );
+				exit;
+			}
 			wp_safe_redirect( maypiano_qna_review_url( $posted && 'pending' !== $posted ? array( 'xong' => $id ) : array( 'loi' => $id ) ) );
 			exit;
 		}
@@ -148,6 +153,9 @@ add_action( 'template_redirect', function () {
 
 	if ( isset( $_GET['xong'] ) ) {
 		$notice .= '<div class="ok">Đã đăng mục ' . absint( $_GET['xong'] ) . '. Học viên thấy ngay.</div>';
+	}
+	if ( isset( $_GET['thu_muc'] ) ) {
+		$notice .= '<div class="ok">Đã ghi mục ' . absint( $_GET['thu_muc'] ) . '. Đây là câu hỏi thử nên không hiện cho học viên nào.</div>';
 	}
 	if ( isset( $_GET['loi'] ) ) {
 		$notice .= '<div class="warn">Mục ' . absint( $_GET['loi'] ) . ' chưa đăng được lên dưới câu hỏi. Chị báo anh Max kiểm tra nhé.</div>';
