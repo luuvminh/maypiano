@@ -582,8 +582,12 @@ add_action( 'init', function () {
 
 /** An entry marked answered with an answer in its excerpt: the answer is posted under the question, once. */
 add_action( 'save_post_' . MAYPIANO_QNA_TYPE, function ( $entry, $post ) {
+	maypiano_qna_post_answer( $entry, $post );
+}, 10, 2 );
+
+function maypiano_qna_post_answer( $entry, $post ) {
 	global $wpdb;
-	if ( 'private' !== $post->post_status || get_post_meta( $entry, '_mp_posted', true ) ) {
+	if ( ! $post || 'private' !== $post->post_status || get_post_meta( $entry, '_mp_posted', true ) ) {
 		return;
 	}
 	$answer   = trim( (string) $post->post_excerpt );
@@ -617,7 +621,92 @@ add_action( 'save_post_' . MAYPIANO_QNA_TYPE, function ( $entry, $post ) {
 	// The asker sees the question as having something new.
 	update_comment_meta( $qid, 'tutor_qna_read_' . (int) $question->user_id, 0 );
 	clean_comment_cache( array( $qid, $posted ) );
-}, 10, 2 );
+}
+
+/*
+ * Practice entries ("Mã câu hỏi: THỬ", made by hand with no learner's question behind them) become real questions,
+ * asked under their lesson by the account maxwelllau@icloud.com (anh Max chọn, 13/10/2026). An entry already answered
+ * gets its answer posted under the question, as for any other entry. Runs once; an entry is never turned twice.
+ */
+const MAYPIANO_QNA_PRACTICE_ASKER = 'maxwelllau@icloud.com';
+
+function maypiano_qna_practice_to_real() {
+	global $wpdb;
+	$user = get_user_by( 'email', MAYPIANO_QNA_PRACTICE_ASKER );
+	if ( ! $user || ! function_exists( 'tutor_utils' ) ) {
+		return false;
+	}
+	$rows = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type = %s AND post_content LIKE %s ORDER BY ID ASC LIMIT 100", MAYPIANO_QNA_TYPE, 'Mã câu hỏi: THỬ%' ) ); // phpcs:ignore WordPress.DB
+	$name = maypiano_qna_name( $user->ID );
+	foreach ( (array) $rows as $id ) {
+		$id = (int) $id;
+		if ( get_post_meta( $id, '_mp_question', true ) ) {
+			continue;
+		}
+		$entry  = get_post( $id );
+		$f      = maypiano_qna_fields( $entry );
+		$path   = trim( (string) wp_parse_url( preg_replace( '/#.*$/', '', $f['link'] ), PHP_URL_PATH ), '/' );
+		$lesson = (int) url_to_postid( preg_replace( '/#.*$/', '', $f['link'] ) );
+		if ( ! $lesson && $path ) {
+			$found  = get_posts( array( 'post_type' => MAYPIANO_QNA_LESSON_TYPES, 'name' => basename( $path ), 'post_status' => 'publish', 'numberposts' => 1, 'fields' => 'ids' ) );
+			$lesson = $found ? (int) $found[0] : 0;
+		}
+		$course = $lesson ? (int) tutor_utils()->get_course_id_by_subcontent( $lesson ) : 0;
+		if ( ! $lesson || ! $course || '' === $f['question'] ) {
+			continue;
+		}
+		$text  = html_entity_decode( wp_strip_all_tags( (string) $entry->post_content ), ENT_QUOTES, 'UTF-8' );
+		$asked = preg_match( '/^Ngày hỏi: (.+)$/mu', $text, $m ) ? trim( $m[1] ) : current_time( 'mysql' );
+		$wpdb->insert( $wpdb->comments, array( // phpcs:ignore WordPress.DB
+			'comment_post_ID'  => $course,
+			'comment_author'   => $name,
+			'comment_date'     => $asked,
+			'comment_date_gmt' => get_gmt_from_date( $asked ),
+			'comment_content'  => $f['question'],
+			'comment_approved' => 'approved',
+			'comment_agent'    => 'TutorLMSPlugin',
+			'comment_type'     => 'tutor_q_and_a',
+			'comment_parent'   => 0,
+			'user_id'          => (int) $user->ID,
+		) );
+		$qid = (int) $wpdb->insert_id;
+		if ( ! $qid ) {
+			continue;
+		}
+		update_comment_meta( $qid, 'mp_lesson', $lesson );
+		update_comment_meta( $qid, 'mp_entry', $id );
+		update_post_meta( $id, '_mp_question', $qid );
+		$question = get_comment( $qid );
+		$lines    = array(
+			'Mã câu hỏi: ' . $qid,
+			'Khóa học: ' . get_the_title( $course ),
+			'Bài học: ' . get_the_title( $lesson ),
+			'Link bài: ' . maypiano_qna_link( $question ),
+			'Người hỏi: ' . $name,
+			'Ngày hỏi: ' . $asked,
+			'',
+			'Câu hỏi:',
+			$f['question'],
+		);
+		// Written straight to the table, so saving does not run the posting step before the question exists in full.
+		$wpdb->update( $wpdb->posts, array( // phpcs:ignore WordPress.DB
+			'post_title'   => wp_html_excerpt( $name . ': ' . $f['question'], 90, '…' ),
+			'post_content' => implode( "\n", array_map( 'esc_html', $lines ) ),
+		), array( 'ID' => $id ) );
+		clean_post_cache( $id );
+		maypiano_qna_post_answer( $id, get_post( $id ) );
+	}
+	return true;
+}
+
+add_action( 'init', function () {
+	if ( get_option( 'maypiano_qna_practice_real' ) ) {
+		return;
+	}
+	if ( maypiano_qna_practice_to_real() ) {
+		update_option( 'maypiano_qna_practice_real', MAYPIANO_VERSION, false );
+	}
+}, 40 );
 
 /**
  * A course without a picture of its own in the site's library uses the photo named in its file in data/,
