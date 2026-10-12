@@ -264,10 +264,24 @@ function maypiano_qna_tools( $tab, $q, $course, $courses ) {
 	return $html . '</form>';
 }
 
+/** "5 phút trước", in Vietnamese whatever the admin's language. */
+function maypiano_qna_vi_ago( $ts ) {
+	$d = max( 0, time() - (int) $ts );
+	if ( $d < 60 ) {
+		return 'vừa xong';
+	}
+	foreach ( array( array( 31536000, 'năm' ), array( 2592000, 'tháng' ), array( 604800, 'tuần' ), array( 86400, 'ngày' ), array( 3600, 'giờ' ), array( 60, 'phút' ) ) as $u ) {
+		if ( $d >= $u[0] ) {
+			return floor( $d / $u[0] ) . ' ' . $u[1] . ' trước';
+		}
+	}
+	return 'vừa xong';
+}
+
 function maypiano_qna_meta_line( $entry ) {
 	$f    = maypiano_qna_fields( $entry );
 	$link = $f['link'] ? '<a href="' . esc_url( $f['link'] ) . '">' . esc_html( $f['lesson'] ? $f['lesson'] : 'Mở bài' ) . '</a>' : esc_html( $f['lesson'] );
-	$ago  = human_time_diff( (int) get_post_time( 'U', true, $entry ) ) . ' trước';
+	$ago  = maypiano_qna_vi_ago( (int) get_post_timestamp( $entry ) );
 	return '<div class="meta"><span class="who">' . esc_html( $f['asker'] ) . '</span> · ' . esc_html( $f['course'] ) . ' · ' . $link . '<br>Mục ' . (int) $entry->ID . ' · ' . esc_html( $ago ) . '</div>'
 		. '<p class="q">' . esc_html( $f['question'] ) . '</p>';
 }
@@ -305,7 +319,7 @@ function maypiano_qna_answered_card( $entry ) {
 		if ( $is_mine ) {
 			$mine = $a;
 		}
-		$html .= '<div class="ans"><div class="by">' . esc_html( $a->comment_author ) . ' · ' . esc_html( human_time_diff( strtotime( $a->comment_date_gmt . ' UTC' ) ) . ' trước' ) . '</div>' . wp_kses_post( wpautop( $a->comment_content ) ) . '</div>';
+		$html .= '<div class="ans"><div class="by">' . esc_html( $a->comment_author ) . ' · ' . esc_html( maypiano_qna_vi_ago( strtotime( $a->comment_date_gmt . ' UTC' ) ) ) . '</div>' . wp_kses_post( wpautop( $a->comment_content ) ) . '</div>';
 	}
 	if ( $mine ) {
 		$text  = trim( html_entity_decode( wp_strip_all_tags( (string) $mine->comment_content ), ENT_QUOTES, 'UTF-8' ) );
