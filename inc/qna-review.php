@@ -420,8 +420,10 @@ function maypiano_qna_act( $do, $entry, $answer, $me ) {
 				if ( '' === $answer ) {
 					return array( 'warn', 'Câu trả lời đang trống. Muốn bỏ hẳn thì chị bấm Gỡ câu trả lời.' );
 				}
-				wp_update_comment( array( 'comment_ID' => $aid, 'comment_content' => wp_kses_post( wpautop( esc_html( $answer ) ) ) ) );
 				global $wpdb;
+				// Straight to the table, as the answer was written: WordPress's own update would touch Tutor LMS's 'approved' mark.
+				$wpdb->update( $wpdb->comments, array( 'comment_content' => wp_kses_post( wpautop( esc_html( $answer ) ) ) ), array( 'comment_ID' => $aid ) ); // phpcs:ignore WordPress.DB
+				clean_comment_cache( $aid );
 				$wpdb->update( $wpdb->posts, array( 'post_excerpt' => $answer ), array( 'ID' => $id ) ); // phpcs:ignore WordPress.DB
 				clean_post_cache( $id );
 				return array( 'ok', 'Đã sửa câu trả lời mục ' . $id . '. Học viên thấy chữ mới ngay.' );
