@@ -146,7 +146,9 @@ function maypiano_qna_answers_of( $entry ) {
 	if ( ! $qid ) {
 		return array();
 	}
-	return get_comments( array( 'parent' => $qid, 'type' => 'tutor_q_and_a', 'orderby' => 'comment_ID', 'order' => 'ASC', 'status' => 'all' ) );
+	// Tutor LMS marks its comments 'approved' (a word, not 1), which WordPress's own comment queries do not return.
+	global $wpdb;
+	return (array) $wpdb->get_results( $wpdb->prepare( "SELECT comment_ID, comment_parent, comment_author, comment_date_gmt, comment_content, user_id FROM {$wpdb->comments} WHERE comment_type = 'tutor_q_and_a' AND comment_parent = %d ORDER BY comment_ID ASC", $qid ) ); // phpcs:ignore WordPress.DB
 }
 
 /*
