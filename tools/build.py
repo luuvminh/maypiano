@@ -34,6 +34,13 @@ def build(name, home_href, signup_href):
     body = body.replace(' src="{{', ' data-dc-src="{{')
     body = body.replace('"/_img/', '"%%THEME%%/assets/img/')
     body = body.replace('href="MuaKhoaHoc.dc.html', 'href="%%SIGNUP%%').replace('href="BanNhac.dc.html"', 'href="%%HOME%%"').replace('href="DangNhap.dc.html"', 'href="%%LOGIN%%"').replace('href="CauHoi.dc.html"', 'href="%%HOME%%cau-hoi-thuong-gap/"').replace('href="SheetNhac.dc.html"', 'href="%%HOME%%sheet-nhac/"').replace('href="BaiHatLe.dc.html"', 'href="%%HOME%%bai-hat-le/"')
+    if name == 'TrangChu':
+        # Follower counts and their date are filled in by the site (inc/socials.php).
+        for label, key in (('bạn đăng ký kênh YouTube', 'YT'), ('bạn theo dõi TikTok', 'TT'), ('bạn theo dõi fanpage', 'FP'), ('thành viên nhóm Facebook', 'GR')):
+            body, n = re.subn(r'>[0-9.]+\+(</span><span[^>]*>' + label + ')', r'>%%MP_' + key + r'%%\1', body)
+            assert n == 1, (name, label)
+        body, n = re.subn(r'Số liệu cập nhật ngày [0-9/]+\.', 'Số liệu cập nhật ngày %%MP_SO_NGAY%%.', body)
+        assert n == 1, (name, 'ngay so lieu')
     for a, b in TEXT[name]:
         assert a in body, (name, a[:40])
         body = body.replace(a, b)

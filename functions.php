@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.18.0' );
+define( 'MAYPIANO_VERSION', '1.19.0' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -36,6 +36,7 @@ require get_theme_file_path( 'inc/telegram.php' );
 require get_theme_file_path( 'inc/learner.php' );
 require get_theme_file_path( 'inc/materials.php' );
 require get_theme_file_path( 'inc/stats.php' );
+require get_theme_file_path( 'inc/socials.php' );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );
@@ -82,7 +83,7 @@ function maypiano_render( $name ) {
 		return;
 	}
 	$html = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions
-	echo strtr( $html, array( // phpcs:ignore WordPress.Security.EscapeOutput
+	echo strtr( $html, maypiano_socials_fill() + array( // phpcs:ignore WordPress.Security.EscapeOutput
 		'%%THEME%%'  => esc_url( get_template_directory_uri() ),
 		'%%HOME%%'   => esc_url( home_url( '/' ) ),
 		'%%SIGNUP%%' => esc_url( home_url( '/dang-ky/' ) ),

@@ -128,6 +128,7 @@ function maypiano_settings_tabs() {
 		) ),
 		'so-lieu'    => array( 'Số liệu', array(
 			array( 'Số liệu cho bảng theo dõi: đếm lại ngay', 'so-lieu', 'so lieu doanh thu thong ke bang theo doi dem lai' ),
+			array( 'Số người theo dõi ở trang chủ: khóa YouTube API, đọc lại ngay', 'mang-xa-hoi', 'youtube tiktok facebook fanpage nhom nguoi dang ky theo doi subscriber' ),
 		) ),
 	);
 }
@@ -228,6 +229,7 @@ function maypiano_settings_page() {
 			break;
 		case 'so-lieu':
 			maypiano_stats_settings_section();
+			maypiano_socials_settings_section();
 			break;
 		default:
 			maypiano_settings_tab_home();
