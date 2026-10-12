@@ -28,6 +28,7 @@ require get_theme_file_path( 'inc/teacher.php' );
 require get_theme_file_path( 'inc/enrol-by-hand.php' );
 require get_theme_file_path( 'inc/teacher-words.php' );
 require get_theme_file_path( 'inc/qna.php' );
+require get_theme_file_path( 'inc/qna-review.php' );
 require get_theme_file_path( 'inc/sheets.php' );
 require get_theme_file_path( 'inc/songs.php' );
 require get_theme_file_path( 'inc/text-size.php' );
