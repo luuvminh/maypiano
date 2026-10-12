@@ -52,9 +52,13 @@ này:", và dòng "Đã duyệt:". Các ký tự như `&quot;` `&amp;` là dấu
      kỹ mục #N.
   2. Đọc README.md của repo: nó nói site có gì, file nào làm gì, tài liệu khoá học và bài học được đưa lên bằng cách nào.
   3. Xem tình trạng thật trên site (khoá, bài học, trang liên quan) bằng công cụ WordPress.com và file trong repo.
-  4. Cần file hay tài liệu: tìm trong Google Drive bằng công cụ Google Drive (thư mục "May Piano/Courses" trong My Drive
-     của anh Max là bản lưu nguồn các khoá, đặt tên khớp với bài trên site; chị Mây cũng chia sẻ các thư mục của chị).
-     Cần biết site cũ có gì thì đọc maypiano.me bằng WebFetch.
+  4. Cần file hay tài liệu: tìm trong Google Drive bằng công cụ Google Drive.
+     - Tài liệu khoá học (PDF, sheet nhạc, ghi chú…): LUÔN tìm trước tiên trong thư mục "May Piano/Courses"
+       (folder id 1VW3SuX-5rCx5LbwhvbCWObkzy5kgZjAi), chia theo từng khoá. Chị Mây hay nhờ sửa tài liệu khoá học qua bot:
+       file cần sửa nằm ở đây. Thư mục cha "May Piano" có id 1yB6WuVTr46OEzFeswVQ_cGCzK7LUTXwz.
+     - Video bài học: thư mục "May Piano - Courses Videos" (id 1WjB_1onk9vPYHqXN0ViNjYO7euTbsUfi). Chỉ vào đây khi cần
+       video, không tìm tài liệu ở đây.
+     - Chị Mây cũng chia sẻ các thư mục của chị. Cần biết site cũ có gì thì đọc maypiano.me bằng WebFetch.
 - Sau khi tìm hiểu, nếu có một cách hiểu hợp lý rõ ràng hơn các cách khác và việc sửa dễ đổi lại được: LÀM theo cách hiểu
   đó, và nói rõ trong báo cáo em đã hiểu thế nào.
 - Chỉ hỏi lại khi: thiếu một thứ không tự tìm được (ví dụ một file không có ở đâu cả), hoặc có hai cách hiểu khác nhau
