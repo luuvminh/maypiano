@@ -143,8 +143,9 @@ body.mp-app .tutor-mark-as-complete-button>span{width:auto!important}
 body.mp-app .tutor-mark-as-complete-button svg{position:static!important;flex:none;transform:none!important;margin:0!important}
 body.mp-app .tutor-mark-as-complete-button.completed{background:#fff!important;border-color:var(--mp-ink)!important;color:var(--mp-ink)!important;opacity:1!important;cursor:default}
 body.mp-app .tutor-learning-sidebar-pages{background:transparent!important;border:0!important;box-shadow:none!important;padding-inline:0}
-/* Nút "Thêm" (menu trang phụ của Tutor) chưa dùng tới: ẩn ở cột bài học. Trang Hỏi đáp của khóa (khung mở rộng) giữ nguyên */
-body.mp-app .tutor-learning-sidebar-pages:not(.expanded){display:none!important}
+/* Tutor's extra pages (Hỏi đáp, Thông báo, Đánh giá, Giới thiệu khóa học) are not used: hidden on every lesson page and on the course's question page.
+   Questions live under each video, and "Xem câu hỏi của cả khóa" opens the course's list. */
+body.mp-app .tutor-learning-sidebar-pages{display:none!important}
 body.mp-app .tutor-learning-sidebar-pages .tutor-learning-pages-item{background:#fff;border:2px solid var(--mp-ink)}
 @media (max-width:700px){body.mp-app .tutor-mark-as-complete-button{padding:8px 16px!important;font-size:1.0625rem!important;min-height:48px}}
 
@@ -508,3 +509,21 @@ body.mp-app .mp-qna-private{margin:0 0 12px;font-size:1.0625rem;color:var(--mp-p
 	body.mp-app .mp-docs-name{flex-basis:100%}
 	body.mp-app a.mp-docs-get{margin-inline-start:auto}
 }
+
+/* ---------- Lesson page, wide screens: "Danh sách bài" in the top bar shows or hides the list of lessons (inc/text-size.php) ----------
+   Tutor's own round button at the foot of the list is gone: it sat on the list's frame and did not answer taps on iPad. */
+body.mp-app .tutor-learning-sidebar .tutor-expand-btn{display:none!important}
+body.mp-app .mp-list-btn{display:none}
+@media (min-width:993px){
+	body.mp-app .tutor-learning-sidebar{padding-bottom:12px!important}
+	body.mp-app .mp-list-btn{appearance:none;-webkit-appearance:none;display:inline-flex;flex:none;align-items:center;gap:8px;height:44px;margin:0;padding:0 16px 0 12px;box-sizing:border-box;background:#fff;border:2px solid var(--mp-ink);border-radius:999px;color:var(--mp-ink);font-family:var(--mp-body)!important;font-size:16px!important;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease,transform .1s ease-out}
+	body.mp-app .mp-list-btn span{font-family:var(--mp-body)!important;font-size:16px!important}
+	body.mp-app .mp-list-btn svg{flex:none;color:var(--mp-plum)}
+	body.mp-app .mp-list-btn[aria-pressed="true"]{background:#F7D9E1}
+	body.mp-app .mp-list-btn[aria-pressed="true"] svg{color:var(--mp-accent)}
+	body.mp-app .mp-list-btn:active{transform:scale(.96)}
+	body.mp-app .mp-list-btn:focus-visible{outline:3px solid var(--mp-ink);outline-offset:2px}
+	body.mp-app .tutor-learning-header-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+@media (min-width:993px) and (hover:hover){body.mp-app .mp-list-btn[aria-pressed="false"]:hover{background:var(--mp-blush)}}
+@media (prefers-reduced-motion:reduce){body.mp-app .mp-list-btn{transition:none}}

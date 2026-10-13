@@ -84,7 +84,16 @@ add_action( 'tutor_load_template_after', function ( $template ) {
 	if ( 'learning-area.components.header' !== $template ) {
 		return;
 	}
-	$html    = (string) ob_get_clean();
+	$html = (string) ob_get_clean();
+	// Show/hide the list of lessons from the top bar, beside the back arrow (wide screens only; lesson.css).
+	// It replaces Tutor's round button at the foot of the list, which sat on the list's frame and was hard to tap on iPad.
+	$list = '<button type="button" class="mp-list-btn" @click="isFullScreen = !isFullScreen" :aria-pressed="isFullScreen ? \'false\' : \'true\'" aria-pressed="true">'
+		. '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="13" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M7.5 3.5v13" stroke="currentColor" stroke-width="1.8"/></svg>'
+		. '<span>Danh sách bài</span></button>';
+	$with = preg_replace( '/(<div class="tutor-learning-header-back">.*?<\/div>)/s', '$1' . $list, $html, 1, $done );
+	if ( $done ) {
+		$html = $with;
+	}
 	$control = maypiano_text_size_control();
 	// The learner's profile menu sits after it, as on every other page.
 	$control .= function_exists( 'maypiano_me_menu' ) ? maypiano_me_menu() : '';
