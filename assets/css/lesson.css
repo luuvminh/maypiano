@@ -143,6 +143,8 @@ body.mp-app .tutor-mark-as-complete-button>span{width:auto!important}
 body.mp-app .tutor-mark-as-complete-button svg{position:static!important;flex:none;transform:none!important;margin:0!important}
 body.mp-app .tutor-mark-as-complete-button.completed{background:#fff!important;border-color:var(--mp-ink)!important;color:var(--mp-ink)!important;opacity:1!important;cursor:default}
 body.mp-app .tutor-learning-sidebar-pages{background:transparent!important;border:0!important;box-shadow:none!important;padding-inline:0}
+/* Nút "Thêm" (menu trang phụ của Tutor) chưa dùng tới: ẩn ở cột bài học. Trang Hỏi đáp của khóa (khung mở rộng) giữ nguyên */
+body.mp-app .tutor-learning-sidebar-pages:not(.expanded){display:none!important}
 body.mp-app .tutor-learning-sidebar-pages .tutor-learning-pages-item{background:#fff;border:2px solid var(--mp-ink)}
 @media (max-width:700px){body.mp-app .tutor-mark-as-complete-button{padding:8px 16px!important;font-size:1.0625rem!important;min-height:48px}}
 
