@@ -12,6 +12,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Whether the Sheet nhạc page is open to visitors. Closed 14/10/2026 because the sheets are not complete yet:
+ * the menu links are hidden and /sheet-nhac/ leads to the home page. The site owners still see the page.
+ * To open it again, return true here.
+ */
+function maypiano_sheets_open() {
+	return false;
+}
+
+add_action( 'template_redirect', function () {
+	if ( maypiano_sheets_open() || ! is_page( 'sheet-nhac' ) || current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	wp_safe_redirect( home_url( '/' ), 302 );
+	exit;
+} );
+
 /** Makes the page once, so the address works as soon as the theme is deployed. */
 add_action( 'init', function () {
 	if ( get_option( 'maypiano_sheet_page' ) ) {

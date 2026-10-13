@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.20.2' );
+define( 'MAYPIANO_VERSION', '1.20.3' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );
@@ -83,6 +83,9 @@ function maypiano_render( $name ) {
 		return;
 	}
 	$html = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	if ( ! maypiano_sheets_open() ) { // While the Sheet nhạc page is closed, its menu links are left out.
+		$html = preg_replace( '#<a [^>]*href="%%HOME%%sheet-nhac/"[^>]*>Sheet nhạc</a>\n?#u', '', $html );
+	}
 	echo strtr( $html, maypiano_socials_fill() + array( // phpcs:ignore WordPress.Security.EscapeOutput
 		'%%THEME%%'  => esc_url( get_template_directory_uri() ),
 		'%%HOME%%'   => esc_url( home_url( '/' ) ),
