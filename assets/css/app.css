@@ -157,7 +157,9 @@ body.mp-app .tutor-dashboard-discussions a.mp-qna-bai{display:inline-block;max-w
 body.mp-app .tutor-dashboard-discussions a.mp-qna-bai:hover{color:var(--mp-accent)}
 /* The same menu at the right end of the lesson page's top bar. */
 body.mp-app .tutor-learning-header .mp-me{align-self:center;flex:none;margin-inline-start:10px}
-body.mp-app .tutor-learning-header .mp-me summary{min-height:44px;box-sizing:border-box;background:#fff}
+body.mp-app .tutor-learning-header .mp-me summary{min-height:44px;box-sizing:border-box;background:transparent}
+/* On a phone the button is just the round picture: no white box around it. */
+@media (max-width:600px){body.mp-app .tutor-learning-header .mp-me summary{min-height:0;border-radius:50%}}
 body.mp-app .tutor-learning-header .mp-me .mp-me-menu a{text-decoration:none;font-weight:500}
 body.mp-app .tutor-learning-header .mp-me .mp-me-menu{text-align:left;line-height:1.5}
 /* The bar clips whatever hangs below it; the menu has to hang below it. */
