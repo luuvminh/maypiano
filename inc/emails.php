@@ -66,7 +66,9 @@ function maypiano_mail_wrap( $body ) {
 		. '<div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:2px solid #2B1E24;border-radius:14px;padding:28px">'
 		. '<div style="font-size:24px;font-weight:bold;margin-bottom:16px">Mây Piano</div>'
 		. $body
-		. '</div></div>';
+		. '</div>'
+		. '<div style="max-width:560px;margin:14px auto 0;text-align:center;font-size:13px;color:#6B5A61">' . esc_html( MAYPIANO_LEGAL_NAME ) . ' · ABN ' . esc_html( MAYPIANO_ABN ) . '</div>'
+		. '</div>';
 }
 
 function maypiano_mail_button( $url, $label ) {

@@ -14,6 +14,8 @@ Theme WordPress cho trang chủ và trang đăng ký khóa học của May Piano
 
 - **Khách và học viên không được thấy chữ nào nhắc tới WordPress hay WordPress.com** (trang, email, nút, tiêu đề tab, thông báo lỗi). Đây là yêu cầu của chủ site về kỹ thuật, bảo mật và kinh doanh. Trang nào của phần mềm nền lọt ra thì đổi sang giao diện May Piano, tiếng Việt, và bỏ tên phần mềm. Trang quản trị bên trong (chỉ chủ site thấy) thì giữ nguyên.
 
+- **Số ABN của May Piano (41 509 255 746) hiện ở chân mọi trang và cuối mọi email gửi khách.** Số và tên đặt ở `MAYPIANO_ABN` và `MAYPIANO_LEGAL_NAME` trong `functions.php`; trang chủ ghi cứng trong `design/TrangChu.dc.html`. Đổi số thì sửa cả hai chỗ.
+
 ## Trong repo có gì
 
 - `front-page.php`: trang chủ.

@@ -7,7 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.20.3' );
+define( 'MAYPIANO_VERSION', '1.20.4' );
+
+/** Registered business details, shown in the footer of every page and every email. */
+define( 'MAYPIANO_LEGAL_NAME', 'May Piano' );
+define( 'MAYPIANO_ABN', '41 509 255 746' );
 
 require get_theme_file_path( 'inc/catalog.php' );
 require get_theme_file_path( 'inc/settings.php' );

@@ -44,6 +44,7 @@ body.mp-app .mp-lost-go a{display:inline-flex;align-items:center;box-sizing:bord
 body.mp-app .mp-lost-go a.mp-main{background:var(--mp-accent);border-color:var(--mp-accent);color:#fff}
 .mp-page{padding:clamp(24px,4vw,56px) var(--mp-side) clamp(56px,8vw,112px);min-height:50vh}
 .mp-foot{display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;padding:28px var(--mp-side) 40px;border-top:2px solid var(--mp-ink);font-size:1.125rem}
+.mp-foot-abn{font-size:.9375rem;opacity:.75}
 .mp-foot-links{display:flex;flex-wrap:wrap;gap:8px 24px}
 .mp-foot-links a{padding:10px 0}
 body.mp-app .mp-plain{font-family:var(--mp-body);max-width:760px;margin:0 auto;padding:0;font-size:1.25rem}
