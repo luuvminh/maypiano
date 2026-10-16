@@ -280,7 +280,7 @@ function maypiano_account_page( $title, $body ) {
 		. '.pw{position:relative}.pw input{padding-right:84px}.eye{position:absolute;right:6px;top:6px;height:44px;min-width:68px;border:0;border-radius:8px;background:#F6EFEF;color:#2B1E24;font:600 17px Newsreader,Georgia,serif;cursor:pointer}'
 		. 'button[type=submit],.btn{display:block;width:100%;min-height:58px;margin-top:22px;border:0;border-radius:999px;background:#C2456B;color:#fff;font:600 20px Newsreader,Georgia,serif;padding:14px 20px;text-align:center;text-decoration:none;cursor:pointer}'
 		. ':is(a,button,input):focus-visible{outline:3px solid #2B1E24;outline-offset:3px}form{margin:0 0 20px}.hint{font-size:17px}.err{background:#F6EFEF;border:2px solid #9A2B2B;border-radius:12px;padding:12px 14px;font-weight:600}'
-		. '</style></head><body><main><a class="logo" href="' . esc_url( home_url( '/' ) ) . '"><img src="' . esc_url( get_template_directory_uri() . '/assets/img/logo.png' ) . '" alt="Mây Piano" width="413" height="240"></a><div class="card"><h1>' . esc_html( $title ) . '</h1>' . $body . '</div></main></body></html>'; // phpcs:ignore WordPress.Security.EscapeOutput
+		. '</style></head><body><main><a class="logo" href="' . esc_url( home_url( '/' ) ) . '"><img src="' . esc_url( get_template_directory_uri() . '/assets/img/logo.png' ) . '" alt="Mây Piano" width="413" height="240"></a><div class="card"><h1>' . esc_html( $title ) . '</h1>' . $body . '</div><p style="margin:20px 0 0;font-size:15px;text-align:center;opacity:.75">© ' . esc_html( gmdate( 'Y' ) ) . ' Mây Piano · ABN ' . esc_html( MAYPIANO_ABN ) . '</p></main></body></html>'; // phpcs:ignore WordPress.Security.EscapeOutput
 	exit;
 }
 
