@@ -88,6 +88,38 @@ function maypiano_mail_lines( $order ) {
 		. '<tr><td style="padding:10px 0;font-weight:bold">Tổng cộng</td><td style="padding:10px 0;text-align:right;font-weight:bold;font-size:20px;white-space:nowrap">' . esc_html( $total ) . '</td></tr></table>';
 }
 
+/**
+ * The receipt block for a paid order. Australian Consumer Law asks for the business name, ABN,
+ * what was bought, the date and the price. May Piano is not registered for GST, so this is a
+ * plain receipt: never the words "Tax Invoice", never a GST line.
+ */
+function maypiano_mail_receipt( $order ) {
+	$paid    = $order->get_date_paid();
+	$when    = $paid ? $paid : new WC_DateTime( 'now', new DateTimeZone( 'Australia/Melbourne' ) );
+	$when->setTimezone( new DateTimeZone( 'Australia/Melbourne' ) );
+	$methods = array(
+		'bank'   => 'Chuyển khoản',
+		'paypal' => 'PayPal',
+		'card'   => 'Thẻ',
+	);
+	$method  = $methods[ (string) $order->get_meta( '_mp_method' ) ] ?? '';
+	$row     = function ( $label, $value ) {
+		return '<tr><td style="padding:3px 14px 3px 0;color:#6B5A61">' . esc_html( $label ) . '</td><td>' . esc_html( $value ) . '</td></tr>';
+	};
+	return '<div style="border:1px solid #E3D7D7;border-radius:10px;padding:14px 16px;margin:14px 0">'
+		. '<div style="font-weight:bold;font-size:19px;margin-bottom:6px">Biên lai</div>'
+		. '<table style="border-collapse:collapse;font-size:15px">'
+		. $row( 'Người bán', MAYPIANO_LEGAL_NAME . ' · ABN ' . MAYPIANO_ABN )
+		. $row( 'Mã đơn', maypiano_order_code( $order ) )
+		. $row( 'Ngày thanh toán', $when->format( 'd/m/Y' ) )
+		. ( '' !== $method ? $row( 'Hình thức', $method ) : '' )
+		. $row( 'Người mua', trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() ) )
+		. '</table>'
+		. maypiano_mail_lines( $order )
+		. '<div style="font-size:13px;color:#6B5A61">Giá không có thuế GST.</div>'
+		. '</div>';
+}
+
 function maypiano_mail_support() {
 	$support = maypiano_setting( 'maypiano_support' );
 	return '<p style="margin:18px 0 0;font-size:15px">Cần Mây giúp, bạn ' . ( '' !== $support ? 'liên hệ ' . esc_html( $support ) . ' hoặc ' : '' ) . 'trả lời email này nhé.</p>';
@@ -139,7 +171,7 @@ function maypiano_mail_order_received( $order ) {
 function maypiano_mail_access( $order, $user_id, $opened, $missing ) {
 	$code = maypiano_order_code( $order );
 	$user = $user_id ? get_user_by( 'id', $user_id ) : null;
-	$body = '<p>Chào ' . esc_html( $order->get_billing_first_name() ) . ',</p><p>Mây đã nhận được tiền cho đơn <strong>' . esc_html( $code ) . '</strong>. Cảm ơn bạn nhiều.</p>' . maypiano_mail_lines( $order );
+	$body = '<p>Chào ' . esc_html( $order->get_billing_first_name() ) . ',</p><p>Mây đã nhận được tiền cho đơn <strong>' . esc_html( $code ) . '</strong>. Cảm ơn bạn nhiều.</p>' . maypiano_mail_receipt( $order );
 	if ( $user && $opened ) {
 		$body .= '<p>Khóa học đã mở cho tài khoản <strong>' . esc_html( $user->user_email ) . '</strong>.</p>';
 		if ( $order->get_meta( '_mp_new_account' ) ) {

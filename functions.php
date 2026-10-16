@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'MAYPIANO_VERSION', '1.20.4' );
+define( 'MAYPIANO_VERSION', '1.20.5' );
 
 /** Registered business details, shown in the footer of every page and every email. */
 define( 'MAYPIANO_LEGAL_NAME', 'May Piano' );
